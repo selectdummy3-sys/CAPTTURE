@@ -1,16 +1,16 @@
 import type { Config } from "tailwindcss";
 
 const brand = {
-  50: "#FBF7EF",
-  100: "#F5ECDA",
-  200: "#EAD7B1",
-  300: "#DFC189",
-  400: "#D4AC63",
-  500: "#C99A45",
-  600: "#B0802F",
-  700: "#8C6526",
-  800: "#6C4E22",
-  900: "#57401E",
+  50: "#EFF6FF",
+  100: "#DBEAFE",
+  200: "#BFDBFE",
+  300: "#93C5FD",
+  400: "#60A5FA",
+  500: "#3B82F6",
+  600: "#2563EB",
+  700: "#1D4ED8",
+  800: "#1E40AF",
+  900: "#1E3A8A",
 };
 
 export default {

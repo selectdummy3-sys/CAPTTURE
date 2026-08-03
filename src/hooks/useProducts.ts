@@ -98,6 +98,7 @@ export function useProducts(params: ProductQueryParams = {}) {
       } else {
         q = q.eq("status", "published");
       }
+      q = q.eq("seller.application_status", "approved");
       if (params.featuredOnly) {
         q = q.eq("seller.featured", true);
       }
@@ -151,6 +152,7 @@ export function useFeaturedProducts(limit = 8) {
         .select(productRelationsSelect)
         .eq("status", "published")
         .eq("seller.featured", true)
+        .eq("seller.application_status", "approved")
         .order("created_at", { ascending: false })
         .limit(limit);
       if (error) throw error;
@@ -169,6 +171,7 @@ export function useLatestProducts(limit = 8) {
         .from("products")
         .select(productRelationsSelect)
         .eq("status", "published")
+        .eq("seller.application_status", "approved")
         .order("created_at", { ascending: false })
         .limit(limit);
       if (error) throw error;
@@ -187,6 +190,7 @@ export function useProduct(slug: string) {
         .from("products")
         .select(productRelationsSelect)
         .eq("slug", slug)
+        .eq("seller.application_status", "approved")
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;
@@ -205,7 +209,8 @@ export function useRelatedProducts(categoryId?: string | null, excludeId?: strin
       let q = supabase
         .from("products")
         .select(productRelationsSelect)
-        .eq("status", "published");
+        .eq("status", "published")
+        .eq("seller.application_status", "approved");
       if (categoryId) q = q.eq("category_id", categoryId);
       if (excludeId) q = q.neq("id", excludeId);
       const { data, error } = await q.order("created_at", { ascending: false }).limit(limit);
@@ -243,6 +248,7 @@ export function useStoreProducts(sellerId: string | undefined, limit = 20) {
         .select(productRelationsSelect)
         .eq("seller_id", sellerId)
         .eq("status", "published")
+        .eq("seller.application_status", "approved")
         .order("created_at", { ascending: false })
         .limit(limit);
       if (error) throw error;

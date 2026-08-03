@@ -66,19 +66,19 @@ export function StorePage() {
 
   return (
     <div className="pb-20">
-      <div className="relative h-48 bg-neutral-200 sm:h-56">
+      <div className="relative h-36 bg-neutral-200 sm:h-44">
         {banner && <img src={banner} alt="" className="h-full w-full object-cover" />}
         <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/70 via-transparent" />
       </div>
 
       <div className="mx-auto max-w-1440 px-4 sm:px-6">
-        <div className="-mt-14 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="-mt-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex items-end gap-4">
             <div className="rounded-full border-4 border-white bg-white shadow">
               {logo ? (
-                <img src={logo} alt={store.business_name} className="h-24 w-24 rounded-full object-cover" />
+                <img src={logo} alt={store.business_name} className="h-20 w-20 rounded-full object-cover" />
               ) : (
-                <div className="grid h-24 w-24 place-items-center rounded-full bg-neutral-200 text-2xl font-bold text-neutral-500">
+                <div className="grid h-20 w-20 place-items-center rounded-full bg-neutral-200 text-xl font-bold text-neutral-500">
                   {store.business_name.slice(0, 1)}
                 </div>
               )}

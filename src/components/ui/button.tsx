@@ -12,7 +12,7 @@ export const buttonVariants = {
     primary:
       "bg-neutral-900 text-white hover:bg-neutral-700 active:bg-neutral-900",
     accent:
-      "bg-brand-500 text-neutral-950 hover:bg-brand-400 active:bg-brand-600",
+      "bg-brand-500 text-white hover:bg-brand-400 active:bg-brand-600",
     secondary:
       "bg-neutral-100 text-neutral-900 hover:bg-neutral-200",
     outline:
