@@ -105,8 +105,38 @@ export function ProductDetailPage() {
   return (
     <div className="mx-auto max-w-1440 px-4 py-8 sm:px-6">
       <div className="grid gap-10 lg:grid-cols-2">
-        {/* Info — LEFT */}
-        <div className="order-2 lg:order-1">
+        {/* Image — LEFT */}
+        <div className="order-1">
+          <div className="w-full bg-neutral-100 lg:sticky lg:top-32">
+            {images[activeImage] ? (
+              <img src={images[activeImage]} alt={product.name} className="aspect-square w-full object-cover" />
+            ) : (
+              <div className="grid aspect-square w-full place-items-center text-sm text-neutral-400">
+                No image yet
+              </div>
+            )}
+          </div>
+          {images.length > 1 && (
+            <div className="mt-2 flex gap-1 overflow-x-auto">
+              {images.map((img, i) => (
+                <button
+                  key={img}
+                  type="button"
+                  onClick={() => setActiveImage(i)}
+                  className={cn(
+                    "shrink-0 overflow-hidden border-2",
+                    i === activeImage ? "border-neutral-900" : "border-transparent"
+                  )}
+                >
+                  <img src={img} alt="" className="h-16 w-16 object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Info — RIGHT */}
+        <div className="order-2">
           <h1 className="text-2xl font-bold tracking-tight text-neutral-900">{product.name}</h1>
           {product.seller && (
             <Link
@@ -230,36 +260,6 @@ export function ProductDetailPage() {
               </div>
             )}
           </div>
-        </div>
-
-        {/* Image — RIGHT */}
-        <div className="order-1 lg:order-2">
-          <div className="w-full bg-neutral-100 lg:sticky lg:top-32">
-            {images[activeImage] ? (
-              <img src={images[activeImage]} alt={product.name} className="aspect-square w-full object-cover" />
-            ) : (
-              <div className="grid aspect-square w-full place-items-center text-sm text-neutral-400">
-                No image yet
-              </div>
-            )}
-          </div>
-          {images.length > 1 && (
-            <div className="mt-2 flex gap-1 overflow-x-auto">
-              {images.map((img, i) => (
-                <button
-                  key={img}
-                  type="button"
-                  onClick={() => setActiveImage(i)}
-                  className={cn(
-                    "shrink-0 overflow-hidden border-2",
-                    i === activeImage ? "border-neutral-900" : "border-transparent"
-                  )}
-                >
-                  <img src={img} alt="" className="h-16 w-16 object-cover" />
-                </button>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </div>
