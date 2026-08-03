@@ -14,26 +14,31 @@ import { PROVINCES } from "@/lib/constants";
 import { ImageUploadButton } from "@/components/ui/image-upload";
 
 export function SellerApplyPage() {
-  const { user, refresh } = useAuth();
+  const { user, seller, refresh } = useAuth();
   const navigate = useNavigate();
-  const [businessName, setBusinessName] = useState("");
-  const [storeUsername, setStoreUsername] = useState("");
-  const [province, setProvince] = useState("");
-  const [addressLine1, setAddressLine1] = useState("");
-  const [city, setCity] = useState("");
-  const [postalCode, setPostalCode] = useState("");
-  const [phone, setPhone] = useState("");
+
+  const isReapply = seller?.application_status === "rejected";
+  const bank = (seller?.bank_details as Record<string, string> | null) ?? {};
+  const socials = (seller?.social_links as Record<string, string> | null) ?? {};
+
+  const [businessName, setBusinessName] = useState(seller?.business_name ?? "");
+  const [storeUsername, setStoreUsername] = useState(seller?.store_username ?? "");
+  const [province, setProvince] = useState(seller?.province ?? "");
+  const [addressLine1, setAddressLine1] = useState(seller?.address_line1 ?? "");
+  const [city, setCity] = useState(seller?.city ?? "");
+  const [postalCode, setPostalCode] = useState(seller?.postal_code ?? "");
+  const [phone, setPhone] = useState(seller?.phone ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
-  const [description, setDescription] = useState("");
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-  const [idDocumentUrl, setIdDocumentUrl] = useState<string | null>(null);
-  const [proofOfResidenceUrl, setProofOfResidenceUrl] = useState<string | null>(null);
-  const [socialInstagram, setSocialInstagram] = useState("");
-  const [socialTiktok, setSocialTiktok] = useState("");
-  const [socialFacebook, setSocialFacebook] = useState("");
-  const [bankName, setBankName] = useState("");
-  const [bankAccountName, setBankAccountName] = useState("");
-  const [bankAccountNumber, setBankAccountNumber] = useState("");
+  const [description, setDescription] = useState(seller?.description ?? "");
+  const [logoUrl, setLogoUrl] = useState<string | null>(seller?.logo_url ?? null);
+  const [idDocumentUrl, setIdDocumentUrl] = useState<string | null>(seller?.id_document_url ?? null);
+  const [proofOfResidenceUrl, setProofOfResidenceUrl] = useState<string | null>(seller?.proof_of_residence_url ?? null);
+  const [socialInstagram, setSocialInstagram] = useState(socials.instagram ?? "");
+  const [socialTiktok, setSocialTiktok] = useState(socials.tiktok ?? "");
+  const [socialFacebook, setSocialFacebook] = useState(socials.facebook ?? "");
+  const [bankName, setBankName] = useState(bank.bank_name ?? "");
+  const [bankAccountName, setBankAccountName] = useState(bank.account_name ?? "");
+  const [bankAccountNumber, setBankAccountNumber] = useState(bank.account_number ?? "");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,32 +62,74 @@ export function SellerApplyPage() {
       if (socialTiktok.trim()) social_links.tiktok = socialTiktok.trim();
       if (socialFacebook.trim()) social_links.facebook = socialFacebook.trim();
 
-      const { error: insertError } = await supabase.from("sellers").insert({
-        user_id: user!.id,
-        business_name: businessName,
-        store_username: slugify(storeUsername).replace(/-/g, "_").slice(0, 24),
-        province,
-        address_line1: addressLine1 || null,
-        city: city || null,
-        postal_code: postalCode || null,
-        phone: phone || null,
-        email: email || null,
-        description: description || null,
-        logo_url: logoUrl,
-        id_document_url: idDocumentUrl,
-        proof_of_residence_url: proofOfResidenceUrl,
-        social_links,
-        bank_details: {
-          bank_name: bankName,
-          account_name: bankAccountName,
-          account_number: bankAccountNumber,
-        },
-      });
-      if (insertError) {
-        if (insertError.message.toLowerCase().includes("duplicate")) {
-          throw new Error("That store handle is already taken. Try another.");
+      const { data: existing } = await supabase
+        .from("sellers")
+        .select("id, application_status")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+
+      const isReapply = existing?.application_status === "rejected";
+
+      if (isReapply) {
+        const { error: updateError } = await supabase
+          .from("sellers")
+          .update({
+            business_name: businessName,
+            store_username: slugify(storeUsername).replace(/-/g, "_").slice(0, 24),
+            province,
+            address_line1: addressLine1 || null,
+            city: city || null,
+            postal_code: postalCode || null,
+            phone: phone || null,
+            email: email || null,
+            description: description || null,
+            logo_url: logoUrl,
+            id_document_url: idDocumentUrl,
+            proof_of_residence_url: proofOfResidenceUrl,
+            social_links,
+            bank_details: {
+              bank_name: bankName,
+              account_name: bankAccountName,
+              account_number: bankAccountNumber,
+            },
+            application_status: "pending",
+            rejection_reason: null,
+          })
+          .eq("id", existing!.id);
+        if (updateError) {
+          if (updateError.message.toLowerCase().includes("duplicate")) {
+            throw new Error("That store handle is already taken. Try another.");
+          }
+          throw updateError;
         }
-        throw insertError;
+      } else {
+        const { error: insertError } = await supabase.from("sellers").insert({
+          user_id: user!.id,
+          business_name: businessName,
+          store_username: slugify(storeUsername).replace(/-/g, "_").slice(0, 24),
+          province,
+          address_line1: addressLine1 || null,
+          city: city || null,
+          postal_code: postalCode || null,
+          phone: phone || null,
+          email: email || null,
+          description: description || null,
+          logo_url: logoUrl,
+          id_document_url: idDocumentUrl,
+          proof_of_residence_url: proofOfResidenceUrl,
+          social_links,
+          bank_details: {
+            bank_name: bankName,
+            account_name: bankAccountName,
+            account_number: bankAccountNumber,
+          },
+        });
+        if (insertError) {
+          if (insertError.message.toLowerCase().includes("duplicate")) {
+            throw new Error("That store handle is already taken. Try another.");
+          }
+          throw insertError;
+        }
       }
       await refresh();
       navigate("/seller", { replace: true });
@@ -95,9 +142,13 @@ export function SellerApplyPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight text-neutral-900">Become a seller</h1>
+      <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+        {isReapply ? "Re-apply to sell" : "Become a seller"}
+      </h1>
       <p className="mt-2 text-neutral-500">
-        Tell us about your business. We'll review your application within 24–48 hours.
+        {isReapply
+          ? "Your previous application was declined. Update your details and submit again for review."
+          : "Tell us about your business. We'll review your application within 24–48 hours."}
       </p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
@@ -237,7 +288,7 @@ export function SellerApplyPage() {
 
         <Button type="submit" disabled={submitting}>
           {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-          Submit application
+          {isReapply ? "Re-submit application" : "Submit application"}
         </Button>
       </form>
     </div>
