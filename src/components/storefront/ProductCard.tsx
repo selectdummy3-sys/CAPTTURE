@@ -25,16 +25,16 @@ export function ProductCard({ product, className }: ProductCardProps) {
     <div className={cn("group relative", className)}>
       <Link to={`/p/${product.slug}`} className="block">
         <div className="relative overflow-hidden bg-neutral-100">
-          <div className="aspect-[4/5] w">
+          <div className="aspect-[4/5] w-full">
             {image ? (
               <img
                 src={image}
                 alt={product.name}
                 loading="lazy"
-                className="h w object-cover transition-transform duration-300 group-hover:scale-105"
+                className="h w-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
-              <div className="grid h w place-items-center text-sm text-neutral-400">
+              <div className="grid h w-full place-items-center text-sm text-neutral-400">
                 No image
               </div>
             )}

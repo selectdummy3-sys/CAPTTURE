@@ -61,7 +61,7 @@ export function ForgotPasswordPage() {
           <Field label="Email address" htmlFor="email" error={errors.email?.message}>
             <Input id="email" type="email" autoComplete="email" placeholder="you@example.co.za" {...register("email")} />
           </Field>
-          <Button type="submit" className="w" loading={isSubmitting}>
+          <Button type="submit" className="w-full" loading={isSubmitting}>
             Send reset link
           </Button>
         </form>

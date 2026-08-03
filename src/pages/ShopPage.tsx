@@ -179,7 +179,7 @@ export function ShopPage() {
               </button>
             </div>
             {filterPanel}
-            <Button className="mt-8 w" onClick={() => setFiltersOpen(false)}>
+            <Button className="mt-8 w-full" onClick={() => setFiltersOpen(false)}>
               Show results
             </Button>
           </div>

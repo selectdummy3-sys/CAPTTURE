@@ -61,7 +61,7 @@ export function DropdownItem({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex w items-center gap-2 px-3 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900",
+        "flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-neutral-700 hover:bg-neutral-50 hover:text-neutral-900",
         className
       )}
       {...props}

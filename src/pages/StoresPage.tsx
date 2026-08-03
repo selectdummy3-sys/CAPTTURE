@@ -40,7 +40,7 @@ export function StoresPage() {
                 className="group overflow-hidden border border-neutral-200 bg-white shadow-sm transition-shadow hover:shadow-md"
               >
                 <div className="h-24 bg-neutral-100">
-                  {banner && <img src={banner} alt="" className="h w object-cover" />}
+                  {banner && <img src={banner} alt="" className="h w-full object-cover" />}
                 </div>
                 <div className="p-5">
                   <div className="-mt-12 mb-3">

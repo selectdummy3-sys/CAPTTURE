@@ -101,7 +101,7 @@ export function SellPage() {
                 </li>
               ))}
             </ul>
-            <Link to="/sell/apply" className={buttonClass("primary", "md", "mt-6 w")}>
+            <Link to="/sell/apply" className={buttonClass("primary", "md", "mt-6 w-full")}>
               Start your application
             </Link>
           </div>

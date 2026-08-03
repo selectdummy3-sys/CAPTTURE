@@ -27,7 +27,7 @@ export function ProductGrid({
       <div className={cn("grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4", className)}>
         {Array.from({ length: skeletons }).map((_, i) => (
           <div key={i}>
-            <Skeleton className="aspect-[4/5] w" />
+            <Skeleton className="aspect-[4/5] w-full" />
             <Skeleton className="mt-3 h-4 w-3/4" />
             <Skeleton className="mt-2 h-3 w-1/2" />
           </div>

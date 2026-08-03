@@ -89,7 +89,7 @@ export function SellerLayout() {
               <img
                 src={supabase.storage.from("store-assets").getPublicUrl(seller.logo_url).data.publicUrl}
                 alt=""
-                className="h w object-cover"
+                className="h w-full object-cover"
               />
             ) : (
               <UserRound className="h-5 w-5 text-neutral-400" />

@@ -60,7 +60,7 @@ export function Dialog({
         aria-modal="true"
         tabIndex={-1}
         className={cn(
-          "relative z-10 flex max-h-[90vh] w flex-col bg-white shadow-xl outline-none sm:m-4",
+          "relative z-10 flex max-h-[90vh] w-full flex-col bg-white shadow-xl outline-none sm:m-4",
           size === "sm" && "sm:max-w-md",
           size === "md" && "sm:max-w-lg",
           size === "lg" && "sm:max-w-3xl",

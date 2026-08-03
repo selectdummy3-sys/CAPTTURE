@@ -27,11 +27,11 @@ export function ProductGallery({ product, activeImage, onSelect }: ProductGaller
   return (
     <div className="space-y-3">
       <div className="relative overflow-hidden bg-neutral-100">
-        <div className="aspect-square w">
+        <div className="aspect-square w-full">
           {images[activeImage] ? (
-            <img src={images[activeImage]} alt={product.name} className="h w object-cover" />
+            <img src={images[activeImage]} alt={product.name} className="h w-full object-cover" />
           ) : (
-            <div className="grid h w place-items-center text-sm text-neutral-400">
+            <div className="grid h w-full place-items-center text-sm text-neutral-400">
               No image yet
             </div>
           )}

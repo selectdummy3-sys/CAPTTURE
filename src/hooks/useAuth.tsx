@@ -65,15 +65,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const bootstrap = async () => {
       setIsLoading(true);
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (!active) return;
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await loadProfile(session.user.id);
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (!active) return;
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          await loadProfile(session.user.id);
+        }
+      } catch {
+        // silently handle auth bootstrap errors
+      } finally {
+        if (active) setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     void bootstrap();

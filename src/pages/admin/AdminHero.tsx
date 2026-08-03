@@ -225,7 +225,7 @@ export function AdminHero() {
                 <img
                   src={editing.image_url.startsWith("http") ? editing.image_url : supabase.storage.from("store-assets").getPublicUrl(editing.image_url).data.publicUrl}
                   alt=""
-                  className="mb-2 h-32 w object-cover"
+                  className="mb-2 h-32 w-full object-cover"
                 />
               )}
               <ImageUploadButton
@@ -238,7 +238,7 @@ export function AdminHero() {
               <select
                 value={editing.image_position || "center"}
                 onChange={(e) => setEditing({ ...editing, image_position: e.target.value })}
-                className="w rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
+                className="w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
               >
                 {POSITION_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>

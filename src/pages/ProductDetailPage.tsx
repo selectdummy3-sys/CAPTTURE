@@ -42,12 +42,12 @@ export function ProductDetailPage() {
   if (isLoading) {
     return (
       <div className="mx-auto max-w-1440 px-4 py-10 sm:px-6">
-        <Skeleton className="aspect-square w" />
+        <Skeleton className="aspect-square w-full" />
         <div className="mt-6 space-y-4">
           <Skeleton className="h-8 w-2/3" />
           <Skeleton className="h-5 w-1/3" />
           <Skeleton className="h-10 w-1/2" />
-          <Skeleton className="h-12 w" />
+          <Skeleton className="h-12 w-full" />
         </div>
       </div>
     );
@@ -107,11 +107,11 @@ export function ProductDetailPage() {
       <div className="grid gap-10 md:grid-cols-2">
         {/* Image — LEFT */}
         <div className="order-1">
-          <div className="w bg-neutral-100">
+          <div className="w-full bg-neutral-100">
             {images[activeImage] ? (
-              <img src={images[activeImage]} alt={product.name} className="aspect-square w object-cover" />
+              <img src={images[activeImage]} alt={product.name} className="aspect-square w-full object-cover" />
             ) : (
-              <div className="grid aspect-square w place-items-center text-sm text-neutral-400">
+              <div className="grid aspect-square w-full place-items-center text-sm text-neutral-400">
                 No image yet
               </div>
             )}
@@ -201,7 +201,7 @@ export function ProductDetailPage() {
 
           {/* Add to cart */}
           <div className="mt-6">
-            <Button className="w" size="lg" disabled={outOfStock} onClick={handleAddToCart}>
+            <Button className="w-full" size="lg" disabled={outOfStock} onClick={handleAddToCart}>
               <ShoppingBag className="h-5 w-5" />
               {outOfStock ? "Sold out" : "Add to cart"}
             </Button>
@@ -213,7 +213,7 @@ export function ProductDetailPage() {
               type="button"
               onClick={handleWishlist}
               className={cn(
-                "flex w items-center justify-center gap-2 border py-3 text-sm font-medium transition-colors",
+                "flex w-full items-center justify-center gap-2 border py-3 text-sm font-medium transition-colors",
                 wishlisted
                   ? "border-brand-500 bg-brand-50 text-brand-700"
                   : "border-neutral-300 text-neutral-600 hover:border-neutral-900"

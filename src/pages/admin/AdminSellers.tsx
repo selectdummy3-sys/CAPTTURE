@@ -57,7 +57,7 @@ function SellerDetailDialog({
     return () => {
       cancelled = true;
     };
-  }, [open, seller]);
+  }, [open, seller.id_document_url, seller.proof_of_residence_url]);
 
   const bank = (seller.bank_details ?? {}) as Record<string, string>;
   const socials = (seller.social_links ?? {}) as Record<string, string>;

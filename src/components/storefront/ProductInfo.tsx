@@ -202,14 +202,14 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
         </div>
 
         <div className="mt-6 space-y-3">
-          <Button className="w" size="lg" disabled={outOfStock} onClick={addToCartHandler}>
+          <Button className="w-full" size="lg" disabled={outOfStock} onClick={addToCartHandler}>
             <ShoppingBag className="h-5 w-5" />
             {outOfStock ? "Sold out" : "Add to bag"}
           </Button>
           <Button
             variant="accent"
             size="lg"
-            className="w"
+            className="w-full"
             disabled={outOfStock}
             onClick={buyNow}
           >

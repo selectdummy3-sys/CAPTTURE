@@ -12,7 +12,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       ref={ref}
       aria-invalid={invalid || undefined}
       className={cn(
-        "w border bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm transition-colors",
+        "w-full border bg-white px-3 py-2 text-sm text-neutral-900 shadow-sm transition-colors",
         "placeholder:text-neutral-400",
         "focus:outline-none focus:ring-2 focus:ring-brand-500/40 focus:border-brand-500",
         "disabled:cursor-not-allowed disabled:bg-neutral-50",

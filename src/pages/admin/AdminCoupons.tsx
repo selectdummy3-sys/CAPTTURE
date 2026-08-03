@@ -91,7 +91,7 @@ export function AdminCoupons() {
             <Input value={description} onChange={(e) => setDescription(e.target.value)} />
           </Field>
           <div className="flex items-end pb-1">
-            <div className="flex w items-center justify-between border border-neutral-200 px-4 py-2">
+            <div className="flex w-full items-center justify-between border border-neutral-200 px-4 py-2">
               <span className="text-sm text-neutral-700">Active</span>
               <Switch checked={isActive} onCheckedChange={setIsActive} />
             </div>
@@ -110,7 +110,7 @@ export function AdminCoupons() {
         <EmptyState icon={<Ticket className="h-8 w-8" />} title="No coupons yet" className="mt-8" />
       ) : (
         <div className="mt-6 overflow-x-auto border border-neutral-200">
-          <table className="w min-w-[600px] text-left text-sm">
+          <table className="w-full min-w-[600px] text-left text-sm">
             <thead className="bg-neutral-50 text-xs uppercase tracking-wide text-neutral-500">
               <tr>
                 <th className="px-4 py-3 font-medium">Code</th>

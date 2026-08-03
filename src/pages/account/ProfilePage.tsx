@@ -59,7 +59,7 @@ export function ProfilePage() {
                 <img
                   src={supabase.storage.from("avatars").getPublicUrl(avatarUrl).data.publicUrl}
                   alt=""
-                  className="h w object-cover"
+                  className="h w-full object-cover"
                 />
               ) : (
                 <span className="text-xs text-neutral-400">Photo</span>

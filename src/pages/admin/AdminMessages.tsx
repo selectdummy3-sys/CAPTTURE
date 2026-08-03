@@ -81,7 +81,7 @@ export default function AdminMessages() {
             placeholder="Search messages..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w border border-neutral-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-neutral-400 focus:ring-2 focus:ring-neutral-100"
+            className="w-full border border-neutral-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-neutral-400 focus:ring-2 focus:ring-neutral-100"
           />
         </div>
         <Button variant="outline" onClick={() => { setComposeMode("bulk"); setOpenCompose(true); }}>
@@ -153,7 +153,7 @@ export default function AdminMessages() {
               <select
                 value={selectedSellerId}
                 onChange={(e) => setSelectedSellerId(e.target.value)}
-                className="mt-1 w border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
+                className="mt-1 w-full border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
               >
                 <option value="">Select a seller...</option>
                 {approvedSellers.map((s) => (
@@ -174,7 +174,7 @@ export default function AdminMessages() {
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="e.g. Important platform update"
-              className="mt-1 w border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
+              className="mt-1 w-full border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
             />
           </div>
           <div>
@@ -184,7 +184,7 @@ export default function AdminMessages() {
               onChange={(e) => setBody(e.target.value)}
               rows={5}
               placeholder="Write your message..."
-              className="mt-1 w resize-none border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
+              className="mt-1 w-full resize-none border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
             />
           </div>
         </div>

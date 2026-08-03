@@ -159,7 +159,7 @@ export function CheckoutPage() {
           ...(appliedCode ? { p_coupon_code: appliedCode } : {}),
         });
         if (error) throw new Error(error.message);
-        placed.push(data.order_number);
+        if (data?.order_number) placed.push(data.order_number);
       }
       clearCart();
       const ids = totals.map((t) => t.group.sellerId);
@@ -294,7 +294,7 @@ export function CheckoutPage() {
                   <div key={`${item.productId}|${item.size ?? ""}|${item.colour ?? ""}`} className="flex items-center gap-3">
                     <div className="h-12 w-10 shrink-0 overflow-hidden bg-neutral-100">
                       {productImageUrl(item.image) ? (
-                        <img src={productImageUrl(item.image)!} alt="" className="h w object-cover" />
+                        <img src={productImageUrl(item.image)!} alt="" className="h w-full object-cover" />
                       ) : null}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -375,7 +375,7 @@ export function CheckoutPage() {
               <span className="font-semibold">Total</span>
               <span className="text-lg font-bold">{formatZAR(grandTotal)}</span>
             </div>
-            <Button type="submit" variant="accent" size="lg" className="mt-4 w" loading={submitting}>
+            <Button type="submit" variant="accent" size="lg" className="mt-4 w-full" loading={submitting}>
               Place order · {formatZAR(grandTotal)}
             </Button>
             <p className="mt-2 text-center text-xs text-neutral-400">

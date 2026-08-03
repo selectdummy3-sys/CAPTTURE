@@ -190,7 +190,7 @@ export function CartPage() {
             <span className="font-semibold text-neutral-900">Total</span>
             <span className="text-lg font-bold text-neutral-900">{formatZAR(total)}</span>
           </div>
-          <Button className="mt-5 w" size="lg" onClick={goToCheckout}>
+          <Button className="mt-5 w-full" size="lg" onClick={goToCheckout}>
             Checkout · {formatZAR(total)}
           </Button>
           <p className="mt-3 text-center text-xs text-neutral-400">
