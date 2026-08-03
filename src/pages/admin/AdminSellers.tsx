@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { BadgeCheck, Eye, FileText, Mail, Phone } from "lucide-react";
+import { BadgeCheck, Eye, FileText, Mail, Phone, Trash2 } from "lucide-react";
 
-import { useAllSellers, useSetSellerStatus } from "@/hooks/useAdmin";
+import { useAllSellers, useDeleteSeller, useSetSellerStatus } from "@/hooks/useAdmin";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -233,9 +233,11 @@ function SellerDetailDialog({
 export function AdminSellers() {
   const { data: sellers, isLoading } = useAllSellers();
   const setStatus = useSetSellerStatus();
+  const deleteSeller = useDeleteSeller();
   const [reason, setReason] = useState<Record<string, string>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
 
   const selected = (sellers ?? []).find((s) => s.id === selectedId) ?? null;
 
@@ -321,6 +323,16 @@ export function AdminSellers() {
                         Suspend
                       </Button>
                     )}
+                    {seller.application_status === "suspended" && (
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        disabled={busyId === seller.id}
+                        onClick={() => setDeleteConfirmId(seller.id)}
+                      >
+                        <Trash2 className="h-4 w-4" /> Delete
+                      </Button>
+                    )}
                   </div>
                   <input
                     value={reason[seller.id] ?? ""}
@@ -337,6 +349,31 @@ export function AdminSellers() {
 
       {selected && (
         <SellerDetailDialog seller={selected} open={selected != null} onClose={() => setSelectedId(null)} />
+      )}
+
+      {deleteConfirmId && (
+        <Dialog
+          open={!!deleteConfirmId}
+          onClose={() => setDeleteConfirmId(null)}
+          title="Delete seller permanently?"
+        >
+          <p className="text-sm text-neutral-600">
+            This will permanently remove the seller, all their products, orders, and associated data. This action cannot be undone.
+          </p>
+          <div className="mt-4 flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setDeleteConfirmId(null)}>Cancel</Button>
+            <Button
+              variant="danger"
+              disabled={deleteSeller.isPending}
+              onClick={async () => {
+                await deleteSeller.mutateAsync(deleteConfirmId);
+                setDeleteConfirmId(null);
+              }}
+            >
+              {deleteSeller.isPending ? "Deleting…" : "Delete permanently"}
+            </Button>
+          </div>
+        </Dialog>
       )}
     </div>
   );

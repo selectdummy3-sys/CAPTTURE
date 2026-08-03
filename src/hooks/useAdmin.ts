@@ -57,6 +57,24 @@ export function useSetSellerStatus() {
   });
 }
 
+/** Admin: permanently delete a seller and all related data. */
+export function useDeleteSeller() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (sellerId: string) => {
+      const { error } = await supabase.rpc("delete_seller", {
+        p_seller_id: sellerId,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "sellers"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin", "pending-sellers-count"] });
+      void queryClient.invalidateQueries({ queryKey: ["stores"] });
+    },
+  });
+}
+
 export function useAllOrders() {
   return useQuery({
     queryKey: ["admin", "orders"],

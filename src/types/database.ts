@@ -1163,6 +1163,7 @@ export type Database = {
         Args: { p_body: string; p_is_bulk?: boolean; p_seller_id?: string | null; p_subject: string }
         Returns: string | null
       }
+      delete_seller: { Args: { p_seller_id: string }; Returns: undefined }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       unread_message_count: { Args: never; Returns: number }
