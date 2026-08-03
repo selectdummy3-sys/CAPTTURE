@@ -258,6 +258,61 @@ export type Database = {
           },
         ]
       }
+      messages: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          is_bulk: boolean
+          is_read: boolean
+          seller_id: string | null
+          sender_id: string
+          subject: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          is_bulk?: boolean
+          is_read?: boolean
+          seller_id?: string | null
+          sender_id: string
+          subject: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          is_bulk?: boolean
+          is_read?: boolean
+          seller_id?: string | null
+          sender_id?: string
+          subject?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "user_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           body: string | null
@@ -959,6 +1014,7 @@ export type Database = {
       generate_order_number: { Args: never; Returns: string }
       increment_view: { Args: { p_product_id: string }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
+      mark_message_read: { Args: { p_message_id: string }; Returns: undefined }
       notify_user: {
         Args: {
           p_body?: string
@@ -1056,8 +1112,13 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      send_message: {
+        Args: { p_body: string; p_is_bulk?: boolean; p_seller_id?: string | null; p_subject: string }
+        Returns: string | null
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      unread_message_count: { Args: never; Returns: number }
       update_my_seller_profile: {
         Args: {
           p_bank_details?: Json
