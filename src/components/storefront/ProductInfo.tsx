@@ -7,7 +7,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useIsWishlisted, useToggleWishlist } from "@/hooks/useWishlist";
 import { useCartStore } from "@/store/useCartStore";
 import { Price } from "@/components/ui/price";
-import { Rating } from "@/components/ui/rating";
 import { Button } from "@/components/ui/button";
 import { cn, formatZAR } from "@/lib/utils";
 
@@ -92,16 +91,6 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">{product.name}</h1>
         <div className="mt-2 flex flex-wrap items-center gap-3">
-          {product.reviews_count != null && product.reviews_count > 0 ? (
-            <div className="flex items-center gap-1.5">
-              <Rating value={product.reviews_avg ?? 0} size="md" />
-              <span className="text-sm text-neutral-500">
-                {product.reviews_avg} · {product.reviews_count} review{product.reviews_count === 1 ? "" : "s"}
-              </span>
-            </div>
-          ) : (
-            <span className="text-sm text-neutral-400">No reviews yet</span>
-          )}
           {product.is_flash_sale && (
             <span className="inline-flex items-center gap-1 rounded-full bg-brand-100 px-2.5 py-0.5 text-xs font-semibold text-brand-800">
               <Zap className="h-3 w-3 fill-current" /> Flash sale

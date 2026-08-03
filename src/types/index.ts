@@ -27,18 +27,12 @@ export type ProductWithDetails = Product & {
   seller?: SellerSummary | null;
   category?: Pick<Category, "id" | "name" | "slug"> | null;
   images?: ProductImage[];
-  reviews_avg?: number | null;
-  reviews_count?: number;
 };
 
 export type OrderWithRelations = Order & {
   seller?: SellerSummary | null;
   items?: OrderItem[];
   coupon?: Pick<Coupon, "code" | "discount_type" | "discount_value"> | null;
-};
-
-export type ReviewWithAuthor = Review & {
-  user?: { id: string | null; full_name: string | null; avatar_url: string | null } | null;
 };
 
 export type CartLine = {

@@ -71,7 +71,6 @@ const AdminDashboard = lazy(() =>
 );
 const AdminSellers = lazy(() => import("@/pages/admin/AdminSellers").then((m) => ({ default: m.AdminSellers })));
 const AdminOrders = lazy(() => import("@/pages/admin/AdminOrders").then((m) => ({ default: m.AdminOrders })));
-const AdminReviews = lazy(() => import("@/pages/admin/AdminReviews").then((m) => ({ default: m.AdminReviews })));
 const AdminCoupons = lazy(() => import("@/pages/admin/AdminCoupons").then((m) => ({ default: m.AdminCoupons })));
 
 function Loadable({ children }: { children: React.ReactNode }) {
@@ -122,7 +121,6 @@ export function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="sellers" element={<AdminSellers />} />
           <Route path="orders" element={<AdminOrders />} />
-          <Route path="reviews" element={<AdminReviews />} />
           <Route path="coupons" element={<AdminCoupons />} />
         </Route>
 

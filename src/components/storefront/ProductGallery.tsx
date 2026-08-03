@@ -1,9 +1,7 @@
 import { useMemo } from "react";
-import { Zap } from "lucide-react";
 
 import type { ProductWithDetails } from "@/types";
 import { productImageUrl } from "@/components/storefront/ProductCard";
-import { Countdown } from "@/components/ui/countdown";
 import { cn } from "@/lib/utils";
 
 interface ProductGalleryProps {
@@ -38,15 +36,6 @@ export function ProductGallery({ product, activeImage, onSelect }: ProductGaller
             </div>
           )}
         </div>
-        {product.is_flash_sale && product.flash_sale_ends_at && (
-          <div className="absolute left-4 top-4 rounded-xl bg-neutral-900/90 px-4 py-2 text-white backdrop-blur">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 fill-brand-400 text-brand-400" />
-              <span className="text-xs font-semibold uppercase tracking-wide">Flash sale</span>
-            </div>
-            <Countdown endsAt={product.flash_sale_ends_at} compact className="mt-1" />
-          </div>
-        )}
       </div>
       {images.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-1">

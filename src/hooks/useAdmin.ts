@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabase";
-import type { Coupon, OrderWithRelations, ReviewWithAuthor, Seller } from "@/types";
+import type { Coupon, OrderWithRelations, Seller } from "@/types";
 
 export function useAllSellers() {
   return useQuery({
@@ -71,37 +71,6 @@ export function useAllOrders() {
   });
 }
 
-export function useAllReviews() {
-  return useQuery({
-    queryKey: ["admin", "reviews"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("product_reviews")
-        .select("*, product:products(id, name, slug), user:profiles(id, full_name, avatar_url)")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as unknown as Array<
-        ReviewWithAuthor & { product?: { id: string; name: string; slug: string } | null }
-      >;
-    },
-  });
-}
-
-export function useSetReviewStatus() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: "approved" | "rejected" }) => {
-      const { error } = await supabase.from("product_reviews").update({ status }).eq("id", id);
-      if (error) throw new Error(error.message);
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["admin", "reviews"] });
-      void queryClient.invalidateQueries({ queryKey: ["product-reviews"] });
-      void queryClient.invalidateQueries({ queryKey: ["products"] });
-    },
-  });
-}
-
 export function useCoupons() {
   return useQuery({
     queryKey: ["admin", "coupons"],
@@ -156,7 +125,7 @@ export function usePlatformStats() {
   return useQuery({
     queryKey: ["admin", "stats"],
     queryFn: async () => {
-      const [sellers, approvedSellers, products, orders, customers, revenue, pendingOrders, reviews] =
+      const [sellers, approvedSellers, products, orders, customers, revenue, pendingOrders] =
         await Promise.all([
           supabase.from("sellers").select("id", { count: "exact", head: true }),
           supabase.from("sellers").select("id", { count: "exact", head: true }).eq("application_status", "approved"),
@@ -165,9 +134,8 @@ export function usePlatformStats() {
           supabase.from("profiles").select("id", { count: "exact", head: true }),
           supabase.from("orders").select("total"),
           supabase.from("orders").select("id", { count: "exact", head: true }).in("status", ["pending", "paid", "processing"]),
-          supabase.from("product_reviews").select("id", { count: "exact", head: true }),
         ]);
-      const counts = [sellers, approvedSellers, products, orders, customers, pendingOrders, reviews];
+      const counts = [sellers, approvedSellers, products, orders, customers, pendingOrders];
       for (const r of counts) if (r.error) throw r.error;
       if (revenue.error) throw revenue.error;
       return {
@@ -177,7 +145,6 @@ export function usePlatformStats() {
         orders: orders.count ?? 0,
         customers: customers.count ?? 0,
         pendingOrders: pendingOrders.count ?? 0,
-        reviews: reviews.count ?? 0,
         revenue: (revenue.data ?? []).reduce((a, o) => a + o.total, 0),
       };
     },

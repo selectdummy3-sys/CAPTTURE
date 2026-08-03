@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import type { ProductWithDetails } from "@/types";
 import { supabase } from "@/lib/supabase";
 import { discountPercent, formatZAR } from "@/lib/utils";
-import { Rating } from "@/components/ui/rating";
-import { Countdown } from "@/components/ui/countdown";
 import { WishlistButton } from "@/components/storefront/WishlistButton";
 import { cn } from "@/lib/utils";
 
@@ -65,24 +63,12 @@ export function ProductCard({ product, className }: ProductCardProps) {
               <p className="text-xs text-neutral-400 line-through">{formatZAR(product.price)}</p>
             )}
           </div>
-          {product.reviews_count != null && product.reviews_count > 0 && (
-            <div className="flex items-center gap-1.5">
-              <Rating value={product.reviews_avg ?? 0} size="sm" />
-              <span className="text-xs text-neutral-400">({product.reviews_count})</span>
-            </div>
-          )}
         </div>
       </Link>
 
       <div className="absolute right-3 top-3">
         <WishlistButton productId={product.id} size="sm" />
       </div>
-
-      {product.is_flash_sale && product.flash_sale_ends_at && (
-        <div className="absolute bottom-3 left-3 rounded-lg bg-neutral-900/85 p-2 backdrop-blur">
-          <Countdown endsAt={product.flash_sale_ends_at} compact />
-        </div>
-      )}
     </div>
   );
 }

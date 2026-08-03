@@ -4,7 +4,6 @@ import { Link, useParams } from "react-router-dom";
 import { useIncrementView, useProduct, useRelatedProducts } from "@/hooks/useProducts";
 import { ProductGallery } from "@/components/storefront/ProductGallery";
 import { ProductInfo } from "@/components/storefront/ProductInfo";
-import { ReviewsSection } from "@/components/storefront/ReviewsSection";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { buttonClass } from "@/components/ui/button";
@@ -107,10 +106,6 @@ export function ProductDetailPage() {
           </div>
         </div>
       )}
-
-      <div className="mx-auto max-w-1440 px-4 sm:px-6">
-        <ReviewsSection product={product} />
-      </div>
 
       {related.data && related.data.length > 0 && (
         <section className="mx-auto max-w-1440 px-4 pt-16 sm:px-6">

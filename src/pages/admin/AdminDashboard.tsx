@@ -20,7 +20,6 @@ export function AdminDashboard() {
         <StatCard label="Sellers" value={stats?.sellers ?? 0} loading={isLoading} />
         <StatCard label="Approved sellers" value={stats?.approvedSellers ?? 0} loading={isLoading} />
         <StatCard label="Pending orders" value={stats?.pendingOrders ?? 0} loading={isLoading} />
-        <StatCard label="Reviews" value={stats?.reviews ?? 0} loading={isLoading} />
       </div>
     </div>
   );

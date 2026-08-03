@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { BadgeCheck, ClipboardList, LayoutDashboard, Star, Ticket } from "lucide-react";
+import { BadgeCheck, ClipboardList, LayoutDashboard, Ticket } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -7,7 +7,6 @@ const links = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true },
   { to: "/admin/sellers", label: "Sellers", icon: BadgeCheck },
   { to: "/admin/orders", label: "Orders", icon: ClipboardList },
-  { to: "/admin/reviews", label: "Reviews", icon: Star },
   { to: "/admin/coupons", label: "Coupons", icon: Ticket },
 ];
 

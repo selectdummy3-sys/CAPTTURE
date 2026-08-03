@@ -1,49 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import type { ProductWithDetails, SellerSummary, ReviewWithAuthor } from "@/types";
+import type { ProductWithDetails, SellerSummary } from "@/types";
 
 export const productRelationsSelect =
   "*, seller:sellers(id, business_name, store_username, logo_url, province, application_status), category:categories(id, name, slug), images:product_images(*)";
-
-export interface RatingStats {
-  avg: number;
-  count: number;
-}
-
-export async function fetchRatingStats(productIds: string[]): Promise<Map<string, RatingStats>> {
-  if (productIds.length === 0) return new Map();
-  const { data, error } = await supabase
-    .from("product_reviews")
-    .select("product_id, rating")
-    .eq("status", "approved")
-    .in("product_id", productIds);
-  if (error) throw error;
-  const map = new Map<string, RatingStats>();
-  for (const row of data ?? []) {
-    const prev = map.get(row.product_id) ?? { avg: 0, count: 0 };
-    prev.avg += row.rating;
-    prev.count += 1;
-    map.set(row.product_id, prev);
-  }
-  for (const stats of map.values()) {
-    stats.avg = stats.count > 0 ? Math.round((stats.avg / stats.count) * 10) / 10 : 0;
-  }
-  return map;
-}
-
-export function withRatingStats(
-  products: Array<ProductWithDetails | null> | null | undefined,
-  stats: Map<string, RatingStats>
-): ProductWithDetails[] {
-  return (products ?? []).filter(Boolean).map((p) => {
-    const s = stats.get(p!.id);
-    return {
-      ...(p as ProductWithDetails),
-      reviews_avg: s?.avg ?? null,
-      reviews_count: s?.count ?? 0,
-    };
-  });
-}
 
 export interface ProductQueryParams {
   categorySlug?: string;
@@ -130,10 +90,8 @@ export function useProducts(params: ProductQueryParams = {}) {
       const { data, error, count } = await q;
       if (error) throw error;
 
-      const ids = (data ?? []).map((row) => row.id);
-      const stats = await fetchRatingStats(ids);
       return {
-        products: withRatingStats(data, stats),
+        products: (data ?? []) as ProductWithDetails[],
         total: count ?? 0,
         page,
         pageSize,
@@ -156,8 +114,7 @@ export function useFeaturedProducts(limit = 8) {
         .order("created_at", { ascending: false })
         .limit(limit);
       if (error) throw error;
-      const stats = await fetchRatingStats((data ?? []).map((r) => r.id));
-      return withRatingStats(data, stats);
+      return (data ?? []) as ProductWithDetails[];
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -175,8 +132,7 @@ export function useLatestProducts(limit = 8) {
         .order("created_at", { ascending: false })
         .limit(limit);
       if (error) throw error;
-      const stats = await fetchRatingStats((data ?? []).map((r) => r.id));
-      return withRatingStats(data, stats);
+      return (data ?? []) as ProductWithDetails[];
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -194,9 +150,7 @@ export function useProduct(slug: string) {
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;
-      const stats = await fetchRatingStats([data.id]);
-      const [product] = withRatingStats([data], stats);
-      return product;
+      return data as ProductWithDetails;
     },
     enabled: Boolean(slug),
   });
@@ -215,8 +169,7 @@ export function useRelatedProducts(categoryId?: string | null, excludeId?: strin
       if (excludeId) q = q.neq("id", excludeId);
       const { data, error } = await q.order("created_at", { ascending: false }).limit(limit);
       if (error) throw error;
-      const stats = await fetchRatingStats((data ?? []).map((r) => r.id));
-      return withRatingStats(data, stats);
+      return (data ?? []) as ProductWithDetails[];
     },
     enabled: Boolean(categoryId) || Boolean(excludeId),
   });
@@ -231,8 +184,7 @@ export function useSellerProducts(sellerId: string | undefined, status?: string)
       if (status) q = q.eq("status", status);
       const { data, error } = await q.order("created_at", { ascending: false });
       if (error) throw error;
-      const stats = await fetchRatingStats((data ?? []).map((r) => r.id));
-      return withRatingStats(data, stats);
+      return (data ?? []) as ProductWithDetails[];
     },
     enabled: Boolean(sellerId),
   });
@@ -252,28 +204,9 @@ export function useStoreProducts(sellerId: string | undefined, limit = 20) {
         .order("created_at", { ascending: false })
         .limit(limit);
       if (error) throw error;
-      const stats = await fetchRatingStats((data ?? []).map((r) => r.id));
-      return withRatingStats(data, stats);
+      return (data ?? []) as ProductWithDetails[];
     },
     enabled: Boolean(sellerId),
-  });
-}
-
-export function useProductReviews(productId: string | undefined) {
-  return useQuery({
-    queryKey: ["product-reviews", productId],
-    queryFn: async () => {
-      if (!productId) return [];
-      const { data, error } = await supabase
-        .from("product_reviews")
-        .select("*, user:profiles(id, full_name, avatar_url)")
-        .eq("product_id", productId)
-        .eq("status", "approved")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as unknown as ReviewWithAuthor[];
-    },
-    enabled: Boolean(productId),
   });
 }
 
