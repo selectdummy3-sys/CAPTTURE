@@ -107,7 +107,7 @@ export function ProductDetailPage() {
       <div className="grid gap-10 md:grid-cols-2">
         {/* Image — LEFT */}
         <div className="order-1">
-          <div className="w-full bg-neutral-100 md:sticky md:top-32">
+          <div className="w-full bg-neutral-100">
             {images[activeImage] ? (
               <img src={images[activeImage]} alt={product.name} className="aspect-square w-full object-cover" />
             ) : (
