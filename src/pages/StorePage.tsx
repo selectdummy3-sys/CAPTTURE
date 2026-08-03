@@ -1,0 +1,119 @@
+import { Link, useParams } from "react-router-dom";
+import { MapPin, Users } from "lucide-react";
+import { toast } from "sonner";
+
+import { useIsFollowing, useStore, useStoreFollowersCount, useToggleFollow } from "@/hooks/useStores";
+import { useStoreProducts } from "@/hooks/useProducts";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { ProductGrid } from "@/components/storefront/ProductGrid";
+import { Button, buttonClass } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { supabase } from "@/lib/supabase";
+
+export function StorePage() {
+  const { username } = useParams<{ username: string }>();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { data: store, isLoading } = useStore(username);
+  const { data: products, isLoading: productsLoading } = useStoreProducts(store?.id);
+  const { data: followers } = useStoreFollowersCount(store?.id);
+  const { data: following = false } = useIsFollowing(store?.id);
+  const toggleFollow = useToggleFollow(store?.id);
+
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-1440 px-4 py-10 sm:px-6">
+        <Skeleton className="h-40 w-full rounded-2xl" />
+        <Skeleton className="mt-6 h-6 w-64" />
+        <Skeleton className="mt-8 h-72 w-full rounded-2xl" />
+      </div>
+    );
+  }
+
+  if (!store) {
+    return (
+      <div className="mx-auto max-w-1440 px-4 py-24 text-center sm:px-6">
+        <h1 className="text-2xl font-bold text-neutral-900">Store not found</h1>
+        <p className="mt-2 text-neutral-500">This store isn't available right now.</p>
+        <Link to="/stores" className={buttonClass("primary", "md", "mt-6")}>
+          Browse stores
+        </Link>
+      </div>
+    );
+  }
+
+  const banner = store.banner_url
+    ? (store.banner_url.startsWith("http")
+        ? store.banner_url
+        : supabase.storage.from("store-assets").getPublicUrl(store.banner_url).data.publicUrl)
+    : null;
+  const logo = store.logo_url
+    ? (store.logo_url.startsWith("http")
+        ? store.logo_url
+        : supabase.storage.from("store-assets").getPublicUrl(store.logo_url).data.publicUrl)
+    : null;
+
+  const onFollow = () => {
+    if (!user) {
+      navigate(`/login?redirect=${encodeURIComponent(`/store/${store.store_username}`)}`);
+      return;
+    }
+    toggleFollow.mutate(following, {
+      onSuccess: () => toast.success(following ? "Unfollowed store" : "Following store"),
+    });
+  };
+
+  return (
+    <div className="pb-20">
+      <div className="relative h-48 bg-neutral-200 sm:h-56">
+        {banner && <img src={banner} alt="" className="h-full w-full object-cover" />}
+        <div className="absolute inset-0 bg-gradient-to-t from-neutral-900/70 via-transparent" />
+      </div>
+
+      <div className="mx-auto max-w-1440 px-4 sm:px-6">
+        <div className="-mt-14 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex items-end gap-4">
+            <div className="rounded-full border-4 border-white bg-white shadow">
+              {logo ? (
+                <img src={logo} alt={store.business_name} className="h-24 w-24 rounded-full object-cover" />
+              ) : (
+                <div className="grid h-24 w-24 place-items-center rounded-full bg-neutral-200 text-2xl font-bold text-neutral-500">
+                  {store.business_name.slice(0, 1)}
+                </div>
+              )}
+            </div>
+            <div className="pb-1">
+              <h1 className="text-2xl font-bold tracking-tight text-neutral-900">{store.business_name}</h1>
+              <p className="text-sm text-neutral-500">@{store.store_username}</p>
+              <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-neutral-500">
+                <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {store.province}</span>
+                <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {followers ?? 0} followers</span>
+              </div>
+            </div>
+          </div>
+          <Button variant={following ? "outline" : "primary"} onClick={onFollow}>
+            {following ? "Following" : "Follow store"}
+          </Button>
+        </div>
+
+        {store.description && (
+          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-neutral-600">{store.description}</p>
+        )}
+
+        <div className="mt-10">
+          <h2 className="text-lg font-semibold text-neutral-900">Products</h2>
+          <div className="mt-5">
+            <ProductGrid
+              products={products}
+              loading={productsLoading}
+              skeletons={8}
+              emptyTitle="No products yet"
+              emptyDescription="This store hasn't listed any products yet. Check back soon."
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

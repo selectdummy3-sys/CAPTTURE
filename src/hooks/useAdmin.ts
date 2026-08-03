@@ -1,0 +1,174 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { supabase } from "@/lib/supabase";
+import type { Coupon, OrderWithRelations, ReviewWithAuthor, Seller } from "@/types";
+
+export function useAllSellers() {
+  return useQuery({
+    queryKey: ["admin", "sellers"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("sellers")
+        .select("*, products:products(count), followers:store_followers(count)")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as Array<
+        Seller & { products?: { count: number } | null; followers?: { count: number } | null }
+      >;
+    },
+  });
+}
+
+export function useSetSellerStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      sellerId,
+      status,
+      reason,
+    }: {
+      sellerId: string;
+      status: string;
+      reason?: string;
+    }) => {
+      const { data, error } = await supabase.rpc("set_seller_status", {
+        p_seller_id: sellerId,
+        p_status: status,
+        ...(reason ? { p_reason: reason } : {}),
+      });
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "sellers"] });
+      void queryClient.invalidateQueries({ queryKey: ["stores"] });
+    },
+  });
+}
+
+export function useAllOrders() {
+  return useQuery({
+    queryKey: ["admin", "orders"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*, seller:sellers(id, business_name, store_username, logo_url, province, application_status), items:order_items(*)")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as OrderWithRelations[];
+    },
+  });
+}
+
+export function useAllReviews() {
+  return useQuery({
+    queryKey: ["admin", "reviews"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_reviews")
+        .select("*, product:products(id, name, slug), user:profiles(id, full_name, avatar_url)")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as Array<
+        ReviewWithAuthor & { product?: { id: string; name: string; slug: string } | null }
+      >;
+    },
+  });
+}
+
+export function useSetReviewStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: "approved" | "rejected" }) => {
+      const { error } = await supabase.from("product_reviews").update({ status }).eq("id", id);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "reviews"] });
+      void queryClient.invalidateQueries({ queryKey: ["product-reviews"] });
+      void queryClient.invalidateQueries({ queryKey: ["products"] });
+    },
+  });
+}
+
+export function useCoupons() {
+  return useQuery({
+    queryKey: ["admin", "coupons"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("coupons")
+        .select("*, seller:sellers(id, business_name)")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as unknown as Array<Coupon & { seller?: { id: string; business_name: string } | null }>;
+    },
+  });
+}
+
+export function useCreateCoupon() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: {
+      code: string;
+      description?: string;
+      discountType: "percentage" | "fixed";
+      discountValue: number;
+      minOrderAmount?: number;
+      usageLimit?: number;
+      isActive: boolean;
+      endsAt?: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("coupons")
+        .insert({
+          code: input.code.trim().toUpperCase(),
+          description: input.description || null,
+          discount_type: input.discountType,
+          discount_value: input.discountValue,
+          min_order_amount: input.minOrderAmount ?? 0,
+          usage_limit: input.usageLimit ?? null,
+          is_active: input.isActive,
+          ends_at: input.endsAt ? new Date(input.endsAt).toISOString() : null,
+        })
+        .select("id")
+        .single();
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "coupons"] });
+    },
+  });
+}
+
+export function usePlatformStats() {
+  return useQuery({
+    queryKey: ["admin", "stats"],
+    queryFn: async () => {
+      const [sellers, approvedSellers, products, orders, customers, revenue, pendingOrders, reviews] =
+        await Promise.all([
+          supabase.from("sellers").select("id", { count: "exact", head: true }),
+          supabase.from("sellers").select("id", { count: "exact", head: true }).eq("application_status", "approved"),
+          supabase.from("products").select("id", { count: "exact", head: true }),
+          supabase.from("orders").select("id", { count: "exact", head: true }),
+          supabase.from("profiles").select("id", { count: "exact", head: true }),
+          supabase.from("orders").select("total"),
+          supabase.from("orders").select("id", { count: "exact", head: true }).in("status", ["pending", "paid", "processing"]),
+          supabase.from("product_reviews").select("id", { count: "exact", head: true }),
+        ]);
+      const counts = [sellers, approvedSellers, products, orders, customers, pendingOrders, reviews];
+      for (const r of counts) if (r.error) throw r.error;
+      if (revenue.error) throw revenue.error;
+      return {
+        sellers: sellers.count ?? 0,
+        approvedSellers: approvedSellers.count ?? 0,
+        products: products.count ?? 0,
+        orders: orders.count ?? 0,
+        customers: customers.count ?? 0,
+        pendingOrders: pendingOrders.count ?? 0,
+        reviews: reviews.count ?? 0,
+        revenue: (revenue.data ?? []).reduce((a, o) => a + o.total, 0),
+      };
+    },
+  });
+}
