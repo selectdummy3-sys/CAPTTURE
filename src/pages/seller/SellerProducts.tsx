@@ -59,7 +59,7 @@ export function SellerProducts() {
             type="button"
             onClick={() => setTab(t)}
             className={cn(
-              "shrink-0-full px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
+              "shrink-0 px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
               tab === t ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
             )}
           >
@@ -90,7 +90,7 @@ export function SellerProducts() {
                     <img
                       src={productImageUrl(product.featured_image) ?? ""}
                       alt=""
-                      className="h-full w-full object-cover"
+                      className="h w object-cover"
                     />
                   )}
                 </div>

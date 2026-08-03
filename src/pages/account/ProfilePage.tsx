@@ -54,12 +54,12 @@ export function ProfilePage() {
         <div>
           <p className="mb-2 text-sm font-medium text-neutral-700">Profile photo</p>
           <div className="flex items-center gap-4">
-            <div className="grid h-16 w-16 place-items-center overflow-hidden-full bg-neutral-100">
+            <div className="grid h-16 w-16 place-items-center overflow-hidden bg-neutral-100">
               {avatarUrl ? (
                 <img
                   src={supabase.storage.from("avatars").getPublicUrl(avatarUrl).data.publicUrl}
                   alt=""
-                  className="h-full w-full object-cover"
+                  className="h w object-cover"
                 />
               ) : (
                 <span className="text-xs text-neutral-400">Photo</span>

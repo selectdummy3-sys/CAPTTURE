@@ -92,7 +92,7 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
         <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">{product.name}</h1>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           {product.is_flash_sale && (
-            <span className="inline-flex items-center gap-1-full bg-brand-100 px-2.5 py-0.5 text-xs font-semibold text-brand-800">
+            <span className="inline-flex items-center gap-1 bg-brand-100 px-2.5 py-0.5 text-xs font-semibold text-brand-800">
               <Zap className="h-3 w-3 fill-current" /> Flash sale
             </span>
           )}
@@ -202,14 +202,14 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
         </div>
 
         <div className="mt-6 space-y-3">
-          <Button className="w-full" size="lg" disabled={outOfStock} onClick={addToCartHandler}>
+          <Button className="w" size="lg" disabled={outOfStock} onClick={addToCartHandler}>
             <ShoppingBag className="h-5 w-5" />
             {outOfStock ? "Sold out" : "Add to bag"}
           </Button>
           <Button
             variant="accent"
             size="lg"
-            className="w-full"
+            className="w"
             disabled={outOfStock}
             onClick={buyNow}
           >

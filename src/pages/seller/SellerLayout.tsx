@@ -89,7 +89,7 @@ export function SellerLayout() {
               <img
                 src={supabase.storage.from("store-assets").getPublicUrl(seller.logo_url).data.publicUrl}
                 alt=""
-                className="h-full w-full object-cover"
+                className="h w object-cover"
               />
             ) : (
               <UserRound className="h-5 w-5 text-neutral-400" />
@@ -123,7 +123,7 @@ export function SellerLayout() {
                 <Icon className="h-4 w-4" />
                 {label}
                 {showBadge && (
-                  <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
+                  <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center bg-red-500 px-1.5 text-[10px] font-bold text-white">
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}

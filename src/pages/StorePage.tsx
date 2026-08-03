@@ -24,9 +24,9 @@ export function StorePage() {
   if (isLoading) {
     return (
       <div className="mx-auto max-w-1440 px-4 py-10 sm:px-6">
-        <Skeleton className="h-40 w-full" />
+        <Skeleton className="h-40 w" />
         <Skeleton className="mt-6 h-6 w-64" />
-        <Skeleton className="mt-8 h-72 w-full" />
+        <Skeleton className="mt-8 h-72 w" />
       </div>
     );
   }
@@ -67,15 +67,15 @@ export function StorePage() {
   return (
     <div className="pb-20">
       <div className="relative h-28 bg-neutral-200 sm:h-36">
-        {banner && <img src={banner} alt="" className="h-full w-full object-cover" />}
+        {banner && <img src={banner} alt="" className="h w object-cover" />}
       </div>
 
       <div className="mx-auto max-w-1440 px-4 sm:px-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex items-end gap-3">
-            <div className="relative z-10 flex h-16 w-16 items-center justify-center-full border-4 border-white bg-white shadow-lg sm:h-20 sm:w-20">
+            <div className="relative z-10 flex h-16 w-16 items-center justify-center overflow-hidden border-4 border-white bg-white shadow-lg sm:h-20 sm:w-20">
               {logo ? (
-                <img src={logo} alt={store.business_name} className="h-full w-full-full object-cover" />
+                <img src={logo} alt={store.business_name} className="h-full w-full rounded-full object-cover" />
               ) : (
                 <span className="text-2xl font-bold text-neutral-500">{store.business_name.slice(0, 1)}</span>
               )}

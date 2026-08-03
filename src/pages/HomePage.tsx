@@ -64,7 +64,8 @@ export function HomePage() {
               <img
                 src={hero.image_url.startsWith("http") ? hero.image_url : supabase.storage.from("store-assets").getPublicUrl(hero.image_url).data.publicUrl}
                 alt={hero.title}
-                className="w-full object-cover"
+                className="w object-cover"
+                style={{ objectPosition: hero.image_position || "center" }}
               />
             ) : (
               <div className="grid grid-cols-2 gap-4">
@@ -72,14 +73,14 @@ export function HomePage() {
                   <img
                     src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=800&auto=format&fit=crop"
                     alt="Fashion product"
-                    className="aspect-[3/4] w-full object-cover"
+                    className="aspect-[3/4] w object-cover"
                   />
                 </div>
                 <div className="mt-8 space-y-4">
                   <img
                     src="https://images.unsplash.com/photo-1524593689594-eae072f5bd3f?q=80&w=800&auto=format&fit=crop"
                     alt="Sneakers"
-                    className="aspect-[3/4] w-full object-cover"
+                    className="aspect-[3/4] w object-cover"
                   />
                 </div>
               </div>
@@ -147,9 +148,9 @@ export function HomePage() {
                   className="group relative overflow-hidden bg-neutral-100"
                 >
                   {img ? (
-                    <img src={img} alt={cat.name} className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <img src={img} alt={cat.name} className="aspect-square w object-cover transition-transform duration-300 group-hover:scale-105" />
                   ) : (
-                    <div className="grid aspect-square w-full place-items-center text-neutral-300">
+                    <div className="grid aspect-square w place-items-center text-neutral-300">
                       <Store className="h-8 w-8" />
                     </div>
                   )}
@@ -230,7 +231,7 @@ export function HomePage() {
                         onError={(e) => {
                           (e.currentTarget as HTMLImageElement).style.display = "none";
                         }}
-                        className="h-12 w-12-full bg-neutral-100 object-cover"
+                        className="h-12 w-12 rounded-full bg-neutral-100 object-cover"
                       />
                       <div>
                         <p className="font-semibold text-neutral-900 group-hover:text-brand-700">

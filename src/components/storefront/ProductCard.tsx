@@ -25,28 +25,28 @@ export function ProductCard({ product, className }: ProductCardProps) {
     <div className={cn("group relative", className)}>
       <Link to={`/p/${product.slug}`} className="block">
         <div className="relative overflow-hidden bg-neutral-100">
-          <div className="aspect-[4/5] w-full">
+          <div className="aspect-[4/5] w">
             {image ? (
               <img
                 src={image}
                 alt={product.name}
                 loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                className="h w object-cover transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
-              <div className="grid h-full w-full place-items-center text-sm text-neutral-400">
+              <div className="grid h w place-items-center text-sm text-neutral-400">
                 No image
               </div>
             )}
           </div>
 
           {percent != null && (
-            <span className="absolute left-3 top-3-full bg-brand-500 px-2.5 py-1 text-xs font-bold text-neutral-950 shadow">
+            <span className="absolute left-3 top-3 bg-brand-500 px-2.5 py-1 text-xs font-bold text-neutral-950 shadow">
               -{percent}%
             </span>
           )}
           {product.stock === 0 && (
-            <span className="absolute left-3 top-3-full bg-neutral-900/80 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
+            <span className="absolute left-3 top-3 bg-neutral-900/80 px-2.5 py-1 text-xs font-semibold text-white backdrop-blur">
               Sold out
             </span>
           )}

@@ -38,7 +38,7 @@ export function SellerOrders() {
             type="button"
             onClick={() => setStatus(s)}
             className={cn(
-              "shrink-0-full px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
+              "shrink-0 px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
               status === s ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
             )}
           >

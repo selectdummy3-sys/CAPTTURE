@@ -294,7 +294,7 @@ export function CheckoutPage() {
                   <div key={`${item.productId}|${item.size ?? ""}|${item.colour ?? ""}`} className="flex items-center gap-3">
                     <div className="h-12 w-10 shrink-0 overflow-hidden bg-neutral-100">
                       {productImageUrl(item.image) ? (
-                        <img src={productImageUrl(item.image)!} alt="" className="h-full w-full object-cover" />
+                        <img src={productImageUrl(item.image)!} alt="" className="h w object-cover" />
                       ) : null}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -375,7 +375,7 @@ export function CheckoutPage() {
               <span className="font-semibold">Total</span>
               <span className="text-lg font-bold">{formatZAR(grandTotal)}</span>
             </div>
-            <Button type="submit" variant="accent" size="lg" className="mt-4 w-full" loading={submitting}>
+            <Button type="submit" variant="accent" size="lg" className="mt-4 w" loading={submitting}>
               Place order · {formatZAR(grandTotal)}
             </Button>
             <p className="mt-2 text-center text-xs text-neutral-400">

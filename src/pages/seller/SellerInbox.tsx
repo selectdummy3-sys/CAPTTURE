@@ -74,7 +74,7 @@ export default function SellerInbox() {
                         <h3 className={`text-sm ${msg.is_read ? "font-medium" : "font-semibold"} text-neutral-900`}>
                           {msg.subject}
                         </h3>
-                        {!msg.is_read && <span className="h-2 w-2-full bg-brand-500" />}
+                        {!msg.is_read && <span className="h-2 w-2 bg-brand-500" />}
                         {msg.is_bulk && (
                           <span className="bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
                             Announcement

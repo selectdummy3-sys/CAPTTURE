@@ -38,7 +38,7 @@ export function AdminLayout() {
                 <Icon className="h-4 w-4" />
                 {label}
                 {showBadge && (
-                  <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center-full bg-amber-500 px-1.5 text-[10px] font-bold text-white">
+                  <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center bg-amber-500 px-1.5 text-[10px] font-bold text-white">
                     {pendingSellers > 99 ? "99+" : pendingSellers}
                   </span>
                 )}

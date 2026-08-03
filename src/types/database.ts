@@ -264,6 +264,7 @@ export type Database = {
           cta_link: string
           cta_text: string
           id: string
+          image_position: string
           image_url: string | null
           is_active: boolean
           sort_order: number
@@ -276,6 +277,7 @@ export type Database = {
           cta_link?: string
           cta_text?: string
           id?: string
+          image_position?: string
           image_url?: string | null
           is_active?: boolean
           sort_order?: number
@@ -288,6 +290,7 @@ export type Database = {
           cta_link?: string
           cta_text?: string
           id?: string
+          image_position?: string
           image_url?: string | null
           is_active?: boolean
           sort_order?: number

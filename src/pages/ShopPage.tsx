@@ -128,22 +128,22 @@ export function ShopPage() {
       {(q || category || gender || maxPrice) && (
         <div className="mt-4 flex flex-wrap items-center gap-2">
           {q && (
-            <button onClick={() => setParam("q", "")} className="inline-flex items-center gap-1-full bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
+            <button onClick={() => setParam("q", "")} className="inline-flex items-center gap-1 bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
               "{q}" <X className="h-3 w-3" />
             </button>
           )}
           {categoryName && (
-            <button onClick={() => setParam("category", "")} className="inline-flex items-center gap-1-full bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
+            <button onClick={() => setParam("category", "")} className="inline-flex items-center gap-1 bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
               {categoryName} <X className="h-3 w-3" />
             </button>
           )}
           {gender && (
-            <button onClick={() => setParam("gender", "")} className="inline-flex items-center gap-1-full bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
+            <button onClick={() => setParam("gender", "")} className="inline-flex items-center gap-1 bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
               {GENDER_LABELS[gender]} <X className="h-3 w-3" />
             </button>
           )}
           {maxPrice && (
-            <button onClick={() => setMaxPrice("")} className="inline-flex items-center gap-1-full bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
+            <button onClick={() => setMaxPrice("")} className="inline-flex items-center gap-1 bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
               Under R{maxPrice} <X className="h-3 w-3" />
             </button>
           )}
@@ -171,7 +171,7 @@ export function ShopPage() {
       {filtersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-neutral-900/50" onClick={() => setFiltersOpen(false)} aria-hidden />
-          <div className="absolute right-0 top-0 h-full w-80 max-w-[85vw] overflow-y-auto bg-white p-5 shadow-xl">
+          <div className="absolute right-0 top-0 h w-80 max-w-[85vw] overflow-y-auto bg-white p-5 shadow-xl">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="text-lg font-semibold">Filters</h2>
               <button onClick={() => setFiltersOpen(false)} aria-label="Close filters" className="p-2 hover:bg-neutral-100">
@@ -179,7 +179,7 @@ export function ShopPage() {
               </button>
             </div>
             {filterPanel}
-            <Button className="mt-8 w-full" onClick={() => setFiltersOpen(false)}>
+            <Button className="mt-8 w" onClick={() => setFiltersOpen(false)}>
               Show results
             </Button>
           </div>

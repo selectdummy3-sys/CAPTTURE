@@ -40,7 +40,7 @@ export function StoresPage() {
                 className="group overflow-hidden border border-neutral-200 bg-white shadow-sm transition-shadow hover:shadow-md"
               >
                 <div className="h-24 bg-neutral-100">
-                  {banner && <img src={banner} alt="" className="h-full w-full object-cover" />}
+                  {banner && <img src={banner} alt="" className="h w object-cover" />}
                 </div>
                 <div className="p-5">
                   <div className="-mt-12 mb-3">
@@ -50,7 +50,7 @@ export function StoresPage() {
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).style.display = "none";
                       }}
-                      className="h-16 w-16-full border-4 border-white bg-neutral-100 object-cover"
+                      className="h-16 w-16 rounded-full border-4 border-white bg-neutral-100 object-cover"
                     />
                   </div>
                   <h2 className="font-semibold text-neutral-900 group-hover:text-brand-700">{store.business_name}</h2>

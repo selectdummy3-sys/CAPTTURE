@@ -66,7 +66,7 @@ export function OrderDetailPage() {
             <div key={item.id} className="flex items-center gap-4 px-5 py-4">
               <div className="h-16 w-16 shrink-0 overflow-hidden bg-neutral-100">
                 {item.product_image && productImageUrl(item.product_image) && (
-                  <img src={productImageUrl(item.product_image)!} alt="" className="h-full w-full object-cover" />
+                  <img src={productImageUrl(item.product_image)!} alt="" className="h w object-cover" />
                 )}
               </div>
               <div className="min-w-0 flex-1">

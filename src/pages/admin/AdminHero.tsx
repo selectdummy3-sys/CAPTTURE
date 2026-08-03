@@ -18,11 +18,20 @@ const EMPTY_SLIDE: HeroSlideInsert = {
   title: "",
   subtitle: "",
   image_url: null,
+  image_position: "center",
   cta_text: "Shop now",
   cta_link: "/shop",
   sort_order: 0,
   is_active: true,
 };
+
+const POSITION_OPTIONS = [
+  { value: "top", label: "Top" },
+  { value: "center", label: "Center" },
+  { value: "bottom", label: "Bottom" },
+  { value: "left", label: "Left" },
+  { value: "right", label: "Right" },
+] as const;
 
 export function AdminHero() {
   const { data: slides = [], isLoading } = useAdminHeroContent();
@@ -44,6 +53,7 @@ export function AdminHero() {
       title: slide.title,
       subtitle: slide.subtitle,
       image_url: slide.image_url,
+      image_position: slide.image_position,
       cta_text: slide.cta_text,
       cta_link: slide.cta_link,
       sort_order: slide.sort_order,
@@ -215,13 +225,25 @@ export function AdminHero() {
                 <img
                   src={editing.image_url.startsWith("http") ? editing.image_url : supabase.storage.from("store-assets").getPublicUrl(editing.image_url).data.publicUrl}
                   alt=""
-                  className="mb-2 h-32 w-full object-cover"
+                  className="mb-2 h-32 w object-cover"
                 />
               )}
               <ImageUploadButton
                 onUploaded={handleImageUpload}
                 bucket="store-assets"
               />
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-neutral-700">Image position</label>
+              <select
+                value={editing.image_position || "center"}
+                onChange={(e) => setEditing({ ...editing, image_position: e.target.value })}
+                className="w rounded border border-neutral-300 bg-white px-3 py-2 text-sm"
+              >
+                {POSITION_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

@@ -41,10 +41,10 @@ export function WishlistPage() {
                     <img
                       src={productImageUrl(product.featured_image) ?? ""}
                       alt={product.name}
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="h w object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="grid h-full w-full place-items-center text-sm text-neutral-400">No image</div>
+                    <div className="grid h w place-items-center text-sm text-neutral-400">No image</div>
                   )}
                 </div>
                 <div className="mt-2 space-y-0.5">
@@ -58,7 +58,7 @@ export function WishlistPage() {
                 type="button"
                 onClick={() => void remove.mutateAsync(product.id)}
                 aria-label="Remove from wishlist"
-                className="absolute right-2 top-2-full bg-neutral-900/70 p-1.5 text-white transition-colors hover:bg-neutral-900"
+                className="absolute right-2 top-2 bg-neutral-900/70 p-1.5 text-white transition-colors hover:bg-neutral-900"
               >
                 <X className="h-4 w-4" />
               </button>

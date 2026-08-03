@@ -97,7 +97,7 @@ export function SignupPage() {
         <Field label="Confirm password" htmlFor="confirm" error={errors.confirm?.message}>
           <Input id="confirm" type="password" autoComplete="new-password" placeholder="••••••••" {...register("confirm")} />
         </Field>
-        <Button type="submit" className="w-full" loading={isSubmitting}>
+        <Button type="submit" className="w" loading={isSubmitting}>
           Create account
         </Button>
       </form>

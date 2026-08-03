@@ -35,7 +35,7 @@ export function SellPage() {
     <div className="pb-20">
       <section className="bg-neutral-950 text-white">
         <div className="mx-auto max-w-1440 px-4 py-20 text-center sm:px-6">
-          <p className="inline-flex items-center gap-2-full border border-white/20 px-3 py-1 text-xs font-medium text-neutral-300">
+          <p className="inline-flex items-center gap-2 border border-white/20 px-3 py-1 text-xs font-medium text-neutral-300">
             <Store className="h-3.5 w-3.5" /> Seller program
           </p>
           <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
@@ -80,7 +80,7 @@ export function SellPage() {
             <ol className="mt-6 space-y-6">
               {steps.map((step, i) => (
                 <li key={step.title} className="flex gap-4">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center-full bg-brand-100 font-bold text-brand-800">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center bg-brand-100 font-bold text-brand-800">
                     {i + 1}
                   </span>
                   <div>
@@ -101,7 +101,7 @@ export function SellPage() {
                 </li>
               ))}
             </ul>
-            <Link to="/sell/apply" className={buttonClass("primary", "md", "mt-6 w-full")}>
+            <Link to="/sell/apply" className={buttonClass("primary", "md", "mt-6 w")}>
               Start your application
             </Link>
           </div>

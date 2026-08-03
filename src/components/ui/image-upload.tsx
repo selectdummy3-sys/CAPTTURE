@@ -100,13 +100,13 @@ export function ImageUpload({
               aspect === "wide" ? "aspect-[4/3]" : "aspect-square"
             )}
           >
-            <img src={url} alt="" className="h-full w-full object-cover" />
+            <img src={url} alt="" className="h w object-cover" />
             {!disabled && (
               <button
                 type="button"
                 onClick={() => removeAt(index)}
                 aria-label="Remove image"
-                className="absolute right-1.5 top-1.5-full bg-neutral-900/70 p-1 text-white opacity-0 transition-opacity hover:bg-neutral-900 group-hover:opacity-100"
+                className="absolute right-1.5 top-1.5 bg-neutral-900/70 p-1 text-white opacity-0 transition-opacity hover:bg-neutral-900 group-hover:opacity-100"
               >
                 <X className="h-3.5 w-3.5" />
               </button>

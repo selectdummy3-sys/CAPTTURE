@@ -64,7 +64,7 @@ export function LoginPage() {
             Forgot password?
           </Link>
         </div>
-        <Button type="submit" className="w-full" loading={isSubmitting}>
+        <Button type="submit" className="w" loading={isSubmitting}>
           Sign in
         </Button>
       </form>
