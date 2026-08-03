@@ -32,16 +32,26 @@ function SellerDetailDialog({
   onClose: () => void;
 }) {
   const [docUrl, setDocUrl] = useState<string | null>(null);
+  const [proofUrl, setProofUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     setDocUrl(null);
+    setProofUrl(null);
     if (open && seller.id_document_url) {
       void supabase.storage
         .from("documents")
         .createSignedUrl(seller.id_document_url, 300)
         .then(({ data, error }) => {
           if (!cancelled && !error) setDocUrl(data?.signedUrl ?? null);
+        });
+    }
+    if (open && seller.proof_of_residence_url) {
+      void supabase.storage
+        .from("documents")
+        .createSignedUrl(seller.proof_of_residence_url, 300)
+        .then(({ data, error }) => {
+          if (!cancelled && !error) setProofUrl(data?.signedUrl ?? null);
         });
     }
     return () => {
@@ -102,6 +112,17 @@ function SellerDetailDialog({
             </dl>
           </div>
 
+          <div>
+            <h3 className="text-sm font-semibold text-neutral-900">Address</h3>
+            <dl className="mt-3 space-y-3">
+              <DetailRow label="Street">{seller.address_line1}</DetailRow>
+              <DetailRow label="City">{seller.city}</DetailRow>
+              <DetailRow label="Postal code">{seller.postal_code}</DetailRow>
+            </dl>
+          </div>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2">
           <div>
             <h3 className="text-sm font-semibold text-neutral-900">Business</h3>
             <dl className="mt-3 space-y-3">
@@ -175,6 +196,24 @@ function SellerDetailDialog({
             {docUrl ? (
               <a
                 href={docUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-flex items-center gap-1.5 text-sm text-brand-600 underline hover:text-brand-700"
+              >
+                <FileText className="h-4 w-4" /> Open document
+              </a>
+            ) : (
+              <p className="mt-2 text-sm text-neutral-500">Generating secure link…</p>
+            )}
+          </div>
+        )}
+
+        {seller.proof_of_residence_url && (
+          <div>
+            <h3 className="text-sm font-semibold text-neutral-900">Proof of residence</h3>
+            {proofUrl ? (
+              <a
+                href={proofUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="mt-2 inline-flex items-center gap-1.5 text-sm text-brand-600 underline hover:text-brand-700"

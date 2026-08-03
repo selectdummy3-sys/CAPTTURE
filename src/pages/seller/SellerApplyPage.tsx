@@ -19,10 +19,18 @@ export function SellerApplyPage() {
   const [businessName, setBusinessName] = useState("");
   const [storeUsername, setStoreUsername] = useState("");
   const [province, setProvince] = useState("");
+  const [addressLine1, setAddressLine1] = useState("");
+  const [city, setCity] = useState("");
+  const [postalCode, setPostalCode] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState(user?.email ?? "");
   const [description, setDescription] = useState("");
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  const [idDocumentUrl, setIdDocumentUrl] = useState<string | null>(null);
+  const [proofOfResidenceUrl, setProofOfResidenceUrl] = useState<string | null>(null);
+  const [socialInstagram, setSocialInstagram] = useState("");
+  const [socialTiktok, setSocialTiktok] = useState("");
+  const [socialFacebook, setSocialFacebook] = useState("");
   const [bankName, setBankName] = useState("");
   const [bankAccountName, setBankAccountName] = useState("");
   const [bankAccountNumber, setBankAccountNumber] = useState("");
@@ -37,15 +45,33 @@ export function SellerApplyPage() {
       if (!/^[a-z0-9_]{3,24}$/.test(storeUsername)) {
         throw new Error("Store handle must be 3–24 characters: lowercase letters, numbers or underscores.");
       }
+      if (!idDocumentUrl) {
+        throw new Error("Please upload your ID document (front).");
+      }
+      if (!proofOfResidenceUrl) {
+        throw new Error("Please upload your proof of residence.");
+      }
+
+      const social_links: Record<string, string> = {};
+      if (socialInstagram.trim()) social_links.instagram = socialInstagram.trim();
+      if (socialTiktok.trim()) social_links.tiktok = socialTiktok.trim();
+      if (socialFacebook.trim()) social_links.facebook = socialFacebook.trim();
+
       const { error: insertError } = await supabase.from("sellers").insert({
         user_id: user!.id,
         business_name: businessName,
         store_username: slugify(storeUsername).replace(/-/g, "_").slice(0, 24),
         province,
+        address_line1: addressLine1 || null,
+        city: city || null,
+        postal_code: postalCode || null,
         phone: phone || null,
         email: email || null,
         description: description || null,
         logo_url: logoUrl,
+        id_document_url: idDocumentUrl,
+        proof_of_residence_url: proofOfResidenceUrl,
+        social_links,
         bank_details: {
           bank_name: bankName,
           account_name: bankAccountName,
@@ -54,7 +80,7 @@ export function SellerApplyPage() {
       });
       if (insertError) {
         if (insertError.message.toLowerCase().includes("duplicate")) {
-          throw new Error("That store handle is already taken. Try another one.");
+          throw new Error("That store handle is already taken. Try another.");
         }
         throw insertError;
       }
@@ -89,29 +115,44 @@ export function SellerApplyPage() {
           </Field>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2">
-          <Field label="Province">
-            <Select value={province} onChange={(e) => setProvince(e.target.value)} required>
-              <option value="">Select…</option>
-              {PROVINCES.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </Select>
-          </Field>
-          <Field label="Contact phone">
-            <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+27 …" inputMode="tel" />
-          </Field>
-        </div>
-
         <Field label="Business email">
           <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        </Field>
+
+        <Field label="Contact phone">
+          <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+27 …" inputMode="tel" required />
         </Field>
 
         <Field label="Description" hint="A short pitch for your brand.">
           <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
         </Field>
+
+        <fieldset className="rounded-xl border border-neutral-200 p-5">
+          <legend className="px-2 text-sm font-semibold text-neutral-900">Address</legend>
+          <div className="space-y-5 pt-2">
+            <Field label="Street address">
+              <Input value={addressLine1} onChange={(e) => setAddressLine1(e.target.value)} placeholder="123 Main St" required />
+            </Field>
+            <div className="grid gap-5 sm:grid-cols-3">
+              <Field label="City">
+                <Input value={city} onChange={(e) => setCity(e.target.value)} required />
+              </Field>
+              <Field label="Province">
+                <Select value={province} onChange={(e) => setProvince(e.target.value)} required>
+                  <option value="">Select…</option>
+                  {PROVINCES.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Postal code">
+                <Input value={postalCode} onChange={(e) => setPostalCode(e.target.value)} inputMode="numeric" required />
+              </Field>
+            </div>
+          </div>
+        </fieldset>
 
         <Field label="Store logo">
           <div className="flex items-center gap-3">
@@ -125,6 +166,57 @@ export function SellerApplyPage() {
             <ImageUploadButton bucket="store-assets" onUploaded={setLogoUrl} />
           </div>
         </Field>
+
+        <fieldset className="rounded-xl border border-neutral-200 p-5">
+          <legend className="px-2 text-sm font-semibold text-neutral-900">Verification documents</legend>
+          <p className="mb-4 text-xs text-neutral-500">Required for admin review. Images or PDF, max 5 MB each.</p>
+          <div className="space-y-5">
+            <Field label="ID document (front)" hint="National ID, passport or driver's licence.">
+              <div className="flex items-center gap-3">
+                {idDocumentUrl && (
+                  <span className="text-sm text-green-600 font-medium">Uploaded ✓</span>
+                )}
+                <ImageUploadButton bucket="documents" onUploaded={setIdDocumentUrl} />
+              </div>
+            </Field>
+            <Field label="Proof of residence" hint="Utility bill, bank statement or lease agreement (max 3 months old).">
+              <div className="flex items-center gap-3">
+                {proofOfResidenceUrl && (
+                  <span className="text-sm text-green-600 font-medium">Uploaded ✓</span>
+                )}
+                <ImageUploadButton bucket="documents" onUploaded={setProofOfResidenceUrl} />
+              </div>
+            </Field>
+          </div>
+        </fieldset>
+
+        <fieldset className="rounded-xl border border-neutral-200 p-5">
+          <legend className="px-2 text-sm font-semibold text-neutral-900">Social handles</legend>
+          <p className="mb-4 text-xs text-neutral-500">At least one is recommended to build trust with buyers.</p>
+          <div className="space-y-5">
+            <Field label="Instagram">
+              <Input
+                value={socialInstagram}
+                onChange={(e) => setSocialInstagram(e.target.value)}
+                placeholder="@yourbrand"
+              />
+            </Field>
+            <Field label="TikTok">
+              <Input
+                value={socialTiktok}
+                onChange={(e) => setSocialTiktok(e.target.value)}
+                placeholder="@yourbrand"
+              />
+            </Field>
+            <Field label="Facebook">
+              <Input
+                value={socialFacebook}
+                onChange={(e) => setSocialFacebook(e.target.value)}
+                placeholder="facebook.com/yourbrand"
+              />
+            </Field>
+          </div>
+        </fieldset>
 
         <fieldset className="rounded-xl border border-neutral-200 p-5">
           <legend className="px-2 text-sm font-semibold text-neutral-900">Payout details</legend>

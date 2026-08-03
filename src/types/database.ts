@@ -397,7 +397,8 @@ export type Database = {
           payment_status?: string
           seller_id: string
           shipping?: number
-          shipping_total?: number
+          shipping_address?: Json
+          status?: string
           subtotal?: number
           total?: number
           updated_at?: string
@@ -752,11 +753,13 @@ export type Database = {
       }
       sellers: {
         Row: {
+          address_line1: string | null
           application_status: string
           approved_at: string | null
           bank_details: Json
           banner_url: string | null
           business_name: string
+          city: string | null
           commission_rate: number | null
           created_at: string
           description: string | null
@@ -766,6 +769,8 @@ export type Database = {
           id_document_url: string | null
           logo_url: string | null
           phone: string | null
+          postal_code: string | null
+          proof_of_residence_url: string | null
           province: string
           rejection_reason: string | null
           social_links: Json
@@ -774,11 +779,13 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          address_line1?: string | null
           application_status?: string
           approved_at?: string | null
           bank_details?: Json
           banner_url?: string | null
           business_name: string
+          city?: string | null
           commission_rate?: number | null
           created_at?: string
           description?: string | null
@@ -788,6 +795,8 @@ export type Database = {
           id_document_url?: string | null
           logo_url?: string | null
           phone?: string | null
+          postal_code?: string | null
+          proof_of_residence_url?: string | null
           province?: string
           rejection_reason?: string | null
           social_links?: Json
@@ -796,11 +805,13 @@ export type Database = {
           user_id: string
         }
         Update: {
+          address_line1?: string | null
           application_status?: string
           approved_at?: string | null
           bank_details?: Json
           banner_url?: string | null
           business_name?: string
+          city?: string | null
           commission_rate?: number | null
           created_at?: string
           description?: string | null
@@ -810,12 +821,14 @@ export type Database = {
           id_document_url?: string | null
           logo_url?: string | null
           phone?: string | null
+          postal_code?: string | null
+          proof_of_residence_url?: string | null
           province?: string
           rejection_reason?: string | null
           social_links?: Json
           store_username?: string
           updated_at?: string
-          user_id: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -1008,28 +1021,16 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      update_my_seller_profile: {
-        Args: {
-          p_bank_details?: Json
-          p_banner_url?: string
-          p_business_name: string
-          p_description?: string
-          p_email?: string
-          p_logo_url?: string
-          p_phone?: string
-          p_province?: string
-          p_social_links?: Json
-        }
-        Returns: undefined
-      }
       set_seller_status: {
         Args: { p_reason?: string; p_seller_id: string; p_status: string }
         Returns: {
+          address_line1: string | null
           application_status: string
           approved_at: string | null
           bank_details: Json
           banner_url: string | null
           business_name: string
+          city: string | null
           commission_rate: number | null
           created_at: string
           description: string | null
@@ -1039,6 +1040,8 @@ export type Database = {
           id_document_url: string | null
           logo_url: string | null
           phone: string | null
+          postal_code: string | null
+          proof_of_residence_url: string | null
           province: string
           rejection_reason: string | null
           social_links: Json
@@ -1055,6 +1058,20 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      update_my_seller_profile: {
+        Args: {
+          p_bank_details?: Json
+          p_banner_url?: string
+          p_business_name: string
+          p_description?: string
+          p_email?: string
+          p_logo_url?: string
+          p_phone?: string
+          p_province?: string
+          p_social_links?: Json
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
@@ -1167,7 +1184,7 @@ export type Enums<
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DatabaseWithoutInternals["public"]["CompositeTypes"]
+    | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
@@ -1178,8 +1195,8 @@ export type CompositeTypes<
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
-  : PublicCompositeTypeNameOrOptions extends keyof DatabaseWithoutInternals["public"]["CompositeTypes"]
-    ? DatabaseWithoutInternals["public"]["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
 export const Constants = {
