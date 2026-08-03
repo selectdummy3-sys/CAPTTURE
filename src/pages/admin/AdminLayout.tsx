@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { BadgeCheck, Banknote, ClipboardList, LayoutDashboard, Mail, Ticket } from "lucide-react";
+import { BadgeCheck, Banknote, ClipboardList, Image, LayoutDashboard, Mail, Ticket } from "lucide-react";
 
 import { usePendingSellersCount } from "@/hooks/useAdmin";
 import { cn } from "@/lib/utils";
@@ -11,6 +11,7 @@ const links = [
   { to: "/admin/withdrawals", label: "Withdrawals", icon: Banknote },
   { to: "/admin/coupons", label: "Coupons", icon: Ticket },
   { to: "/admin/messages", label: "Messages", icon: Mail },
+  { to: "/admin/hero", label: "Hero", icon: Image },
 ];
 
 export function AdminLayout() {

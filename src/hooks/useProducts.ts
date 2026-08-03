@@ -33,10 +33,28 @@ export function useProducts(params: ProductQueryParams = {}) {
       let q = supabase.from("products").select(productRelationsSelect, { count: "exact" });
 
       if (params.categorySlug) {
-        q = q.eq("category.slug", params.categorySlug);
+        const { data: cat } = await supabase
+          .from("categories")
+          .select("id")
+          .eq("slug", params.categorySlug)
+          .single();
+        if (cat) {
+          q = q.eq("category_id", cat.id);
+        } else {
+          q = q.eq("category_id", "__none__");
+        }
       }
       if (params.sellerUsername) {
-        q = q.eq("seller.store_username", params.sellerUsername);
+        const { data: seller } = await supabase
+          .from("sellers")
+          .select("id")
+          .eq("store_username", params.sellerUsername)
+          .single();
+        if (seller) {
+          q = q.eq("seller_id", seller.id);
+        } else {
+          q = q.eq("seller_id", "__none__");
+        }
       }
       if (params.sellerId) {
         q = q.eq("seller_id", params.sellerId);

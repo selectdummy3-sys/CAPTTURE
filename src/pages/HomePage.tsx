@@ -4,6 +4,7 @@ import { ArrowRight, ShieldCheck, Truck, Wallet, Store } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories";
 import { useFeaturedProducts, useLatestProducts } from "@/hooks/useProducts";
 import { useApprovedSellers } from "@/hooks/useStores";
+import { useHeroContent } from "@/hooks/useHeroContent";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { buttonClass } from "@/components/ui/button";
@@ -14,6 +15,9 @@ export function HomePage() {
   const featured = useFeaturedProducts(8);
   const latest = useLatestProducts(8);
   const stores = useApprovedSellers(4);
+  const { data: heroSlides } = useHeroContent();
+
+  const hero = heroSlides?.[0];
 
   return (
     <div className="pb-20">
@@ -22,15 +26,33 @@ export function HomePage() {
         <div className="mx-auto grid max-w-1440 items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:py-24">
           <div>
             <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-              Wear the <span className="text-brand-400">local</span> label.
+              {hero?.title ? (
+                <>
+                  {hero.title.split("local").length > 1 ? (
+                    <>
+                      {hero.title.split("local")[0]}
+                      <span className="text-brand-400">local</span>
+                      {hero.title.split("local").slice(1).join("local")}
+                    </>
+                  ) : (
+                    hero.title
+                  )}
+                </>
+              ) : (
+                <>
+                  Wear the <span className="text-brand-400">local</span> label.
+                </>
+              )}
             </h1>
             <p className="mt-5 max-w-lg text-lg text-neutral-400">
-              Shop South African designers, tailors and sneaker sellers. Direct from the maker to
-              your door — with COD and EFT that just works.
+              {hero?.subtitle || "Shop South African designers, tailors and sneaker sellers. Direct from the maker to your door — with COD and EFT that just works."}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/shop" className={buttonClass("accent", "lg")}>
-                Shop the drop <ArrowRight className="h-4 w-4" />
+              <Link
+                to={hero?.cta_link || "/shop"}
+                className={buttonClass("accent", "lg")}
+              >
+                {hero?.cta_text || "Shop the drop"} <ArrowRight className="h-4 w-4" />
               </Link>
               <Link to="/sell" className={buttonClass("outline", "lg", "border-white/30 text-white hover:bg-white/10")}>
                 Sell on CAPPTURE
@@ -38,22 +60,30 @@ export function HomePage() {
             </div>
           </div>
           <div className="relative hidden lg:block">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-4">
-                <img
-                  src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=800&auto=format&fit=crop"
-                  alt="Fashion product"
-                  className="aspect-[3/4] w-full rounded-2xl object-cover"
-                />
+            {hero?.image_url ? (
+              <img
+                src={hero.image_url.startsWith("http") ? hero.image_url : supabase.storage.from("store-assets").getPublicUrl(hero.image_url).data.publicUrl}
+                alt={hero.title}
+                className="w-full rounded-2xl object-cover"
+              />
+            ) : (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <img
+                    src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=800&auto=format&fit=crop"
+                    alt="Fashion product"
+                    className="aspect-[3/4] w-full rounded-2xl object-cover"
+                  />
+                </div>
+                <div className="mt-8 space-y-4">
+                  <img
+                    src="https://images.unsplash.com/photo-1524593689594-eae072f5bd3f?q=80&w=800&auto=format&fit=crop"
+                    alt="Sneakers"
+                    className="aspect-[3/4] w-full rounded-2xl object-cover"
+                  />
+                </div>
               </div>
-              <div className="mt-8 space-y-4">
-                <img
-                  src="https://images.unsplash.com/photo-1524593689594-eae072f5bd3f?q=80&w=800&auto=format&fit=crop"
-                  alt="Sneakers"
-                  className="aspect-[3/4] w-full rounded-2xl object-cover"
-                />
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
