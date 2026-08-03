@@ -6,7 +6,7 @@ import {
   useUpsertHeroSlide,
   useDeleteHeroSlide,
 } from "@/hooks/useHeroContent";
-import { ImageUploadButton } from "@/components/ui/image-upload";
+import { ImageCropper } from "@/components/ui/image-cropper";
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -228,9 +228,12 @@ export function AdminHero() {
                   className="mb-2 h-32 w-full object-cover"
                 />
               )}
-              <ImageUploadButton
+              <ImageCropper
                 onUploaded={handleImageUpload}
                 bucket="store-assets"
+                aspectRatio={16 / 9}
+                outputWidth={1600}
+                outputHeight={900}
               />
             </div>
             <div>
