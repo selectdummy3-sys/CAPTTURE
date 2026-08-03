@@ -21,11 +21,7 @@ export function HomePage() {
       <section className="bg-neutral-950 text-white">
         <div className="mx-auto grid max-w-1440 items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:py-24">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1 text-xs font-medium text-neutral-300">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
-              Homegrown fashion, one marketplace
-            </p>
-            <h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
               Wear the <span className="text-brand-400">local</span> label.
             </h1>
             <p className="mt-5 max-w-lg text-lg text-neutral-400">
