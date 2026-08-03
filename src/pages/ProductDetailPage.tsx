@@ -27,6 +27,7 @@ export function ProductDetailPage() {
   const addToCart = useCartStore((s) => s.add);
   const { data: wishlisted = false } = useIsWishlisted(product?.id ?? "");
   const toggleWishlist = useToggleWishlist(product?.id ?? "");
+  const images = useGalleryImages(product);
 
   useEffect(() => {
     if (product?.id) void incrementView.mutateAsync(product.id);
@@ -64,7 +65,6 @@ export function ProductDetailPage() {
     );
   }
 
-  const images = useGalleryImages(product);
   const outOfStock = product.stock === 0;
 
   const handleAddToCart = () => {
