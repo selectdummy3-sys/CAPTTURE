@@ -88,7 +88,7 @@ export function AdminSellers() {
                         size="sm"
                         variant="outline"
                         disabled={busyId === seller.id}
-                        onClick={() => void act(seller.id, "suspended", false)}
+                        onClick={() => void act(seller.id, "suspended", true)}
                       >
                         Suspend
                       </Button>
@@ -97,7 +97,7 @@ export function AdminSellers() {
                   <input
                     value={reason[seller.id] ?? ""}
                     onChange={(e) => setReason((r) => ({ ...r, [seller.id]: e.target.value }))}
-                    placeholder="Rejection reason (optional)"
+                    placeholder="Reason (optional)"
                     className="h-8 w-56 rounded-md border border-neutral-300 px-2 text-xs"
                   />
                 </div>

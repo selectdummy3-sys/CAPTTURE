@@ -66,7 +66,12 @@ export function SellerLayout() {
       <div className="mx-auto max-w-lg px-4 py-24 text-center">
         <Store className="mx-auto h-10 w-10 text-red-500" />
         <h1 className="mt-4 text-2xl font-bold tracking-tight text-neutral-900">Store suspended</h1>
-        <p className="mt-2 text-neutral-500">Contact support for more information.</p>
+        <p className="mt-2 text-neutral-500">
+          {seller.rejection_reason
+            ? seller.rejection_reason
+            : "Your store has been temporarily suspended. Your products are hidden from shoppers until the suspension is lifted."}
+        </p>
+        <p className="mt-4 text-sm text-neutral-400">Contact support if you believe this is a mistake.</p>
       </div>
     );
   }

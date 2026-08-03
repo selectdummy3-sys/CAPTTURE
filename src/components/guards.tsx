@@ -30,9 +30,6 @@ export function RequireSeller({ children }: { children: ReactNode }) {
   if (isLoading) return <LoadingScreen />;
   if (!user) return <Navigate to="/login" replace />;
   if (!seller) return <Navigate to="/sell/apply" replace />;
-  if (seller.application_status !== "approved" && seller.application_status !== "pending") {
-    return <Navigate to="/sell/apply" replace />;
-  }
   return <>{children}</>;
 }
 
