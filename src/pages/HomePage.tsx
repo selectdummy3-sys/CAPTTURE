@@ -64,7 +64,7 @@ export function HomePage() {
               <img
                 src={hero.image_url.startsWith("http") ? hero.image_url : supabase.storage.from("store-assets").getPublicUrl(hero.image_url).data.publicUrl}
                 alt={hero.title}
-                className="w-full rounded-2xl object-cover"
+                className="w-full object-cover"
               />
             ) : (
               <div className="grid grid-cols-2 gap-4">
@@ -72,14 +72,14 @@ export function HomePage() {
                   <img
                     src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=800&auto=format&fit=crop"
                     alt="Fashion product"
-                    className="aspect-[3/4] w-full rounded-2xl object-cover"
+                    className="aspect-[3/4] w-full object-cover"
                   />
                 </div>
                 <div className="mt-8 space-y-4">
                   <img
                     src="https://images.unsplash.com/photo-1524593689594-eae072f5bd3f?q=80&w=800&auto=format&fit=crop"
                     alt="Sneakers"
-                    className="aspect-[3/4] w-full rounded-2xl object-cover"
+                    className="aspect-[3/4] w-full object-cover"
                   />
                 </div>
               </div>
@@ -92,7 +92,7 @@ export function HomePage() {
       <section className="border-b border-neutral-200 bg-white">
         <div className="mx-auto grid max-w-1440 gap-6 px-4 py-8 sm:grid-cols-3 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-brand-100 p-3 text-brand-700">
+            <div className="bg-brand-100 p-3 text-brand-700">
               <Truck className="h-5 w-5" />
             </div>
             <div>
@@ -101,7 +101,7 @@ export function HomePage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-brand-100 p-3 text-brand-700">
+            <div className="bg-brand-100 p-3 text-brand-700">
               <Wallet className="h-5 w-5" />
             </div>
             <div>
@@ -110,7 +110,7 @@ export function HomePage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-brand-100 p-3 text-brand-700">
+            <div className="bg-brand-100 p-3 text-brand-700">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <div>
@@ -144,7 +144,7 @@ export function HomePage() {
                 <Link
                   key={cat.id}
                   to={`/shop?category=${cat.slug}`}
-                  className="group relative overflow-hidden rounded-xl bg-neutral-100"
+                  className="group relative overflow-hidden bg-neutral-100"
                 >
                   {img ? (
                     <img src={img} alt={cat.name} className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105" />
@@ -221,7 +221,7 @@ export function HomePage() {
                   <Link
                     key={store.id}
                     to={`/store/${store.store_username}`}
-                    className="group rounded-xl border border-neutral-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                    className="group border border-neutral-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
                   >
                     <div className="flex items-center gap-3">
                       <img
@@ -230,7 +230,7 @@ export function HomePage() {
                         onError={(e) => {
                           (e.currentTarget as HTMLImageElement).style.display = "none";
                         }}
-                        className="h-12 w-12 rounded-full bg-neutral-100 object-cover"
+                        className="h-12 w-12-full bg-neutral-100 object-cover"
                       />
                       <div>
                         <p className="font-semibold text-neutral-900 group-hover:text-brand-700">
@@ -250,7 +250,7 @@ export function HomePage() {
 
       {/* CTA */}
       <section className="mx-auto max-w-1440 px-4 pt-14 sm:px-6">
-        <div className="overflow-hidden rounded-2xl bg-neutral-900 px-8 py-14 text-center text-white">
+        <div className="overflow-hidden bg-neutral-900 px-8 py-14 text-center text-white">
           <h2 className="text-3xl font-bold tracking-tight">
             Ready to turn your craft into a brand?
           </h2>

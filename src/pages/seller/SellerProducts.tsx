@@ -59,7 +59,7 @@ export function SellerProducts() {
             type="button"
             onClick={() => setTab(t)}
             className={cn(
-              "shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
+              "shrink-0-full px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
               tab === t ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
             )}
           >
@@ -81,11 +81,11 @@ export function SellerProducts() {
           className="mt-8"
         />
       ) : (
-        <div className="mt-6 overflow-hidden rounded-xl border border-neutral-200">
+        <div className="mt-6 overflow-hidden border border-neutral-200">
           <div className="divide-y divide-neutral-100">
             {(products ?? []).map((product) => (
               <div key={product.id} className="flex items-center gap-4 px-4 py-3">
-                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+                <div className="h-14 w-14 shrink-0 overflow-hidden bg-neutral-100">
                   {product.featured_image && (
                     <img
                       src={productImageUrl(product.featured_image) ?? ""}
@@ -115,7 +115,7 @@ export function SellerProducts() {
                   <Link
                     to={`/seller/products/${product.id}/edit`}
                     aria-label="Edit"
-                    className="rounded-md p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+                    className="p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
                   >
                     <Pencil className="h-4 w-4" />
                   </Link>
@@ -124,7 +124,7 @@ export function SellerProducts() {
                     aria-label="Delete"
                     disabled={busyId === product.id}
                     onClick={() => void onDelete(product.id, product.name)}
-                    className="rounded-md p-2 text-neutral-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
+                    className="p-2 text-neutral-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

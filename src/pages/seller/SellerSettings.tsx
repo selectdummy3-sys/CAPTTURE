@@ -98,7 +98,7 @@ export function SellerSettings() {
               <img
                 src={supabase.storage.from("store-assets").getPublicUrl(logoUrl).data.publicUrl}
                 alt=""
-                className="h-12 w-12 rounded-lg object-cover"
+                className="h-12 w-12 object-cover"
               />
             )}
             <ImageUploadButton bucket="store-assets" onUploaded={setLogoUrl} />
@@ -111,14 +111,14 @@ export function SellerSettings() {
               <img
                 src={supabase.storage.from("store-assets").getPublicUrl(bannerUrl).data.publicUrl}
                 alt=""
-                className="h-16 w-32 rounded-lg object-cover"
+                className="h-16 w-32 object-cover"
               />
             )}
             <ImageUploadButton bucket="store-assets" onUploaded={setBannerUrl} />
           </div>
         </Field>
 
-        <fieldset className="rounded-xl border border-neutral-200 p-5">
+        <fieldset className="border border-neutral-200 p-5">
           <legend className="px-2 text-sm font-semibold text-neutral-900">Social links</legend>
           <div className="grid gap-5 pt-2 sm:grid-cols-2">
             <Field label="Instagram">
@@ -130,7 +130,7 @@ export function SellerSettings() {
           </div>
         </fieldset>
 
-        <fieldset className="rounded-xl border border-neutral-200 p-5">
+        <fieldset className="border border-neutral-200 p-5">
           <legend className="px-2 text-sm font-semibold text-neutral-900">Bank details</legend>
           <div className="grid gap-5 pt-2 sm:grid-cols-2">
             <Field label="Bank name">

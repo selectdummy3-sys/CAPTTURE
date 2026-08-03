@@ -20,7 +20,7 @@ function Line({ item }: { item: CartItem }) {
 
   return (
     <div className="flex gap-4 border-b border-neutral-100 py-5 last:border-0">
-      <Link to={`/p/${item.slug}`} className="shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+      <Link to={`/p/${item.slug}`} className="shrink-0 overflow-hidden bg-neutral-100">
         {image ? (
           <img src={image} alt={item.name} className="h-24 w-20 object-cover" />
         ) : (
@@ -42,13 +42,13 @@ function Line({ item }: { item: CartItem }) {
             type="button"
             onClick={() => remove(key)}
             aria-label={`Remove ${item.name}`}
-            className="rounded-md p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600"
+            className="p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600"
           >
             <Trash2 className="h-4 w-4" />
           </button>
         </div>
         <div className="mt-auto flex items-center justify-between pt-3">
-          <div className="flex items-center rounded-lg border border-neutral-300">
+          <div className="flex items-center border border-neutral-300">
             <button
               type="button"
               onClick={() => updateQuantity(key, item.quantity - 1)}
@@ -144,7 +144,7 @@ export function CartPage() {
             const groupSubtotal = group.reduce((a, i) => a + i.price * i.quantity, 0);
             const groupShipping = groupSubtotal >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING_FEE;
             return (
-              <div key={gi} className="mb-6 rounded-xl border border-neutral-200 p-5">
+              <div key={gi} className="mb-6 border border-neutral-200 p-5">
                 <Link
                   to={`/store/${group[0].sellerUsername}`}
                   className="text-sm font-semibold text-neutral-900 hover:text-brand-700"
@@ -169,7 +169,7 @@ export function CartPage() {
           })}
         </div>
 
-        <aside className="h-fit rounded-xl border border-neutral-200 p-5 lg:sticky lg:top-32">
+        <aside className="h-fit border border-neutral-200 p-5 lg:sticky lg:top-32">
           <h2 className="font-semibold text-neutral-900">Order summary</h2>
           <dl className="mt-4 space-y-2 text-sm">
             <div className="flex justify-between">
@@ -181,7 +181,7 @@ export function CartPage() {
               <dd className="font-medium text-neutral-900">{shipping === 0 ? "Free" : formatZAR(shipping)}</dd>
             </div>
             {subtotal < FREE_SHIPPING_ABOVE && (
-              <p className="rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-800">
+              <p className="bg-brand-50 px-3 py-2 text-xs text-brand-800">
                 Add {formatZAR(FREE_SHIPPING_ABOVE - subtotal)} more to unlock free shipping on qualifying orders.
               </p>
             )}

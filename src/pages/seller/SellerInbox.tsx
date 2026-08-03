@@ -27,7 +27,7 @@ export default function SellerInbox() {
       <div className="flex items-center gap-3">
         <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Inbox</h1>
         {unreadCount > 0 && (
-          <span className="rounded-full bg-brand-500 px-2.5 py-0.5 text-xs font-semibold text-white">
+          <span className="bg-brand-500 px-2.5 py-0.5 text-xs font-semibold text-white">
             {unreadCount} unread
           </span>
         )}
@@ -38,7 +38,7 @@ export default function SellerInbox() {
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-20 animate-pulse rounded-xl bg-neutral-100" />
+              <div key={i} className="h-20 animate-pulse bg-neutral-100" />
             ))}
           </div>
         ) : messages.length === 0 ? (
@@ -55,7 +55,7 @@ export default function SellerInbox() {
                 <div
                   key={msg.id}
                   onClick={() => handleExpand(msg)}
-                  className={`cursor-pointer rounded-xl border p-4 transition-colors ${
+                  className={`cursor-pointer border p-4 transition-colors ${
                     msg.is_read
                       ? "border-neutral-200 bg-white hover:bg-neutral-50"
                       : "border-brand-200 bg-brand-50/50 hover:bg-brand-50"
@@ -74,9 +74,9 @@ export default function SellerInbox() {
                         <h3 className={`text-sm ${msg.is_read ? "font-medium" : "font-semibold"} text-neutral-900`}>
                           {msg.subject}
                         </h3>
-                        {!msg.is_read && <span className="h-2 w-2 rounded-full bg-brand-500" />}
+                        {!msg.is_read && <span className="h-2 w-2-full bg-brand-500" />}
                         {msg.is_bulk && (
-                          <span className="rounded bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
+                          <span className="bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500">
                             Announcement
                           </span>
                         )}

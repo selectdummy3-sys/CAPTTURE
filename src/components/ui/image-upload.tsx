@@ -96,7 +96,7 @@ export function ImageUpload({
           <div
             key={url}
             className={cn(
-              "group relative overflow-hidden rounded-lg border border-neutral-200 bg-neutral-50",
+              "group relative overflow-hidden border border-neutral-200 bg-neutral-50",
               aspect === "wide" ? "aspect-[4/3]" : "aspect-square"
             )}
           >
@@ -106,7 +106,7 @@ export function ImageUpload({
                 type="button"
                 onClick={() => removeAt(index)}
                 aria-label="Remove image"
-                className="absolute right-1.5 top-1.5 rounded-full bg-neutral-900/70 p-1 text-white opacity-0 transition-opacity hover:bg-neutral-900 group-hover:opacity-100"
+                className="absolute right-1.5 top-1.5-full bg-neutral-900/70 p-1 text-white opacity-0 transition-opacity hover:bg-neutral-900 group-hover:opacity-100"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -120,7 +120,7 @@ export function ImageUpload({
             disabled={disabled || uploading}
             {...getRootProps()}
             className={cn(
-              "flex flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed text-neutral-400 transition-colors",
+              "flex flex-col items-center justify-center gap-1 border-2 border-dashed text-neutral-400 transition-colors",
               aspect === "wide" ? "aspect-[4/3]" : "aspect-square",
               isDragActive ? "border-brand-500 bg-brand-50 text-brand-600" : "border-neutral-300 hover:border-neutral-400 hover:text-neutral-500",
               (disabled || uploading) && "cursor-not-allowed opacity-50"

@@ -38,7 +38,7 @@ export function SellerOrders() {
             type="button"
             onClick={() => setStatus(s)}
             className={cn(
-              "shrink-0 rounded-full px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
+              "shrink-0-full px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
               status === s ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
             )}
           >
@@ -57,7 +57,7 @@ export function SellerOrders() {
       ) : (
         <div className="mt-6 space-y-4">
           {(orders ?? []).map((order) => (
-            <div key={order.id} className="rounded-xl border border-neutral-200 p-5">
+            <div key={order.id} className="border border-neutral-200 p-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="font-mono text-xs text-neutral-400">{order.order_number}</p>

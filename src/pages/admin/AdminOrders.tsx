@@ -33,7 +33,7 @@ export function AdminOrders() {
       {(visible ?? []).length === 0 ? (
         <EmptyState icon={<ClipboardList className="h-8 w-8" />} title="No orders found" className="mt-8" />
       ) : (
-        <div className="mt-6 overflow-x-auto rounded-xl border border-neutral-200">
+        <div className="mt-6 overflow-x-auto border border-neutral-200">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead className="bg-neutral-50 text-xs uppercase tracking-wide text-neutral-500">
               <tr>

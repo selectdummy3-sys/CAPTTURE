@@ -171,7 +171,7 @@ export function ProductFormPage() {
           <ImageUpload value={images} onChange={setImages} />
         </Field>
 
-        <div className="flex items-center justify-between rounded-xl border border-neutral-200 p-4">
+        <div className="flex items-center justify-between border border-neutral-200 p-4">
           <div>
             <p className="text-sm font-medium text-neutral-900">Flash sale</p>
             <p className="text-xs text-neutral-500">Lower price for a limited time.</p>

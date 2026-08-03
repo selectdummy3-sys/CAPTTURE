@@ -32,7 +32,7 @@ export function SellerDashboard() {
         <StatCard label="Products" value={stats.products} />
       </div>
 
-      <section className="rounded-xl border border-neutral-200">
+      <section className="border border-neutral-200">
         <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-3">
           <h2 className="font-semibold text-neutral-900">Recent orders</h2>
           <Link to="/seller/orders" className="inline-flex items-center gap-1 text-sm text-brand-700 hover:underline">

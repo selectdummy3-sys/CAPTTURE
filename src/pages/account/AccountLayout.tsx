@@ -23,7 +23,7 @@ export function AccountLayout() {
               end={end}
               className={({ isActive }) =>
                 cn(
-                  "flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  "flex shrink-0 items-center gap-2.5 px-3 py-2 text-sm font-medium transition-colors",
                   isActive ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                 )
               }
@@ -36,7 +36,7 @@ export function AccountLayout() {
             to="/seller"
             className={({ isActive }) =>
               cn(
-                "flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors lg:mt-4 lg:border-t lg:border-neutral-200 lg:pt-4",
+                "flex shrink-0 items-center gap-2.5 px-3 py-2 text-sm font-medium transition-colors lg:mt-4 lg:border-t lg:border-neutral-200 lg:pt-4",
                 isActive ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
               )
             }

@@ -21,7 +21,7 @@ export function Avatar({ src, name, size = "md", className }: AvatarProps) {
       <img
         src={src}
         alt={name ?? "Avatar"}
-        className={cn("shrink-0 rounded-full object-cover", sizes[size], className)}
+        className={cn("shrink-0-full object-cover", sizes[size], className)}
         referrerPolicy="no-referrer"
       />
     );
@@ -29,7 +29,7 @@ export function Avatar({ src, name, size = "md", className }: AvatarProps) {
   return (
     <span
       className={cn(
-        "grid shrink-0 place-items-center rounded-full bg-neutral-200 font-semibold text-neutral-600",
+        "grid shrink-0 place-items-center-full bg-neutral-200 font-semibold text-neutral-600",
         sizes[size],
         className
       )}

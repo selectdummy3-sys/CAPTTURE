@@ -35,7 +35,7 @@ export function Dropdown({ trigger, children, align = "right", width = "auto", c
       {open && (
         <div
           className={cn(
-            "absolute z-40 mt-2 overflow-hidden rounded-lg border border-neutral-200 bg-white py-1 shadow-lg",
+            "absolute z-40 mt-2 overflow-hidden border border-neutral-200 bg-white py-1 shadow-lg",
             align === "right" ? "right-0" : "left-0",
             width === "sm" && "w-44",
             width === "md" && "w-64",

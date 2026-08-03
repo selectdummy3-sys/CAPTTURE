@@ -42,7 +42,7 @@ export function TagInput({ value, onChange, placeholder, suggestions, className,
           {value.map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700"
+              className="inline-flex items-center gap-1-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700"
             >
               {tag}
               {!disabled && (
@@ -75,7 +75,7 @@ export function TagInput({ value, onChange, placeholder, suggestions, className,
           disabled={disabled || !text.trim()}
           onClick={() => add(text)}
           aria-label="Add tag"
-          className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-neutral-400 hover:text-neutral-700 disabled:opacity-40"
+          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-neutral-400 hover:text-neutral-700 disabled:opacity-40"
         >
           <Plus className="h-4 w-4" />
         </button>
@@ -90,7 +90,7 @@ export function TagInput({ value, onChange, placeholder, suggestions, className,
                 e.preventDefault();
                 add(s);
               }}
-              className="rounded-full border border-neutral-200 px-2.5 py-1 text-xs text-neutral-500 hover:border-brand-500 hover:text-brand-600"
+              className="border border-neutral-200 px-2.5 py-1 text-xs text-neutral-500 hover:border-brand-500 hover:text-brand-600"
             >
               {s}
             </button>

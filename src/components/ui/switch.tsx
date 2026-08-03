@@ -16,7 +16,7 @@ export function Switch({ checked, onCheckedChange, disabled, className }: Switch
       disabled={disabled}
       onClick={() => onCheckedChange(!checked)}
       className={cn(
-        "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors",
+        "relative inline-flex h-6 w-11 shrink-0 items-center-full transition-colors",
         checked ? "bg-brand-500" : "bg-neutral-300",
         disabled && "cursor-not-allowed opacity-50",
         className
@@ -24,7 +24,7 @@ export function Switch({ checked, onCheckedChange, disabled, className }: Switch
     >
       <span
         className={cn(
-          "inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform",
+          "inline-block h-5 w-5 transform-full bg-white shadow transition-transform",
           checked ? "translate-x-[22px]" : "translate-x-0.5"
         )}
       />

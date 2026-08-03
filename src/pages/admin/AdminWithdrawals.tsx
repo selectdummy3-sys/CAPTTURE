@@ -73,7 +73,7 @@ export default function AdminWithdrawals() {
         {isLoading ? (
           <div className="mt-3 space-y-3">
             {[1, 2].map((i) => (
-              <div key={i} className="h-24 animate-pulse rounded-xl bg-neutral-100" />
+              <div key={i} className="h-24 animate-pulse bg-neutral-100" />
             ))}
           </div>
         ) : pending.length === 0 ? (
@@ -85,10 +85,10 @@ export default function AdminWithdrawals() {
         ) : (
           <div className="mt-3 space-y-3">
             {pending.map((w) => (
-              <div key={w.id} className="rounded-xl border border-amber-200 bg-amber-50/50 p-4">
+              <div key={w.id} className="border border-amber-200 bg-amber-50/50 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="grid h-10 w-10 place-items-center rounded-lg bg-amber-100 text-amber-700">
+                    <div className="grid h-10 w-10 place-items-center bg-amber-100 text-amber-700">
                       <DollarSign className="h-5 w-5" />
                     </div>
                     <div>
@@ -130,7 +130,7 @@ export default function AdminWithdrawals() {
             {processed.map((w) => {
               const cfg = STATUS_CONFIG[w.status] ?? STATUS_CONFIG.pending;
               return (
-                <div key={w.id} className="flex items-center justify-between rounded-xl border border-neutral-200 bg-white p-4">
+                <div key={w.id} className="flex items-center justify-between border border-neutral-200 bg-white p-4">
                   <div className="flex items-center gap-3">
                     <div>
                       <p className="text-sm font-semibold text-neutral-900">

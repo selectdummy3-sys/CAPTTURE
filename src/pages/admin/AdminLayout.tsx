@@ -30,7 +30,7 @@ export function AdminLayout() {
                 end={end}
                 className={({ isActive }) =>
                   cn(
-                    "flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "flex shrink-0 items-center gap-2.5 px-3 py-2 text-sm font-medium transition-colors",
                     isActive ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                   )
                 }
@@ -38,7 +38,7 @@ export function AdminLayout() {
                 <Icon className="h-4 w-4" />
                 {label}
                 {showBadge && (
-                  <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-500 px-1.5 text-[10px] font-bold text-white">
+                  <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center-full bg-amber-500 px-1.5 text-[10px] font-bold text-white">
                     {pendingSellers > 99 ? "99+" : pendingSellers}
                   </span>
                 )}

@@ -178,7 +178,7 @@ export function SellerApplyPage() {
           <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
         </Field>
 
-        <fieldset className="rounded-xl border border-neutral-200 p-5">
+        <fieldset className="border border-neutral-200 p-5">
           <legend className="px-2 text-sm font-semibold text-neutral-900">Address</legend>
           <div className="space-y-5 pt-2">
             <Field label="Street address">
@@ -211,14 +211,14 @@ export function SellerApplyPage() {
               <img
                 src={supabase.storage.from("store-assets").getPublicUrl(logoUrl).data.publicUrl}
                 alt=""
-                className="h-12 w-12 rounded-lg object-cover"
+                className="h-12 w-12 object-cover"
               />
             )}
             <ImageUploadButton bucket="store-assets" onUploaded={setLogoUrl} />
           </div>
         </Field>
 
-        <fieldset className="rounded-xl border border-neutral-200 p-5">
+        <fieldset className="border border-neutral-200 p-5">
           <legend className="px-2 text-sm font-semibold text-neutral-900">Verification documents</legend>
           <p className="mb-4 text-xs text-neutral-500">Required for admin review. Images or PDF, max 5 MB each.</p>
           <div className="space-y-5">
@@ -241,7 +241,7 @@ export function SellerApplyPage() {
           </div>
         </fieldset>
 
-        <fieldset className="rounded-xl border border-neutral-200 p-5">
+        <fieldset className="border border-neutral-200 p-5">
           <legend className="px-2 text-sm font-semibold text-neutral-900">Social handles</legend>
           <p className="mb-4 text-xs text-neutral-500">At least one is recommended to build trust with buyers.</p>
           <div className="space-y-5">
@@ -269,7 +269,7 @@ export function SellerApplyPage() {
           </div>
         </fieldset>
 
-        <fieldset className="rounded-xl border border-neutral-200 p-5">
+        <fieldset className="border border-neutral-200 p-5">
           <legend className="px-2 text-sm font-semibold text-neutral-900">Payout details</legend>
           <div className="space-y-5 pt-2">
             <Field label="Bank name">

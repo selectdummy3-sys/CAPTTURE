@@ -57,14 +57,14 @@ export function OrderDetailPage() {
         </div>
       </div>
 
-      <section className="mt-8 rounded-xl border border-neutral-200">
+      <section className="mt-8 border border-neutral-200">
         <div className="border-b border-neutral-100 px-5 py-3 text-sm font-semibold text-neutral-900">
           Items
         </div>
         <div className="divide-y divide-neutral-100">
           {(order.items ?? []).map((item) => (
             <div key={item.id} className="flex items-center gap-4 px-5 py-4">
-              <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-neutral-100">
+              <div className="h-16 w-16 shrink-0 overflow-hidden bg-neutral-100">
                 {item.product_image && productImageUrl(item.product_image) && (
                   <img src={productImageUrl(item.product_image)!} alt="" className="h-full w-full object-cover" />
                 )}
@@ -101,7 +101,7 @@ export function OrderDetailPage() {
         </div>
       </section>
 
-      <section className="mt-6 rounded-xl border border-neutral-200 p-5">
+      <section className="mt-6 border border-neutral-200 p-5">
         <div className="flex items-start gap-3">
           <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-neutral-400" />
           <div className="text-sm">

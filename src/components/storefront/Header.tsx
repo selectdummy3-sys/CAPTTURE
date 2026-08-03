@@ -46,7 +46,7 @@ function AccountMenu() {
         <button
           type="button"
           aria-label="Account menu"
-          className="flex items-center gap-2 rounded-full p-1 hover:bg-neutral-100"
+          className="flex items-center gap-2-full p-1 hover:bg-neutral-100"
         >
           <Avatar src={profile?.avatar_url} name={profile?.full_name} size="sm" />
         </button>
@@ -70,7 +70,7 @@ function AccountMenu() {
           {unread > 0 && (
             <DropdownItem onClick={() => { close(); navigate("/account/notifications"); }}>
               <span className="relative flex h-4 w-4">
-                <span className="h-2 w-2 rounded-full bg-brand-500" />
+                <span className="h-2 w-2-full bg-brand-500" />
               </span>
               Notifications
             </DropdownItem>
@@ -132,7 +132,7 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-1440 items-center gap-4 px-4 sm:px-6">
         <button
           type="button"
-          className="rounded-md p-2 text-neutral-700 hover:bg-neutral-100 lg:hidden"
+          className="p-2 text-neutral-700 hover:bg-neutral-100 lg:hidden"
           onClick={() => setOpen(true)}
           aria-label="Open menu"
         >
@@ -159,26 +159,26 @@ export function Header() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search fashion, shoes, bags…"
-            className="h-10 w-full rounded-full border border-neutral-300 bg-neutral-50 pl-10 pr-4 text-sm outline-none transition-colors focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/30"
+            className="h-10 w-full-full border border-neutral-300 bg-neutral-50 pl-10 pr-4 text-sm outline-none transition-colors focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-500/30"
           />
         </form>
 
         <div className="ml-auto flex items-center gap-1 md:ml-2">
           <Link
             to="/account/wishlist"
-            className="relative rounded-md p-2 text-neutral-700 hover:bg-neutral-100"
+            className="relative p-2 text-neutral-700 hover:bg-neutral-100"
             aria-label="Wishlist"
           >
             <Heart className="h-5 w-5" />
           </Link>
           <Link
             to="/cart"
-            className="relative rounded-md p-2 text-neutral-700 hover:bg-neutral-100"
+            className="relative p-2 text-neutral-700 hover:bg-neutral-100"
             aria-label="Cart"
           >
             <ShoppingBag className="h-5 w-5" />
             {cartCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[10px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center-full bg-brand-500 px-1 text-[10px] font-bold text-white">
                 {cartCount}
               </span>
             )}
@@ -192,14 +192,14 @@ export function Header() {
       {categories && categories.length > 0 && (
         <nav className="hidden border-t border-neutral-100 lg:block" aria-label="Categories">
           <div className="mx-auto flex max-w-1440 items-center gap-1 overflow-x-auto px-4 py-2 sm:px-6">
-            <Link to="/shop" className="whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-100">
+            <Link to="/shop" className="whitespace-nowrap-full px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-100">
               All
             </Link>
             {categories.map((c) => (
               <Link
                 key={c.id}
                 to={`/shop?category=${c.slug}`}
-                className="whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-100"
+                className="whitespace-nowrap-full px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-100"
               >
                 {c.name}
               </Link>
@@ -214,7 +214,7 @@ export function Header() {
           <div className="absolute left-0 top-0 flex h-full w-80 max-w-[85vw] flex-col bg-white shadow-xl">
             <div className="flex items-center justify-between border-b border-neutral-100 p-4">
               <Logo size="sm" />
-              <button type="button" onClick={() => setOpen(false)} aria-label="Close menu" className="rounded-md p-2 hover:bg-neutral-100">
+              <button type="button" onClick={() => setOpen(false)} aria-label="Close menu" className="p-2 hover:bg-neutral-100">
                 <X className="h-5 w-5" />
               </button>
             </div>
@@ -224,18 +224,18 @@ export function Header() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search products…"
-                className="h-10 w-full rounded-full border border-neutral-300 bg-neutral-50 pl-10 pr-4 text-sm outline-none focus:border-brand-500"
+                className="h-10 w-full-full border border-neutral-300 bg-neutral-50 pl-10 pr-4 text-sm outline-none focus:border-brand-500"
               />
             </form>
             <nav className="flex-1 overflow-y-auto px-2 pb-6">
               <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">Browse</div>
-              <NavLink to="/shop" onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
+              <NavLink to="/shop" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
                 Shop all
               </NavLink>
-              <NavLink to="/stores" onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
+              <NavLink to="/stores" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
                 Stores
               </NavLink>
-              <NavLink to="/sell" onClick={() => setOpen(false)} className="block rounded-md px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
+              <NavLink to="/sell" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
                 Sell on CAPPTURE
               </NavLink>
               <div className="mt-4 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">Categories</div>
@@ -244,7 +244,7 @@ export function Header() {
                   key={c.id}
                   to={`/shop?category=${c.slug}`}
                   onClick={() => setOpen(false)}
-                  className="block rounded-md px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
+                  className="block px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
                 >
                   {c.name}
                 </NavLink>

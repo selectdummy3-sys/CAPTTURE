@@ -35,7 +35,7 @@ export function NotificationsPage() {
           <div
             key={n.id}
             className={cn(
-              "flex items-start gap-3 rounded-xl border border-neutral-200 p-4",
+              "flex items-start gap-3 border border-neutral-200 p-4",
               !n.read_at && "border-brand-300 bg-brand-50/40"
             )}
           >
@@ -44,7 +44,7 @@ export function NotificationsPage() {
               {n.body && <p className="mt-0.5 text-sm text-neutral-600">{n.body}</p>}
               <p className="mt-1 text-xs text-neutral-400">{formatDate(n.created_at)}</p>
             </div>
-            {!n.read_at && <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-brand-500" />}
+            {!n.read_at && <span className="mt-1 h-2 w-2 shrink-0-full bg-brand-500" />}
           </div>
         ))}
       </div>

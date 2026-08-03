@@ -32,7 +32,7 @@ export function WishlistButton({ productId, className, size = "md" }: WishlistBu
       aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
       aria-pressed={wishlisted}
       className={cn(
-        "rounded-full bg-white/90 p-2 text-neutral-500 shadow-sm backdrop-blur transition-colors hover:text-brand-600",
+        "bg-white/90 p-2 text-neutral-500 shadow-sm backdrop-blur transition-colors hover:text-brand-600",
         wishlisted && "text-brand-600",
         size === "sm" ? "h-8 w-8" : "h-9 w-9",
         className

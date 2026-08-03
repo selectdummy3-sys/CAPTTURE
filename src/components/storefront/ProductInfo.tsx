@@ -92,7 +92,7 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
         <h1 className="text-2xl font-bold tracking-tight text-neutral-900 sm:text-3xl">{product.name}</h1>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           {product.is_flash_sale && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-brand-100 px-2.5 py-0.5 text-xs font-semibold text-brand-800">
+            <span className="inline-flex items-center gap-1-full bg-brand-100 px-2.5 py-0.5 text-xs font-semibold text-brand-800">
               <Zap className="h-3 w-3 fill-current" /> Flash sale
             </span>
           )}
@@ -125,7 +125,7 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
                   type="button"
                   onClick={() => onSize(s)}
                   className={cn(
-                    "h-10 min-w-12 rounded-lg border px-3 text-sm font-medium transition-colors",
+                    "h-10 min-w-12 border px-3 text-sm font-medium transition-colors",
                     size === s
                       ? "border-neutral-900 bg-neutral-900 text-white"
                       : "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-900"
@@ -151,7 +151,7 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
                   type="button"
                   onClick={() => onColour(c)}
                   className={cn(
-                    "h-10 rounded-lg border px-3 text-sm font-medium transition-colors",
+                    "h-10 border px-3 text-sm font-medium transition-colors",
                     colour === c
                       ? "border-neutral-900 bg-neutral-900 text-white"
                       : "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-900"
@@ -165,7 +165,7 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
         )}
 
         <div className="mt-5 flex items-center gap-4">
-          <div className="flex items-center rounded-lg border border-neutral-300">
+          <div className="flex items-center border border-neutral-300">
             <button
               type="button"
               onClick={() => onQty(Math.max(1, qty - 1))}
@@ -191,7 +191,7 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
             onClick={wishlistClick}
             aria-pressed={wishlisted}
             className={cn(
-              "rounded-lg border px-4 py-3 text-sm font-medium transition-colors",
+              "border px-4 py-3 text-sm font-medium transition-colors",
               wishlisted
                 ? "border-brand-500 bg-brand-50 text-brand-700"
                 : "border-neutral-300 text-neutral-600 hover:border-neutral-900"
@@ -218,7 +218,7 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
         </div>
       </div>
 
-      <div className="space-y-3 rounded-xl border border-neutral-200 bg-neutral-50 p-4 text-sm">
+      <div className="space-y-3 border border-neutral-200 bg-neutral-50 p-4 text-sm">
         <div className="flex items-start gap-3">
           <Truck className="mt-0.5 h-4 w-4 text-neutral-400" />
           <p className="text-neutral-600">

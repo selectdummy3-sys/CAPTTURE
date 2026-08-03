@@ -44,16 +44,16 @@ export function Footer() {
               designers, tailors and sneakerheads — all in one place.
             </p>
             <div className="mt-5 flex items-center gap-3">
-              <a href="#" aria-label="Instagram" className="rounded-full bg-neutral-800 p-2 hover:bg-neutral-700">
+              <a href="#" aria-label="Instagram" className="bg-neutral-800 p-2 hover:bg-neutral-700">
                 <Instagram className="h-4 w-4" />
               </a>
-              <a href="#" aria-label="Facebook" className="rounded-full bg-neutral-800 p-2 hover:bg-neutral-700">
+              <a href="#" aria-label="Facebook" className="bg-neutral-800 p-2 hover:bg-neutral-700">
                 <Facebook className="h-4 w-4" />
               </a>
-              <a href="#" aria-label="Twitter" className="rounded-full bg-neutral-800 p-2 hover:bg-neutral-700">
+              <a href="#" aria-label="Twitter" className="bg-neutral-800 p-2 hover:bg-neutral-700">
                 <Twitter className="h-4 w-4" />
               </a>
-              <a href="mailto:hello@cappture.co.za" aria-label="Email" className="rounded-full bg-neutral-800 p-2 hover:bg-neutral-700">
+              <a href="mailto:hello@cappture.co.za" aria-label="Email" className="bg-neutral-800 p-2 hover:bg-neutral-700">
                 <Mail className="h-4 w-4" />
               </a>
             </div>

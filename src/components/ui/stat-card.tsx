@@ -13,7 +13,7 @@ interface StatCardProps {
 
 export function StatCard({ label, value, icon, hint, loading, className }: StatCardProps) {
   return (
-    <div className={cn("rounded-xl border border-neutral-200 bg-white p-5 shadow-sm", className)}>
+    <div className={cn("border border-neutral-200 bg-white p-5 shadow-sm", className)}>
       <div className="flex items-start justify-between">
         <p className="text-sm font-medium text-neutral-500">{label}</p>
         {icon && <span className="text-neutral-300">{icon}</span>}

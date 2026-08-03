@@ -35,7 +35,7 @@ export function ProductDetailPage() {
   if (isLoading) {
     return (
       <div className="mx-auto grid max-w-1440 gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2">
-        <Skeleton className="aspect-square w-full rounded-2xl" />
+        <Skeleton className="aspect-square w-full" />
         <div className="space-y-4">
           <Skeleton className="h-8 w-2/3" />
           <Skeleton className="h-5 w-1/3" />
@@ -98,7 +98,7 @@ export function ProductDetailPage() {
 
       {product.description && (
         <div className="mx-auto max-w-1440 px-4 sm:px-6">
-          <div className="max-w-3xl rounded-2xl border border-neutral-200 p-6">
+          <div className="max-w-3xl border border-neutral-200 p-6">
             <h2 className="font-semibold text-neutral-900">Details</h2>
             <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-neutral-600">
               {product.description}

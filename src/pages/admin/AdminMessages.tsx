@@ -81,7 +81,7 @@ export default function AdminMessages() {
             placeholder="Search messages..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-neutral-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-neutral-400 focus:ring-2 focus:ring-neutral-100"
+            className="w-full border border-neutral-200 bg-white py-2 pl-9 pr-3 text-sm outline-none focus:border-neutral-400 focus:ring-2 focus:ring-neutral-100"
           />
         </div>
         <Button variant="outline" onClick={() => { setComposeMode("bulk"); setOpenCompose(true); }}>
@@ -93,7 +93,7 @@ export default function AdminMessages() {
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-20 animate-pulse rounded-xl bg-neutral-100" />
+              <div key={i} className="h-20 animate-pulse bg-neutral-100" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
@@ -107,7 +107,7 @@ export default function AdminMessages() {
             {filtered.map((msg) => (
               <div
                 key={msg.id}
-                className={`rounded-xl border p-4 transition-colors ${
+                className={`border p-4 transition-colors ${
                   msg.is_read ? "border-neutral-200 bg-white" : "border-brand-200 bg-brand-50/50"
                 }`}
               >
@@ -116,7 +116,7 @@ export default function AdminMessages() {
                     <div className="flex items-center gap-2">
                       <h3 className="text-sm font-semibold text-neutral-900">{msg.subject}</h3>
                       {msg.is_bulk && <Badge tone="blue">Bulk</Badge>}
-                      {!msg.is_read && <span className="h-2 w-2 rounded-full bg-brand-500" />}
+                      {!msg.is_read && <span className="h-2 w-2-full bg-brand-500" />}
                     </div>
                     <p className="mt-1 text-sm text-neutral-600 line-clamp-2">{msg.body}</p>
                     <div className="mt-2 flex items-center gap-3 text-xs text-neutral-400">
@@ -153,7 +153,7 @@ export default function AdminMessages() {
               <select
                 value={selectedSellerId}
                 onChange={(e) => setSelectedSellerId(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
+                className="mt-1 w-full border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
               >
                 <option value="">Select a seller...</option>
                 {approvedSellers.map((s) => (
@@ -174,7 +174,7 @@ export default function AdminMessages() {
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="e.g. Important platform update"
-              className="mt-1 w-full rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
+              className="mt-1 w-full border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
             />
           </div>
           <div>
@@ -184,7 +184,7 @@ export default function AdminMessages() {
               onChange={(e) => setBody(e.target.value)}
               rows={5}
               placeholder="Write your message..."
-              className="mt-1 w-full resize-none rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
+              className="mt-1 w-full resize-none border border-neutral-200 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-400"
             />
           </div>
         </div>

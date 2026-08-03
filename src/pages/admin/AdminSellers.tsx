@@ -143,11 +143,11 @@ function SellerDetailDialog({
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-xl border border-neutral-200 p-4">
+          <div className="border border-neutral-200 p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">Products</p>
             <p className="mt-1 text-2xl font-bold text-neutral-900">{seller.products ?? 0}</p>
           </div>
-          <div className="rounded-xl border border-neutral-200 p-4">
+          <div className="border border-neutral-200 p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">Followers</p>
             <p className="mt-1 text-2xl font-bold text-neutral-900">{seller.followers ?? 0}</p>
           </div>
@@ -265,7 +265,7 @@ export function AdminSellers() {
       ) : (
         <div className="mt-6 space-y-4">
           {(sellers ?? []).map((seller) => (
-            <div key={seller.id} className="rounded-xl border border-neutral-200 p-5">
+            <div key={seller.id} className="border border-neutral-200 p-5">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
@@ -338,7 +338,7 @@ export function AdminSellers() {
                     value={reason[seller.id] ?? ""}
                     onChange={(e) => setReason((r) => ({ ...r, [seller.id]: e.target.value }))}
                     placeholder="Reason (optional)"
-                    className="h-8 w-56 rounded-md border border-neutral-300 px-2 text-xs"
+                    className="h-8 w-56 border border-neutral-300 px-2 text-xs"
                   />
                 </div>
               </div>

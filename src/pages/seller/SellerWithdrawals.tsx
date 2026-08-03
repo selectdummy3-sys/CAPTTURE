@@ -55,10 +55,10 @@ export default function SellerWithdrawals() {
       <p className="mt-1 text-sm text-neutral-500">Request payouts from your earnings.</p>
 
       {/* Balance card */}
-      <div className="mt-6 rounded-xl border border-neutral-200 bg-white p-6">
+      <div className="mt-6 border border-neutral-200 bg-white p-6">
         <p className="text-sm font-medium text-neutral-500">Available balance</p>
         {balanceLoading ? (
-          <div className="mt-2 h-8 w-32 animate-pulse rounded bg-neutral-100" />
+          <div className="mt-2 h-8 w-32 animate-pulse bg-neutral-100" />
         ) : (
           <p className="mt-1 text-3xl font-bold text-neutral-900">
             R{balance.toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
@@ -79,7 +79,7 @@ export default function SellerWithdrawals() {
         {isLoading ? (
           <div className="mt-4 space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-16 animate-pulse rounded-xl bg-neutral-100" />
+              <div key={i} className="h-16 animate-pulse bg-neutral-100" />
             ))}
           </div>
         ) : withdrawals.length === 0 ? (
@@ -94,9 +94,9 @@ export default function SellerWithdrawals() {
               const cfg = STATUS_CONFIG[w.status] ?? STATUS_CONFIG.pending;
               const Icon = cfg.icon;
               return (
-                <div key={w.id} className="flex items-center justify-between rounded-xl border border-neutral-200 bg-white p-4">
+                <div key={w.id} className="flex items-center justify-between border border-neutral-200 bg-white p-4">
                   <div className="flex items-center gap-3">
-                    <div className={`grid h-9 w-9 place-items-center rounded-lg ${cfg.color}`}>
+                    <div className={`grid h-9 w-9 place-items-center ${cfg.color}`}>
                       <Icon className="h-4 w-4" />
                     </div>
                     <div>
@@ -106,7 +106,7 @@ export default function SellerWithdrawals() {
                       <p className="text-xs text-neutral-400">{formatDate(w.created_at)}</p>
                     </div>
                   </div>
-                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${cfg.color}`}>
+                  <span className={`px-2.5 py-0.5 text-xs font-medium ${cfg.color}`}>
                     {cfg.label}
                   </span>
                 </div>

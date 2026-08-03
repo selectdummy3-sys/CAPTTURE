@@ -35,7 +35,7 @@ export function OrdersPage() {
           <Link
             key={order.id}
             to={`/account/orders/${order.id}`}
-            className="block rounded-xl border border-neutral-200 p-5 transition-colors hover:border-brand-300 hover:shadow-sm"
+            className="block border border-neutral-200 p-5 transition-colors hover:border-brand-300 hover:shadow-sm"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>

@@ -21,7 +21,7 @@ export function StoresPage() {
       {isLoading ? (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-40 rounded-xl" />
+            <Skeleton key={i} className="h-40" />
           ))}
         </div>
       ) : stores && stores.length > 0 ? (
@@ -37,7 +37,7 @@ export function StoresPage() {
               <Link
                 key={store.id}
                 to={`/store/${store.store_username}`}
-                className="group overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition-shadow hover:shadow-md"
+                className="group overflow-hidden border border-neutral-200 bg-white shadow-sm transition-shadow hover:shadow-md"
               >
                 <div className="h-24 bg-neutral-100">
                   {banner && <img src={banner} alt="" className="h-full w-full object-cover" />}
@@ -50,7 +50,7 @@ export function StoresPage() {
                       onError={(e) => {
                         (e.currentTarget as HTMLImageElement).style.display = "none";
                       }}
-                      className="h-16 w-16 rounded-full border-4 border-white bg-neutral-100 object-cover"
+                      className="h-16 w-16-full border-4 border-white bg-neutral-100 object-cover"
                     />
                   </div>
                   <h2 className="font-semibold text-neutral-900 group-hover:text-brand-700">{store.business_name}</h2>

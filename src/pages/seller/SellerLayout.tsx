@@ -83,8 +83,8 @@ export function SellerLayout() {
   return (
     <div className="mx-auto flex max-w-1440 flex-col gap-8 px-4 py-10 sm:px-6 lg:flex-row">
       <aside className="lg:w-56 lg:shrink-0">
-        <div className="mb-4 flex items-center gap-3 rounded-xl border border-neutral-200 p-3">
-          <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-lg bg-neutral-100">
+        <div className="mb-4 flex items-center gap-3 border border-neutral-200 p-3">
+          <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden bg-neutral-100">
             {seller.logo_url ? (
               <img
                 src={supabase.storage.from("store-assets").getPublicUrl(seller.logo_url).data.publicUrl}
@@ -115,7 +115,7 @@ export function SellerLayout() {
                 end={end}
                 className={({ isActive }) =>
                   cn(
-                    "flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "flex shrink-0 items-center gap-2.5 px-3 py-2 text-sm font-medium transition-colors",
                     isActive ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                   )
                 }
@@ -123,7 +123,7 @@ export function SellerLayout() {
                 <Icon className="h-4 w-4" />
                 {label}
                 {showBadge && (
-                  <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
+                  <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 )}

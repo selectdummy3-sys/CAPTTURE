@@ -26,7 +26,7 @@ export function ProductGallery({ product, activeImage, onSelect }: ProductGaller
 
   return (
     <div className="space-y-3">
-      <div className="relative overflow-hidden rounded-2xl bg-neutral-100">
+      <div className="relative overflow-hidden bg-neutral-100">
         <div className="aspect-square w-full">
           {images[activeImage] ? (
             <img src={images[activeImage]} alt={product.name} className="h-full w-full object-cover" />
@@ -46,7 +46,7 @@ export function ProductGallery({ product, activeImage, onSelect }: ProductGaller
               onClick={() => onSelect(i)}
               aria-label={`View image ${i + 1}`}
               className={cn(
-                "shrink-0 overflow-hidden rounded-lg border-2",
+                "shrink-0 overflow-hidden border-2",
                 i === activeImage ? "border-brand-500" : "border-transparent hover:border-neutral-300"
               )}
             >

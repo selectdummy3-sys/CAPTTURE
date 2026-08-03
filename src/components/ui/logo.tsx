@@ -17,7 +17,7 @@ export function Logo({ size = "md", className, linkTo }: LogoProps) {
       <span
         className={cn(
           markClass,
-          "grid shrink-0 place-items-center rounded-lg bg-neutral-900 text-white"
+          "grid shrink-0 place-items-center bg-neutral-900 text-white"
         )}
       >
         <svg viewBox="0 0 24 24" fill="none" className="h-[55%] w-[55%]" aria-hidden>

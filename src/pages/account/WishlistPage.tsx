@@ -36,7 +36,7 @@ export function WishlistPage() {
           product ? (
             <div key={id} className="group relative">
               <Link to={`/p/${product.slug}`} className="block">
-                <div className="aspect-[4/5] overflow-hidden rounded-xl bg-neutral-100">
+                <div className="aspect-[4/5] overflow-hidden bg-neutral-100">
                   {product.featured_image ? (
                     <img
                       src={productImageUrl(product.featured_image) ?? ""}
@@ -58,7 +58,7 @@ export function WishlistPage() {
                 type="button"
                 onClick={() => void remove.mutateAsync(product.id)}
                 aria-label="Remove from wishlist"
-                className="absolute right-2 top-2 rounded-full bg-neutral-900/70 p-1.5 text-white transition-colors hover:bg-neutral-900"
+                className="absolute right-2 top-2-full bg-neutral-900/70 p-1.5 text-white transition-colors hover:bg-neutral-900"
               >
                 <X className="h-4 w-4" />
               </button>

@@ -110,11 +110,11 @@ export function AdminHero() {
       {isLoading ? (
         <div className="space-y-4">
           {[1, 2].map((i) => (
-            <div key={i} className="h-32 animate-pulse rounded-xl bg-neutral-100" />
+            <div key={i} className="h-32 animate-pulse bg-neutral-100" />
           ))}
         </div>
       ) : slides.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-neutral-300 py-16 text-center">
+        <div className="border border-dashed border-neutral-300 py-16 text-center">
           <p className="text-sm text-neutral-500">No hero slides yet. Add one to get started.</p>
         </div>
       ) : (
@@ -128,14 +128,14 @@ export function AdminHero() {
             return (
               <div
                 key={slide.id}
-                className={`flex items-center gap-4 rounded-xl border bg-white p-4 shadow-sm ${
+                className={`flex items-center gap-4 border bg-white p-4 shadow-sm ${
                   !slide.is_active ? "opacity-50" : ""
                 }`}
               >
                 {img ? (
-                  <img src={img} alt="" className="h-20 w-32 flex-shrink-0 rounded-lg object-cover" />
+                  <img src={img} alt="" className="h-20 w-32 flex-shrink-0 object-cover" />
                 ) : (
-                  <div className="flex h-20 w-32 flex-shrink-0 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 text-xs">
+                  <div className="flex h-20 w-32 flex-shrink-0 items-center justify-center bg-neutral-100 text-neutral-400 text-xs">
                     No image
                   </div>
                 )}
@@ -150,33 +150,33 @@ export function AdminHero() {
                   <button
                     onClick={() => toggleActive(slide)}
                     title={slide.is_active ? "Hide" : "Show"}
-                    className="rounded-lg p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
+                    className="p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
                   >
                     {slide.is_active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
                   </button>
                   <button
                     onClick={() => moveSlide(slide, "up")}
                     disabled={slides.indexOf(slide) === 0}
-                    className="rounded-lg p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 disabled:opacity-30"
+                    className="p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 disabled:opacity-30"
                   >
                     <ArrowUp className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => moveSlide(slide, "down")}
                     disabled={slides.indexOf(slide) === slides.length - 1}
-                    className="rounded-lg p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 disabled:opacity-30"
+                    className="p-2 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700 disabled:opacity-30"
                   >
                     <ArrowDown className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => openEdit(slide)}
-                    className="rounded-lg p-2 text-neutral-400 hover:bg-neutral-100 hover:text-brand-700"
+                    className="p-2 text-neutral-400 hover:bg-neutral-100 hover:text-brand-700"
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => setDeleteConfirmId(slide.id)}
-                    className="rounded-lg p-2 text-neutral-400 hover:bg-red-50 hover:text-red-600"
+                    className="p-2 text-neutral-400 hover:bg-red-50 hover:text-red-600"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -215,7 +215,7 @@ export function AdminHero() {
                 <img
                   src={editing.image_url.startsWith("http") ? editing.image_url : supabase.storage.from("store-assets").getPublicUrl(editing.image_url).data.publicUrl}
                   alt=""
-                  className="mb-2 h-32 w-full rounded-lg object-cover"
+                  className="mb-2 h-32 w-full object-cover"
                 />
               )}
               <ImageUploadButton
@@ -256,7 +256,7 @@ export function AdminHero() {
                     type="checkbox"
                     checked={editing.is_active}
                     onChange={(e) => setEditing({ ...editing, is_active: e.target.checked })}
-                    className="h-4 w-4 rounded border-neutral-300"
+                    className="h-4 w-4 border-neutral-300"
                   />
                   Active (visible on site)
                 </label>

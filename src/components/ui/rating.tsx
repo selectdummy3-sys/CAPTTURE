@@ -42,7 +42,7 @@ export function RatingInput({ value, onChange, className }: RatingInputProps) {
           type="button"
           onClick={() => onChange(star)}
           aria-label={`${star} star`}
-          className="rounded-sm p-0.5 transition-transform hover:scale-110"
+          className="p-0.5 transition-transform hover:scale-110"
         >
           <Star
             className={cn("h-6 w-6", star <= value ? "text-amber-400" : "text-neutral-300")}

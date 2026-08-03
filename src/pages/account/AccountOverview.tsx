@@ -38,7 +38,7 @@ export function AccountOverview() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <section className="rounded-xl border border-neutral-200 p-5">
+        <section className="border border-neutral-200 p-5">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-neutral-900">Recent orders</h2>
             <Link to="/account/orders" className="inline-flex items-center gap-1 text-sm text-brand-700 hover:underline">
@@ -50,7 +50,7 @@ export function AccountOverview() {
               <Link
                 key={order.id}
                 to={`/account/orders/${order.id}`}
-                className="flex items-center justify-between rounded-lg border border-neutral-100 px-3 py-2.5 hover:bg-neutral-50"
+                className="flex items-center justify-between border border-neutral-100 px-3 py-2.5 hover:bg-neutral-50"
               >
                 <div>
                   <p className="font-mono text-xs text-neutral-500">{order.order_number}</p>
@@ -68,7 +68,7 @@ export function AccountOverview() {
           </div>
         </section>
 
-        <section className="rounded-xl border border-neutral-200 p-5">
+        <section className="border border-neutral-200 p-5">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold text-neutral-900">Notifications</h2>
             {unread > 0 && (
@@ -79,7 +79,7 @@ export function AccountOverview() {
           </div>
           <div className="mt-3 space-y-2">
             {(notifications ?? []).slice(0, 4).map((n) => (
-              <div key={n.id} className="rounded-lg border border-neutral-100 px-3 py-2.5">
+              <div key={n.id} className="border border-neutral-100 px-3 py-2.5">
                 <p className="text-sm font-medium text-neutral-800">{n.title}</p>
                 {n.body && <p className="text-xs text-neutral-500">{n.body}</p>}
                 <p className="mt-1 text-[11px] text-neutral-400">{timeAgo(n.created_at)}</p>

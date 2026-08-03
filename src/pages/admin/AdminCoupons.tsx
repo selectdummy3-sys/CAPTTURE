@@ -56,7 +56,7 @@ export function AdminCoupons() {
     <div>
       <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Coupons</h1>
 
-      <form onSubmit={handleSubmit} className="mt-6 rounded-xl border border-neutral-200 p-5">
+      <form onSubmit={handleSubmit} className="mt-6 border border-neutral-200 p-5">
         <p className="text-sm font-semibold text-neutral-900">Create coupon</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-3">
           <Field label="Code">
@@ -91,7 +91,7 @@ export function AdminCoupons() {
             <Input value={description} onChange={(e) => setDescription(e.target.value)} />
           </Field>
           <div className="flex items-end pb-1">
-            <div className="flex w-full items-center justify-between rounded-lg border border-neutral-200 px-4 py-2">
+            <div className="flex w-full items-center justify-between border border-neutral-200 px-4 py-2">
               <span className="text-sm text-neutral-700">Active</span>
               <Switch checked={isActive} onCheckedChange={setIsActive} />
             </div>
@@ -109,7 +109,7 @@ export function AdminCoupons() {
       ) : (coupons ?? []).length === 0 ? (
         <EmptyState icon={<Ticket className="h-8 w-8" />} title="No coupons yet" className="mt-8" />
       ) : (
-        <div className="mt-6 overflow-x-auto rounded-xl border border-neutral-200">
+        <div className="mt-6 overflow-x-auto border border-neutral-200">
           <table className="w-full min-w-[600px] text-left text-sm">
             <thead className="bg-neutral-50 text-xs uppercase tracking-wide text-neutral-500">
               <tr>

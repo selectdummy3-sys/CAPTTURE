@@ -35,7 +35,7 @@ export function SellPage() {
     <div className="pb-20">
       <section className="bg-neutral-950 text-white">
         <div className="mx-auto max-w-1440 px-4 py-20 text-center sm:px-6">
-          <p className="inline-flex items-center gap-2 rounded-full border border-white/20 px-3 py-1 text-xs font-medium text-neutral-300">
+          <p className="inline-flex items-center gap-2-full border border-white/20 px-3 py-1 text-xs font-medium text-neutral-300">
             <Store className="h-3.5 w-3.5" /> Seller program
           </p>
           <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
@@ -55,17 +55,17 @@ export function SellPage() {
 
       <section className="mx-auto max-w-1440 px-4 py-16 sm:px-6">
         <div className="grid gap-6 sm:grid-cols-3">
-          <div className="rounded-xl border border-neutral-200 p-6">
+          <div className="border border-neutral-200 p-6">
             <Percent className="h-6 w-6 text-brand-600" />
             <p className="mt-3 text-2xl font-bold text-neutral-900">8%</p>
             <p className="text-sm text-neutral-500">Commission only on successful orders. No listing fees.</p>
           </div>
-          <div className="rounded-xl border border-neutral-200 p-6">
+          <div className="border border-neutral-200 p-6">
             <Wallet className="h-6 w-6 text-brand-600" />
             <p className="mt-3 text-2xl font-bold text-neutral-900">Payouts</p>
             <p className="text-sm text-neutral-500">Get paid straight to your South African bank account.</p>
           </div>
-          <div className="rounded-xl border border-neutral-200 p-6">
+          <div className="border border-neutral-200 p-6">
             <Rocket className="h-6 w-6 text-brand-600" />
             <p className="mt-3 text-2xl font-bold text-neutral-900">5 mins</p>
             <p className="text-sm text-neutral-500">Average time to set up your storefront.</p>
@@ -80,7 +80,7 @@ export function SellPage() {
             <ol className="mt-6 space-y-6">
               {steps.map((step, i) => (
                 <li key={step.title} className="flex gap-4">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-brand-100 font-bold text-brand-800">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center-full bg-brand-100 font-bold text-brand-800">
                     {i + 1}
                   </span>
                   <div>
@@ -91,7 +91,7 @@ export function SellPage() {
               ))}
             </ol>
           </div>
-          <div className="h-fit rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
+          <div className="h-fit border border-neutral-200 bg-white p-6 shadow-sm">
             <h3 className="font-semibold text-neutral-900">Why sellers choose CAPPTURE</h3>
             <ul className="mt-4 space-y-3">
               {benefits.map((b) => (

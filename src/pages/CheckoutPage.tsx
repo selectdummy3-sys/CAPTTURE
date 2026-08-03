@@ -181,7 +181,7 @@ export function CheckoutPage() {
     return (
       <div className="mx-auto max-w-1440 px-4 py-16 sm:px-6">
         <h1 className="text-2xl font-bold text-neutral-900">Checkout</h1>
-        <div className="mt-6 rounded-xl border border-dashed border-neutral-300 p-12 text-center">
+        <div className="mt-6 border border-dashed border-neutral-300 p-12 text-center">
           <PackageCheck className="mx-auto h-10 w-10 text-neutral-300" />
           <p className="mt-3 font-medium text-neutral-700">Your bag is empty</p>
           <Link to="/shop" className="mt-3 inline-block text-sm text-brand-700 hover:underline">
@@ -199,7 +199,7 @@ export function CheckoutPage() {
       <form onSubmit={handleSubmit(placeOrder)} className="mt-8 grid gap-8 lg:grid-cols-[1fr_400px]">
         <div className="space-y-8">
           {/* Address */}
-          <section className="rounded-xl border border-neutral-200 p-5">
+          <section className="border border-neutral-200 p-5">
             <h2 className="font-semibold text-neutral-900">Delivery address</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <Field label="Recipient full name" error={errors.recipient?.message}>
@@ -232,14 +232,14 @@ export function CheckoutPage() {
           </section>
 
           {/* Payment */}
-          <section className="rounded-xl border border-neutral-200 p-5">
+          <section className="border border-neutral-200 p-5">
             <h2 className="font-semibold text-neutral-900">Payment method</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <button
                 type="button"
                 onClick={() => setPaymentMethod("cod")}
                 className={cn(
-                  "flex items-start gap-3 rounded-xl border p-4 text-left transition-colors",
+                  "flex items-start gap-3 border p-4 text-left transition-colors",
                   paymentMethod === "cod" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
                 )}
               >
@@ -253,7 +253,7 @@ export function CheckoutPage() {
                 type="button"
                 onClick={() => setPaymentMethod("eft")}
                 className={cn(
-                  "flex items-start gap-3 rounded-xl border p-4 text-left transition-colors",
+                  "flex items-start gap-3 border p-4 text-left transition-colors",
                   paymentMethod === "eft" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
                 )}
               >
@@ -265,14 +265,14 @@ export function CheckoutPage() {
               </button>
             </div>
             {paymentMethod === "eft" && (
-              <p className="mt-3 rounded-lg bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
+              <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
                 Bank details will be shown on your order confirmation. Please use your order number as the payment reference.
               </p>
             )}
           </section>
 
           {/* Notes */}
-          <section className="rounded-xl border border-neutral-200 p-5">
+          <section className="border border-neutral-200 p-5">
             <h2 className="font-semibold text-neutral-900">Order notes</h2>
             <Textarea
               className="mt-3"
@@ -287,12 +287,12 @@ export function CheckoutPage() {
         {/* Summary */}
         <aside className="h-fit space-y-4 lg:sticky lg:top-32">
           {totals.map(({ group, discount, shipping, total }) => (
-            <div key={group.sellerId} className="rounded-xl border border-neutral-200 p-5">
+            <div key={group.sellerId} className="border border-neutral-200 p-5">
               <p className="text-sm font-semibold text-neutral-900">{group.sellerName}</p>
               <div className="mt-3 space-y-2">
                 {group.items.map((item) => (
                   <div key={`${item.productId}|${item.size ?? ""}|${item.colour ?? ""}`} className="flex items-center gap-3">
-                    <div className="h-12 w-10 shrink-0 overflow-hidden rounded bg-neutral-100">
+                    <div className="h-12 w-10 shrink-0 overflow-hidden bg-neutral-100">
                       {productImageUrl(item.image) ? (
                         <img src={productImageUrl(item.image)!} alt="" className="h-full w-full object-cover" />
                       ) : null}
@@ -331,7 +331,7 @@ export function CheckoutPage() {
           ))}
 
           {/* Coupon */}
-          <div className="rounded-xl border border-neutral-200 p-5">
+          <div className="border border-neutral-200 p-5">
             <p className="text-sm font-semibold text-neutral-900">Coupon</p>
             <div className="mt-2 flex gap-2">
               <Input
@@ -356,7 +356,7 @@ export function CheckoutPage() {
             )}
           </div>
 
-          <div className="rounded-xl bg-neutral-900 p-5 text-white">
+          <div className="bg-neutral-900 p-5 text-white">
             <div className="flex justify-between text-sm">
               <span className="text-neutral-300">Subtotal</span>
               <span>{formatZAR(groups.reduce((a, g) => a + g.subtotal, 0))}</span>
