@@ -71,18 +71,18 @@ export function StorePage() {
       </div>
 
       <div className="mx-auto max-w-1440 px-4 sm:px-6">
-        <div className="-mt-7 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex items-end gap-3">
-            <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-3 border-white bg-white shadow-md sm:h-20 sm:w-20">
+        <div className="-mt-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex items-end gap-4">
+            <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-white shadow-lg sm:h-24 sm:w-24">
               {logo ? (
                 <img src={logo} alt={store.business_name} className="h-full w-full rounded-full object-cover" />
               ) : (
-                <span className="text-xl font-bold text-neutral-500">{store.business_name.slice(0, 1)}</span>
+                <span className="text-2xl font-bold text-neutral-500">{store.business_name.slice(0, 1)}</span>
               )}
             </div>
-            <div className="pb-0.5">
+            <div className="pb-1">
               <h1 className="text-xl font-bold tracking-tight text-neutral-900 sm:text-2xl">{store.business_name}</h1>
-              <p className="text-xs text-neutral-500 sm:text-sm">@{store.store_username}</p>
+              <p className="text-sm text-neutral-500">@{store.store_username}</p>
               <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-neutral-500">
                 <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {store.province}</span>
                 <span className="inline-flex items-center gap-1"><Users className="h-3.5 w-3.5" /> {followers ?? 0} followers</span>
