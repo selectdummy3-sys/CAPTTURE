@@ -1,5 +1,5 @@
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { ClipboardList, ExternalLink, LayoutDashboard, Mail, Package, Settings, Store, UserRound } from "lucide-react";
+import { Banknote, ClipboardList, ExternalLink, LayoutDashboard, Mail, Package, Settings, Store, UserRound } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
 import { buttonClass } from "@/components/ui/button";
@@ -11,6 +11,7 @@ const links = [
   { to: "/seller/products", label: "Products", icon: Package },
   { to: "/seller/orders", label: "Orders", icon: ClipboardList },
   { to: "/seller/inbox", label: "Inbox", icon: Mail },
+  { to: "/seller/withdrawals", label: "Withdrawals", icon: Banknote },
   { to: "/seller/settings", label: "Settings", icon: Settings },
 ];
 

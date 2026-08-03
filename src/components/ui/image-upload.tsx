@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { ImagePlus, Loader2, X } from "lucide-react";
+import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
@@ -165,8 +166,8 @@ export function ImageUploadButton({
         const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
         if (error) throw error;
         onUploaded(path);
-      } catch {
-        /* surfaced by caller */
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Upload failed");
       } finally {
         setUploading(false);
       }

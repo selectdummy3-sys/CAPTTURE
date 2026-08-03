@@ -988,6 +988,47 @@ export type Database = {
           },
         ]
       }
+      withdrawal_requests: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          bank_snapshot: Json
+          created_at: string
+          id: string
+          processed_at: string | null
+          seller_id: string
+          status: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          bank_snapshot?: Json
+          created_at?: string
+          id?: string
+          processed_at?: string | null
+          seller_id: string
+          status?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          bank_snapshot?: Json
+          created_at?: string
+          id?: string
+          processed_at?: string | null
+          seller_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "withdrawal_requests_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       user_public: {
@@ -1077,6 +1118,12 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      process_withdrawal: {
+        Args: { p_action: string; p_notes?: string; p_request_id: string }
+        Returns: undefined
+      }
+      request_withdrawal: { Args: { p_amount: number }; Returns: string }
+      seller_balance: { Args: never; Returns: number }
       set_seller_status: {
         Args: { p_reason?: string; p_seller_id: string; p_status: string }
         Returns: {

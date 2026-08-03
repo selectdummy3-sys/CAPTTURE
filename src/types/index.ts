@@ -16,6 +16,7 @@ export type WishlistItem = Tables<"wishlist_items">;
 export type StoreFollower = Tables<"store_followers">;
 export type RecentlyViewed = Tables<"recently_viewed">;
 export type Message = Tables<"messages">;
+export type WithdrawalRequest = Tables<"withdrawal_requests">;
 
 /** Seller info embedded on products / orders via a join. */
 export type SellerSummary = Pick<

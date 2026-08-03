@@ -79,6 +79,12 @@ const AdminMessages = lazy(() =>
 const SellerInbox = lazy(() =>
   import("@/pages/seller/SellerInbox").then((m) => ({ default: m.default }))
 );
+const SellerWithdrawals = lazy(() =>
+  import("@/pages/seller/SellerWithdrawals").then((m) => ({ default: m.default }))
+);
+const AdminWithdrawals = lazy(() =>
+  import("@/pages/admin/AdminWithdrawals").then((m) => ({ default: m.default }))
+);
 
 function Loadable({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<LoadingScreen />}>{children}</Suspense>;
@@ -122,6 +128,7 @@ export function App() {
           <Route path="products/:id/edit" element={<ProductFormPage />} />
           <Route path="orders" element={<SellerOrders />} />
           <Route path="inbox" element={<SellerInbox />} />
+          <Route path="withdrawals" element={<SellerWithdrawals />} />
           <Route path="settings" element={<SellerSettings />} />
         </Route>
 
@@ -129,6 +136,7 @@ export function App() {
           <Route index element={<AdminDashboard />} />
           <Route path="sellers" element={<AdminSellers />} />
           <Route path="orders" element={<AdminOrders />} />
+          <Route path="withdrawals" element={<AdminWithdrawals />} />
           <Route path="coupons" element={<AdminCoupons />} />
           <Route path="messages" element={<AdminMessages />} />
         </Route>
