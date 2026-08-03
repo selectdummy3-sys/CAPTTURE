@@ -38,3 +38,6 @@ supabase/.branches
 
 # Coverage / tests
 coverage
+
+.vercel
+.env*
