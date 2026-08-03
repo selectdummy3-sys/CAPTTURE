@@ -121,6 +121,21 @@ export function useCreateCoupon() {
   });
 }
 
+/** Admin: count pending seller applications. */
+export function usePendingSellersCount() {
+  return useQuery({
+    queryKey: ["admin", "pending-sellers-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("sellers")
+        .select("id", { count: "exact", head: true })
+        .eq("application_status", "pending");
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+}
+
 export function usePlatformStats() {
   return useQuery({
     queryKey: ["admin", "stats"],

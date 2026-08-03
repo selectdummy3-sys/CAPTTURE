@@ -2,6 +2,7 @@ import { NavLink, Outlet, Link } from "react-router-dom";
 import { Banknote, ClipboardList, ExternalLink, LayoutDashboard, Mail, Package, Settings, Store, UserRound } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useUnreadMessageCount } from "@/hooks/useMessages";
 import { buttonClass } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
@@ -45,6 +46,7 @@ function RejectedScreen({ reason }: { reason?: string | null }) {
 
 export function SellerLayout() {
   const { seller } = useAuth();
+  const { data: unreadCount = 0 } = useUnreadMessageCount();
 
   if (seller == null) {
     return (
@@ -104,22 +106,30 @@ export function SellerLayout() {
           </div>
         </div>
         <nav className="flex gap-1 overflow-x-auto lg:flex-col">
-          {links.map(({ to, label, icon: Icon, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              className={({ isActive }) =>
-                cn(
-                  "flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-                  isActive ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
-                )
-              }
-            >
-              <Icon className="h-4 w-4" />
-              {label}
-            </NavLink>
-          ))}
+          {links.map(({ to, label, icon: Icon, end }) => {
+            const showBadge = to === "/seller/inbox" && unreadCount > 0;
+            return (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                className={({ isActive }) =>
+                  cn(
+                    "flex shrink-0 items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    isActive ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+                  )
+                }
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+                {showBadge && (
+                  <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
+              </NavLink>
+            );
+          })}
         </nav>
       </aside>
       <div className="min-w-0 flex-1">

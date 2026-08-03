@@ -71,9 +71,9 @@ export function StorePage() {
       </div>
 
       <div className="mx-auto max-w-1440 px-4 sm:px-6">
-        <div className="-mt-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex items-end gap-4">
-            <div className="relative z-10 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white bg-white shadow-lg sm:h-24 sm:w-24">
+        <div className="-mt-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex items-end gap-3">
+            <div className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full border-4 border-white bg-white shadow-lg sm:h-20 sm:w-20">
               {logo ? (
                 <img src={logo} alt={store.business_name} className="h-full w-full rounded-full object-cover" />
               ) : (
