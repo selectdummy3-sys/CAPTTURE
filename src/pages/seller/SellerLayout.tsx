@@ -71,11 +71,21 @@ export function SellerLayout() {
         <Store className="mx-auto h-10 w-10 text-red-500" />
         <h1 className="mt-4 text-2xl font-bold tracking-tight text-neutral-900">Store suspended</h1>
         <p className="mt-2 text-neutral-500">
-          {seller.rejection_reason
-            ? seller.rejection_reason
-            : "Your store has been temporarily suspended. Your products are hidden from shoppers until the suspension is lifted."}
+          Your store is temporarily suspended and your products are hidden from shoppers until the suspension is lifted.
         </p>
-        <p className="mt-4 text-sm text-neutral-400">Contact support if you believe this is a mistake.</p>
+        {seller.rejection_reason && (
+          <div className="mt-6 border border-red-200 bg-red-50 p-4 text-left">
+            <p className="text-xs font-semibold uppercase tracking-wider text-red-600">Suspension reason</p>
+            <p className="mt-1 text-sm font-medium text-red-900">{seller.rejection_reason}</p>
+          </div>
+        )}
+        <p className="mt-6 text-sm text-neutral-400">
+          Contact{" "}
+          <a href="mailto:support@cappture.co.za" className="text-brand-700 underline hover:text-brand-800">
+            support@cappture.co.za
+          </a>{" "}
+          if you believe this is a mistake.
+        </p>
       </div>
     );
   }
