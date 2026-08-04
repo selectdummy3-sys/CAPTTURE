@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
@@ -27,6 +27,20 @@ export function Dialog({
   className,
 }: DialogProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(open);
+  const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setClosing(false);
+      setMounted(true);
+      return;
+    }
+    if (!mounted) return;
+    setClosing(true);
+    const timer = window.setTimeout(() => setMounted(false), 160);
+    return () => window.clearTimeout(timer);
+  }, [open, mounted]);
 
   useEffect(() => {
     if (!open) return;
@@ -45,12 +59,15 @@ export function Dialog({
     if (open) panelRef.current?.focus();
   }, [open]);
 
-  if (!open) return null;
+  if (!mounted) return null;
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       <div
-        className="absolute inset-0 bg-neutral-900/50 backdrop-blur-sm"
+        className={cn(
+          "absolute inset-0 bg-neutral-900/50 backdrop-blur-sm",
+          closing ? "animate-overlay-out" : "animate-overlay-in"
+        )}
         onClick={onClose}
         aria-hidden
       />
@@ -64,6 +81,7 @@ export function Dialog({
           size === "sm" && "sm:max-w-md",
           size === "md" && "sm:max-w-lg",
           size === "lg" && "sm:max-w-3xl",
+          closing ? "animate-panel-out" : "animate-panel-in",
           className
         )}
       >

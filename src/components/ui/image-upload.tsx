@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
 import { ImagePlus, Loader2, X } from "lucide-react";
 import { toast } from "sonner";
@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 import { storagePath } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { ImageCropDialog, type CropOptions } from "@/components/ui/image-cropper";
 
 interface ImageUploadProps {
   bucket?: string;
@@ -18,6 +19,7 @@ interface ImageUploadProps {
   aspect?: "square" | "wide";
   disabled?: boolean;
   className?: string;
+  crop?: CropOptions;
 }
 
 export function ImageUpload({
@@ -29,10 +31,17 @@ export function ImageUpload({
   aspect = "square",
   disabled,
   className,
+  crop,
 }: ImageUploadProps) {
   const { user } = useAuth();
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cropOpen, setCropOpen] = useState(false);
+  const [pendingSrc, setPendingSrc] = useState<string | null>(null);
+
+  const valueRef = useRef(value);
+  valueRef.current = value;
+  const queueRef = useRef<File[]>([]);
 
   const urls = useMemo(
     () =>
@@ -42,51 +51,89 @@ export function ImageUpload({
     [value, bucket]
   );
 
-  const handleUpload = useCallback(
-    async (files: File[]) => {
-      if (!user) return;
-      setError(null);
-      setUploading(true);
+  const uploadFile = useCallback(
+    async (file: File) => {
+      if (!user) return "";
       const baseFolder = folder ?? `${user.id}`;
-      const next: string[] = [...value];
-      try {
-        for (const file of files) {
-          const path = storagePath(baseFolder, file);
-          const { error: uploadError } = await supabase.storage
-            .from(bucket)
-            .upload(path, file, { upsert: false, cacheControl: "31536000" });
-          if (uploadError) throw uploadError;
-          next.push(path);
-        }
-        onChange(next.slice(0, maxFiles));
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Upload failed");
-      } finally {
-        setUploading(false);
-      }
+      const path = storagePath(baseFolder, file);
+      const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(path, file, { upsert: false, cacheControl: "31536000" });
+      if (uploadError) throw uploadError;
+      return path;
     },
-    [user, folder, bucket, value, onChange, maxFiles]
+    [user, folder, bucket]
   );
+
+  const processNext = useCallback(() => {
+    const file = queueRef.current.shift();
+    if (!file) return;
+    if (crop) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        setPendingSrc(reader.result as string);
+        setCropOpen(true);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setUploading(true);
+      setError(null);
+      void (async () => {
+        try {
+          const path = await uploadFile(file);
+          if (path) onChange([...valueRef.current, path].slice(0, maxFiles));
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Upload failed");
+        } finally {
+          setUploading(false);
+          processNext();
+        }
+      })();
+    }
+  }, [crop, uploadFile, onChange, maxFiles]);
 
   const onDrop = useCallback(
     (accepted: File[], rejected: FileRejection[]) => {
       if (rejected.length > 0) setError("One or more files were rejected.");
       const room = maxFiles - value.length;
       if (room <= 0) return;
-      void handleUpload(accepted.slice(0, room));
+      queueRef.current.push(...accepted.slice(0, room));
+      processNext();
     },
-    [handleUpload, maxFiles, value.length]
+    [processNext, maxFiles, value.length]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { "image/*": [] },
     maxFiles,
-    disabled: disabled || uploading || value.length >= maxFiles,
+    disabled: disabled || uploading || cropOpen || value.length >= maxFiles,
   });
 
   const removeAt = (index: number) => {
     onChange(value.filter((_, i) => i !== index));
+  };
+
+  const closeCropDialog = () => {
+    setCropOpen(false);
+    setPendingSrc(null);
+    processNext();
+  };
+
+  const handleCropConfirm = async (file: File) => {
+    if (!user) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const path = await uploadFile(file);
+      if (path) onChange([...valueRef.current, path].slice(0, maxFiles));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Upload failed";
+      setError(message);
+      throw new Error(message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -140,6 +187,19 @@ export function ImageUpload({
         {value.length}/{maxFiles} images · JPG, PNG or WebP
       </p>
       {error && <p className="text-xs text-red-600">{error}</p>}
+
+      {crop && (
+        <ImageCropDialog
+          open={cropOpen}
+          imageSrc={pendingSrc}
+          aspectRatio={crop.aspect}
+          outputWidth={crop.width}
+          outputHeight={crop.height}
+          title="Crop image"
+          onCancel={closeCropDialog}
+          onConfirm={handleCropConfirm}
+        />
+      )}
     </div>
   );
 }
@@ -148,44 +208,101 @@ export function ImageUploadButton({
   onUploaded,
   bucket = "store-assets",
   className,
+  crop,
 }: {
   onUploaded: (path: string) => void;
   bucket?: string;
   className?: string;
+  crop?: CropOptions;
 }) {
   const { user } = useAuth();
   const [uploading, setUploading] = useState(false);
+  const [cropOpen, setCropOpen] = useState(false);
+  const [pendingSrc, setPendingSrc] = useState<string | null>(null);
+
+  const uploadFile = async (file: File) => {
+    if (!user) return "";
+    const path = storagePath(user.id, file);
+    const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
+    if (error) throw error;
+    return path;
+  };
 
   const onDrop = useCallback(
-    async (files: File[]) => {
+    (files: File[]) => {
       if (!user || files.length === 0) return;
-      setUploading(true);
-      try {
-        const file = files[0];
-        const path = storagePath(user.id, file);
-        const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
-        if (error) throw error;
-        onUploaded(path);
-      } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Upload failed");
-      } finally {
-        setUploading(false);
+      const file = files[0];
+      if (crop) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setPendingSrc(reader.result as string);
+          setCropOpen(true);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        setUploading(true);
+        void (async () => {
+          try {
+            const path = await uploadFile(file);
+            if (path) onUploaded(path);
+          } catch (err) {
+            toast.error(err instanceof Error ? err.message : "Upload failed");
+          } finally {
+            setUploading(false);
+          }
+        })();
       }
     },
-    [user, bucket, onUploaded]
+    [user, crop, uploadFile, onUploaded]
   );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
     accept: { "image/*": [] },
     maxFiles: 1,
+    disabled: uploading || cropOpen,
   });
 
+  const handleCropConfirm = async (file: File) => {
+    if (!user) return;
+    setUploading(true);
+    try {
+      const path = await uploadFile(file);
+      if (path) onUploaded(path);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Upload failed";
+      toast.error(message);
+      throw new Error(message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const closeCropDialog = () => {
+    setCropOpen(false);
+    setPendingSrc(null);
+  };
+
   return (
-    <Button type="button" variant="outline" size="sm" disabled={uploading} className={className} {...getRootProps()}>
-      <input {...getInputProps()} />
-      {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
-      {uploading ? "Uploading…" : "Upload"}
-    </Button>
+    <>
+      <Button type="button" variant="outline" size="sm" disabled={uploading || cropOpen} className={className} {...getRootProps()}>
+        <input {...getInputProps()} />
+        {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
+        {uploading ? "Uploading…" : "Upload"}
+      </Button>
+
+      {crop && (
+        <ImageCropDialog
+          open={cropOpen}
+          imageSrc={pendingSrc}
+          aspectRatio={crop.aspect}
+          outputWidth={crop.width}
+          outputHeight={crop.height}
+          title="Crop image"
+          onCancel={closeCropDialog}
+          onConfirm={handleCropConfirm}
+        />
+      )}
+    </>
   );
 }

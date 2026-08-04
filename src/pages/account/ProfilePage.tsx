@@ -65,7 +65,7 @@ export function ProfilePage() {
                 <span className="text-xs text-neutral-400">Photo</span>
               )}
             </div>
-            <ImageUploadButton bucket="avatars" onUploaded={setAvatarUrl} />
+            <ImageUploadButton bucket="avatars" onUploaded={setAvatarUrl} crop={{ aspect: 1, width: 512, height: 512 }} />
           </div>
         </div>
 

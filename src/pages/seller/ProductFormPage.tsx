@@ -168,7 +168,11 @@ export function ProductFormPage() {
         </Field>
 
         <Field label="Photos" hint="The first photo is used as the product cover.">
-          <ImageUpload value={images} onChange={setImages} />
+          <ImageUpload
+            value={images}
+            onChange={setImages}
+            crop={{ aspect: 4 / 5, width: 800, height: 1000 }}
+          />
         </Field>
 
         <div className="flex items-center justify-between border border-neutral-200 p-4">

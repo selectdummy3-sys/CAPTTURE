@@ -214,7 +214,7 @@ export function SellerApplyPage() {
                 className="h-12 w-12 object-cover"
               />
             )}
-            <ImageUploadButton bucket="store-assets" onUploaded={setLogoUrl} />
+            <ImageUploadButton bucket="store-assets" onUploaded={setLogoUrl} crop={{ aspect: 1, width: 512, height: 512 }} />
           </div>
         </Field>
 
