@@ -52,7 +52,11 @@ export function useSetSellerStatus() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "sellers"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin", "pending-sellers-count"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin", "stats"] });
       void queryClient.invalidateQueries({ queryKey: ["stores"] });
+      void queryClient.invalidateQueries({ queryKey: ["products"] });
+      void queryClient.invalidateQueries({ queryKey: ["store-products"] });
     },
   });
 }

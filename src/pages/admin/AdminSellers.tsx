@@ -1,8 +1,8 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { BadgeCheck, Eye, FileText, Mail, Phone, Trash2 } from "lucide-react";
+import { BadgeCheck, Check, Eye, FileText, Mail, Phone, RotateCcw, Trash2, X } from "lucide-react";
 
 import { useAllSellers, useDeleteSeller, useSetSellerStatus } from "@/hooks/useAdmin";
-import { Button } from "@/components/ui/button";
+import { Button, type ButtonVariant } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Dialog } from "@/components/ui/dialog";
@@ -11,6 +11,40 @@ import { formatDate } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 
 type AdminSellerRow = NonNullable<ReturnType<typeof useAllSellers>["data"]>[number];
+
+type StatusAction =
+  | { kind: "approve"; label: string; variant: ButtonVariant }
+  | { kind: "reinstate"; label: string; variant: ButtonVariant }
+  | { kind: "reject"; label: string; variant: ButtonVariant }
+  | { kind: "suspend"; label: string; variant: ButtonVariant };
+
+function statusActions(status: string): StatusAction[] {
+  switch (status) {
+    case "pending":
+      return [
+        { kind: "approve", label: "Approve", variant: "primary" },
+        { kind: "reject", label: "Reject", variant: "danger-outline" },
+      ];
+    case "approved":
+      return [{ kind: "suspend", label: "Suspend", variant: "danger-outline" }];
+    case "suspended":
+      return [{ kind: "reinstate", label: "Reinstate", variant: "primary" }];
+    default:
+      return [];
+  }
+}
+
+function actionIcon(action: StatusAction) {
+  switch (action.kind) {
+    case "reject":
+    case "suspend":
+      return <X className="h-4 w-4" />;
+    case "reinstate":
+      return <RotateCcw className="h-4 w-4" />;
+    default:
+      return <Check className="h-4 w-4" />;
+  }
+}
 
 function DetailRow({ label, children }: { label: string; children: ReactNode }) {
   if (children === null || children === undefined || children === "") return null;
@@ -234,24 +268,47 @@ export function AdminSellers() {
   const { data: sellers, isLoading } = useAllSellers();
   const setStatus = useSetSellerStatus();
   const deleteSeller = useDeleteSeller();
-  const [reason, setReason] = useState<Record<string, string>>({});
   const [busyId, setBusyId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
+  const [statusDialog, setStatusDialog] = useState<{ seller: AdminSellerRow; action: StatusAction } | null>(null);
+  const [reason, setReason] = useState("");
+  const [showReasonError, setShowReasonError] = useState(false);
 
   const selected = (sellers ?? []).find((s) => s.id === selectedId) ?? null;
 
-  const act = async (id: string, status: string, withReason: boolean) => {
+  const act = async (id: string, status: string, reason?: string) => {
     setBusyId(id);
     try {
-      await setStatus.mutateAsync({
-        sellerId: id,
-        status,
-        ...(withReason ? { reason: reason[id] || "No reason provided." } : {}),
-      });
+      await setStatus.mutateAsync({ sellerId: id, status, ...(reason ? { reason } : {}) });
     } finally {
       setBusyId(null);
     }
+  };
+
+  const runAction = (seller: AdminSellerRow, action: StatusAction) => {
+    if (action.kind === "reject" || action.kind === "suspend") {
+      setReason("");
+      setShowReasonError(false);
+      setStatusDialog({ seller, action });
+      return;
+    }
+    void act(seller.id, "approved");
+  };
+
+  const confirmStatusDialog = async () => {
+    if (!statusDialog) return;
+    const next = statusDialog.action.kind === "reject" ? "rejected" : "suspended";
+    if (!reason.trim()) {
+      setShowReasonError(true);
+      return;
+    }
+    const id = statusDialog.seller.id;
+    const trimmed = reason.trim();
+    setStatusDialog(null);
+    setReason("");
+    setShowReasonError(false);
+    await act(id, next, trimmed);
   };
 
   if (isLoading) return <p className="py-10 text-center text-sm text-neutral-400">Loading sellers…</p>;
@@ -264,65 +321,53 @@ export function AdminSellers() {
         <EmptyState icon={<BadgeCheck className="h-8 w-8" />} title="No sellers yet" className="mt-8" />
       ) : (
         <div className="mt-6 space-y-4">
-          {(sellers ?? []).map((seller) => (
-            <div key={seller.id} className="border border-neutral-200 p-5">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-neutral-900">{seller.business_name}</p>
-                    <Badge
-                      tone={
-                        seller.application_status === "approved"
-                          ? "green"
-                          : seller.application_status === "rejected" || seller.application_status === "suspended"
-                            ? "red"
-                            : "amber"
-                      }
-                    >
-                      {APPLICATION_STATUS_LABELS[seller.application_status] ?? seller.application_status}
-                    </Badge>
+          {(sellers ?? []).map((seller) => {
+            const actions = statusActions(seller.application_status);
+            return (
+              <div key={seller.id} className="border border-neutral-200 p-5">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-neutral-900">{seller.business_name}</p>
+                      <Badge
+                        tone={
+                          seller.application_status === "approved"
+                            ? "green"
+                            : seller.application_status === "rejected" || seller.application_status === "suspended"
+                              ? "red"
+                              : "amber"
+                        }
+                      >
+                        {APPLICATION_STATUS_LABELS[seller.application_status] ?? seller.application_status}
+                      </Badge>
+                    </div>
+                    <p className="mt-0.5 text-sm text-neutral-500">
+                      @{seller.store_username} · {seller.province || "—"} · joined {formatDate(seller.created_at)}
+                    </p>
+                    <p className="mt-1 text-xs text-neutral-400">
+                      {seller.products ?? 0} products · {seller.followers ?? 0} followers
+                    </p>
+                    {seller.rejection_reason && (
+                      <p className="mt-1 text-xs text-amber-700">Reason: {seller.rejection_reason}</p>
+                    )}
                   </div>
-                  <p className="mt-0.5 text-sm text-neutral-500">
-                    @{seller.store_username} · {seller.province || "—"} · joined {formatDate(seller.created_at)}
-                  </p>
-                  <p className="mt-1 text-xs text-neutral-400">
-                    {seller.products ?? 0} products · {seller.followers ?? 0} followers
-                  </p>
-                  {seller.rejection_reason && (
-                    <p className="mt-1 text-xs text-amber-700">Reason: {seller.rejection_reason}</p>
-                  )}
-                </div>
 
-                <div className="flex shrink-0 flex-col items-end gap-2">
-                  <div className="flex flex-wrap justify-end gap-2">
+                  <div className="flex shrink-0 flex-wrap justify-end gap-2">
                     <Button size="sm" variant="outline" onClick={() => setSelectedId(seller.id)}>
                       <Eye className="h-4 w-4" /> Details
                     </Button>
-                    {seller.application_status !== "approved" && (
-                      <Button size="sm" disabled={busyId === seller.id} onClick={() => void act(seller.id, "approved", false)}>
-                        Approve
-                      </Button>
-                    )}
-                    {seller.application_status !== "rejected" && (
+                    {actions.map((action) => (
                       <Button
+                        key={action.kind}
                         size="sm"
-                        variant="outline"
+                        variant={action.variant}
                         disabled={busyId === seller.id}
-                        onClick={() => void act(seller.id, "rejected", true)}
+                        onClick={() => runAction(seller, action)}
                       >
-                        Reject
+                        {actionIcon(action)}
+                        {action.label}
                       </Button>
-                    )}
-                    {seller.application_status !== "suspended" && (
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        disabled={busyId === seller.id}
-                        onClick={() => void act(seller.id, "suspended", true)}
-                      >
-                        Suspend
-                      </Button>
-                    )}
+                    ))}
                     {seller.application_status === "suspended" && (
                       <Button
                         size="sm"
@@ -334,21 +379,73 @@ export function AdminSellers() {
                       </Button>
                     )}
                   </div>
-                  <input
-                    value={reason[seller.id] ?? ""}
-                    onChange={(e) => setReason((r) => ({ ...r, [seller.id]: e.target.value }))}
-                    placeholder="Reason (optional)"
-                    className="h-8 w-56 border border-neutral-300 px-2 text-xs"
-                  />
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
       {selected && (
         <SellerDetailDialog seller={selected} open={selected != null} onClose={() => setSelectedId(null)} />
+      )}
+
+      {statusDialog && (
+        <Dialog
+          open
+          onClose={() => {
+            setStatusDialog(null);
+            setReason("");
+            setShowReasonError(false);
+          }}
+          title={
+            statusDialog.action.kind === "reject"
+              ? `Reject ${statusDialog.seller.business_name}?`
+              : `Suspend ${statusDialog.seller.business_name}?`
+          }
+          description={
+            statusDialog.action.kind === "reject"
+              ? "The seller will lose dashboard access and will be told why the application was declined."
+              : "All products will be hidden from the marketplace and the seller will lose dashboard access until reinstated."
+          }
+        >
+          <label htmlFor="status-reason" className="block text-sm font-medium text-neutral-900">
+            {statusDialog.action.kind === "reject" ? "Rejection reason" : "Suspension reason"} (required)
+          </label>
+          <textarea
+            id="status-reason"
+            value={reason}
+            onChange={(e) => {
+              setReason(e.target.value);
+              if (showReasonError && e.target.value.trim()) setShowReasonError(false);
+            }}
+            rows={4}
+            placeholder={statusDialog.action.kind === "reject" ? "e.g. Failed identity verification." : "e.g. Violation of marketplace policies."}
+            className="mt-2 w-full border border-neutral-300 p-3 text-sm outline-none focus:border-neutral-900"
+          />
+          {showReasonError && !reason.trim() && (
+            <p className="mt-1 text-xs text-red-600">A reason is required to {statusDialog.action.kind} this seller.</p>
+          )}
+          <div className="mt-4 flex justify-end gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setStatusDialog(null);
+                setReason("");
+                setShowReasonError(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant={statusDialog.action.kind === "reject" ? "danger" : "danger"}
+              loading={setStatus.isPending}
+              onClick={() => void confirmStatusDialog()}
+            >
+              {statusDialog.action.kind === "reject" ? "Reject seller" : "Suspend seller"}
+            </Button>
+          </div>
+        </Dialog>
       )}
 
       {deleteConfirmId && (
