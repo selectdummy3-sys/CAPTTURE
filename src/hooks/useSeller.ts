@@ -25,19 +25,31 @@ export interface ProductDraft {
   imagePaths: string[];
 }
 
+async function ensureUniqueSlug(base: string): Promise<string> {
+  const { data: existing } = await supabase.from("products").select("id").eq("slug", base).maybeSingle();
+  if (!existing) return base;
+  for (let i = 2; i < 100; i++) {
+    const candidate = `${base}-${i}`;
+    const { data: taken } = await supabase.from("products").select("id").eq("slug", candidate).maybeSingle();
+    if (!taken) return candidate;
+  }
+  return `${base}-${Date.now()}`;
+}
+
 export function useCreateProduct() {
   const { seller } = useAuth();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (draft: ProductDraft) => {
       if (!seller) throw new Error("Seller account required");
+      const slug = await ensureUniqueSlug(draft.slug);
       const { data: product, error } = await supabase
         .from("products")
         .insert({
           seller_id: seller.id,
           category_id: draft.categoryId ?? null,
           name: draft.name,
-          slug: draft.slug,
+          slug,
           description: draft.description ?? null,
           price: draft.price,
           sale_price: draft.salePrice ?? null,

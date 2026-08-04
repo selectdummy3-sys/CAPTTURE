@@ -165,6 +165,8 @@ export function useProduct(slug: string) {
         .select(productRelationsSelect)
         .eq("slug", slug)
         .eq("seller.application_status", "approved")
+        .order("created_at", { ascending: false })
+        .limit(1)
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;
