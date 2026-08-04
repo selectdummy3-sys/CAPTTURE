@@ -100,7 +100,7 @@ export function ImageUpload({
               aspect === "wide" ? "aspect-[4/3]" : "aspect-square"
             )}
           >
-            <img src={url} alt="" className="h w-full object-cover" />
+            <img src={url} alt="" className="h-full w-full object-cover" />
             {!disabled && (
               <button
                 type="button"

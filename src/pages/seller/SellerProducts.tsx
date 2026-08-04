@@ -90,7 +90,7 @@ export function SellerProducts() {
                     <img
                       src={productImageUrl(product.featured_image) ?? ""}
                       alt=""
-                      className="h w-full object-cover"
+                      className="h-full w-full object-cover"
                     />
                   )}
                 </div>

@@ -294,7 +294,7 @@ export function CheckoutPage() {
                   <div key={`${item.productId}|${item.size ?? ""}|${item.colour ?? ""}`} className="flex items-center gap-3">
                     <div className="h-12 w-10 shrink-0 overflow-hidden bg-neutral-100">
                       {productImageUrl(item.image) ? (
-                        <img src={productImageUrl(item.image)!} alt="" className="h w-full object-cover" />
+                        <img src={productImageUrl(item.image)!} alt="" className="h-full w-full object-cover" />
                       ) : null}
                     </div>
                     <div className="min-w-0 flex-1">

@@ -69,6 +69,9 @@ const AdminLayout = lazy(() => import("@/pages/admin/AdminLayout").then((m) => (
 const AdminDashboard = lazy(() =>
   import("@/pages/admin/AdminDashboard").then((m) => ({ default: m.AdminDashboard }))
 );
+const AdminProducts = lazy(() =>
+  import("@/pages/admin/AdminProducts").then((m) => ({ default: m.AdminProducts }))
+);
 const AdminSellers = lazy(() => import("@/pages/admin/AdminSellers").then((m) => ({ default: m.AdminSellers })));
 const AdminOrders = lazy(() => import("@/pages/admin/AdminOrders").then((m) => ({ default: m.AdminOrders })));
 const AdminCoupons = lazy(() => import("@/pages/admin/AdminCoupons").then((m) => ({ default: m.AdminCoupons })));
@@ -137,6 +140,7 @@ export function App() {
 
         <Route path="/admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
           <Route index element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProducts />} />
           <Route path="sellers" element={<AdminSellers />} />
           <Route path="orders" element={<AdminOrders />} />
           <Route path="withdrawals" element={<AdminWithdrawals />} />

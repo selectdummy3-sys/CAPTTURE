@@ -1,11 +1,12 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { BadgeCheck, Banknote, ClipboardList, Image, LayoutDashboard, Mail, Ticket } from "lucide-react";
+import { BadgeCheck, Banknote, ClipboardList, Image, LayoutDashboard, Mail, Package, Ticket } from "lucide-react";
 
 import { usePendingSellersCount } from "@/hooks/useAdmin";
 import { cn } from "@/lib/utils";
 
 const links = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true },
+  { to: "/admin/products", label: "Products", icon: Package },
   { to: "/admin/sellers", label: "Sellers", icon: BadgeCheck },
   { to: "/admin/orders", label: "Orders", icon: ClipboardList },
   { to: "/admin/withdrawals", label: "Withdrawals", icon: Banknote },
