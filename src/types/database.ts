@@ -478,6 +478,7 @@ export type Database = {
           status: string
           subtotal: number
           total: number
+          tracking_number: string | null
           updated_at: string
           user_id: string | null
         }
@@ -498,6 +499,7 @@ export type Database = {
           status?: string
           subtotal?: number
           total?: number
+          tracking_number?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -518,6 +520,7 @@ export type Database = {
           status?: string
           subtotal?: number
           total?: number
+          tracking_number?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -1098,6 +1101,54 @@ export type Database = {
     Functions: {
       current_seller: { Args: never; Returns: string }
       generate_order_number: { Args: never; Returns: string }
+      get_seller_best_selling_products: {
+        Args: { p_limit?: number; p_seller_id: string }
+        Returns: Array<{ id: string; name: string; sales: number; revenue: number }>
+      }
+      get_seller_conversion_rate: { Args: { p_days?: number; p_seller_id: string }; Returns: number }
+      get_seller_daily_sales: {
+        Args: { p_days?: number; p_seller_id: string }
+        Returns: Array<{ date: string; value: number }>
+      }
+      get_seller_earnings: {
+        Args: { p_seller_id: string }
+        Returns: {
+          availableBalance: number
+          marketplaceCommission: number
+          nextPayoutDate: string | null
+          pendingBalance: number
+          totalEarnings: number
+        }
+      }
+      get_seller_follower_growth: {
+        Args: { p_days?: number; p_seller_id: string }
+        Returns: Array<{ date: string; value: number }>
+      }
+      get_seller_monthly_sales: {
+        Args: { p_months?: number; p_seller_id: string }
+        Returns: Array<{ date: string; value: number }>
+      }
+      get_seller_orders_over_time: {
+        Args: { p_days?: number; p_seller_id: string }
+        Returns: Array<{ date: string; value: number }>
+      }
+      get_seller_product_views: {
+        Args: { p_days?: number; p_seller_id: string }
+        Returns: Array<{ date: string; value: number }>
+      }
+      get_seller_revenue_over_time: {
+        Args: { p_days?: number; p_seller_id: string }
+        Returns: Array<{ date: string; value: number }>
+      }
+      get_seller_store_visits: {
+        Args: { p_days?: number; p_seller_id: string }
+        Returns: Array<{ date: string; value: number }>
+      }
+      get_seller_user_id: { Args: { p_seller_id: string }; Returns: string }
+      get_seller_weekly_sales: {
+        Args: { p_seller_id: string; p_weeks?: number }
+        Returns: Array<{ date: string; value: number }>
+      }
       increment_view: { Args: { p_product_id: string }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       mark_message_read: { Args: { p_message_id: string }; Returns: undefined }

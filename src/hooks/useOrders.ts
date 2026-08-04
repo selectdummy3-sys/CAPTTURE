@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import type { Json } from "@/types/database";
 import type { Address, OrderWithRelations } from "@/types";
 
-const orderSelect = "*, items:order_items(*), seller:sellers(id, business_name, store_username, logo_url), coupon:coupons(code, discount_type, discount_value)";
+const orderSelect = "*, items:order_items(*), seller:sellers(id, business_name, store_username, logo_url), user:profiles(id, full_name, avatar_url, email, phone), coupon:coupons(code, discount_type, discount_value)";
 
 export interface PlaceOrderInput {
   sellerId: string;
@@ -116,6 +116,22 @@ export function useUpdateOrderStatus() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["orders"] });
       void queryClient.invalidateQueries({ queryKey: ["seller-stats"] });
+    },
+  });
+}
+
+export function useUpdateOrderTracking() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, trackingNumber }: { id: string; trackingNumber: string }) => {
+      const { error } = await supabase
+        .from("orders")
+        .update({ tracking_number: trackingNumber || null })
+        .eq("id", id);
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
   });
 }

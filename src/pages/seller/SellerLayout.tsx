@@ -1,8 +1,24 @@
 import { NavLink, Outlet, Link } from "react-router-dom";
-import { Banknote, ClipboardList, ExternalLink, LayoutDashboard, Mail, Package, Settings, Store, UserRound } from "lucide-react";
+import {
+  Banknote,
+  BarChart3,
+  Bell,
+  ClipboardList,
+  ExternalLink,
+  Heart,
+  LayoutDashboard,
+  Mail,
+  Megaphone,
+  Package,
+  Settings,
+  Store,
+  UserRound,
+  Wallet,
+} from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useUnreadMessageCount } from "@/hooks/useMessages";
+import { useUnreadNotificationCount } from "@/hooks/useSellerDashboard";
 import { buttonClass } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
@@ -11,8 +27,13 @@ const links = [
   { to: "/seller", label: "Dashboard", icon: LayoutDashboard, end: true },
   { to: "/seller/products", label: "Products", icon: Package },
   { to: "/seller/orders", label: "Orders", icon: ClipboardList },
+  { to: "/seller/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/seller/earnings", label: "Earnings", icon: Wallet },
+  { to: "/seller/followers", label: "Followers", icon: Heart },
+  { to: "/seller/promotions", label: "Promotions", icon: Megaphone },
   { to: "/seller/inbox", label: "Inbox", icon: Mail },
   { to: "/seller/withdrawals", label: "Withdrawals", icon: Banknote },
+  { to: "/seller/notifications", label: "Notifications", icon: Bell },
   { to: "/seller/settings", label: "Settings", icon: Settings },
 ];
 
@@ -47,6 +68,7 @@ function RejectedScreen({ reason }: { reason?: string | null }) {
 export function SellerLayout() {
   const { seller } = useAuth();
   const { data: unreadCount = 0 } = useUnreadMessageCount();
+  const { data: unreadNotifs = 0 } = useUnreadNotificationCount();
 
   if (seller == null) {
     return (
@@ -117,7 +139,7 @@ export function SellerLayout() {
         </div>
         <nav className="flex gap-1 overflow-x-auto lg:flex-col">
           {links.map(({ to, label, icon: Icon, end }) => {
-            const showBadge = to === "/seller/inbox" && unreadCount > 0;
+            const badge = to === "/seller/inbox" ? unreadCount : to === "/seller/notifications" ? unreadNotifs : 0;
             return (
               <NavLink
                 key={to}
@@ -132,9 +154,9 @@ export function SellerLayout() {
               >
                 <Icon className="h-4 w-4" />
                 {label}
-                {showBadge && (
+                {badge > 0 && (
                   <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center bg-red-500 px-1.5 text-[10px] font-bold text-white">
-                    {unreadCount > 99 ? "99+" : unreadCount}
+                    {badge > 99 ? "99+" : badge}
                   </span>
                 )}
               </NavLink>

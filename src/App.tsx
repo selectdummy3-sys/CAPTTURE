@@ -58,6 +58,21 @@ const ProductFormPage = lazy(() =>
   import("@/pages/seller/ProductFormPage").then((m) => ({ default: m.ProductFormPage }))
 );
 const SellerOrders = lazy(() => import("@/pages/seller/SellerOrders").then((m) => ({ default: m.SellerOrders })));
+const SellerAnalytics = lazy(() =>
+  import("@/pages/seller/SellerAnalytics").then((m) => ({ default: m.SellerAnalytics }))
+);
+const SellerEarnings = lazy(() =>
+  import("@/pages/seller/SellerEarnings").then((m) => ({ default: m.SellerEarnings }))
+);
+const SellerFollowers = lazy(() =>
+  import("@/pages/seller/SellerFollowers").then((m) => ({ default: m.SellerFollowers }))
+);
+const SellerPromotions = lazy(() =>
+  import("@/pages/seller/SellerPromotions").then((m) => ({ default: m.SellerPromotions }))
+);
+const SellerNotifications = lazy(() =>
+  import("@/pages/seller/SellerNotifications").then((m) => ({ default: m.SellerNotifications }))
+);
 const SellerSettings = lazy(() =>
   import("@/pages/seller/SellerSettings").then((m) => ({ default: m.SellerSettings }))
 );
@@ -133,6 +148,11 @@ export function App() {
           <Route path="products/new" element={<ProductFormPage />} />
           <Route path="products/:id/edit" element={<ProductFormPage />} />
           <Route path="orders" element={<SellerOrders />} />
+          <Route path="analytics" element={<SellerAnalytics />} />
+          <Route path="earnings" element={<SellerEarnings />} />
+          <Route path="followers" element={<SellerFollowers />} />
+          <Route path="promotions" element={<SellerPromotions />} />
+          <Route path="notifications" element={<SellerNotifications />} />
           <Route path="inbox" element={<SellerInbox />} />
           <Route path="withdrawals" element={<SellerWithdrawals />} />
           <Route path="settings" element={<SellerSettings />} />

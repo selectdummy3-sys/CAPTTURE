@@ -35,6 +35,7 @@ export type OrderWithRelations = Order & {
   seller?: SellerSummary | null;
   items?: OrderItem[];
   coupon?: Pick<Coupon, "code" | "discount_type" | "discount_value"> | null;
+  user?: Pick<Profile, "id" | "full_name" | "avatar_url" | "email" | "phone"> | null;
 };
 
 export type CartLine = {
