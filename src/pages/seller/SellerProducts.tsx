@@ -6,13 +6,13 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSellerProducts } from "@/hooks/useProducts";
 import { useDeleteProduct, useToggleProductStatus } from "@/hooks/useSeller";
 import { Button, buttonClass } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ProductStatusBadge } from "@/components/ui/status-badge";
 import { productImageUrl } from "@/components/storefront/ProductCard";
 import { formatZAR } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 
-const TABS = ["all", "published", "draft", "archived"] as const;
+const TABS = ["all", "published", "draft", "pending", "rejected", "archived"] as const;
 
 export function SellerProducts() {
   const { seller } = useAuth();
@@ -30,7 +30,6 @@ export function SellerProducts() {
       setBusyId(null);
     }
   };
-
   const onDelete = async (id: string, name: string) => {
     if (!window.confirm(`Delete "${name}"? This can't be undone.`)) return;
     setBusyId(id);
@@ -99,19 +98,33 @@ export function SellerProducts() {
                   <p className="mt-0.5 text-xs text-neutral-500">
                     {formatZAR(product.sale_price ?? product.price)} · {product.stock} in stock
                   </p>
+                  {product.status === "rejected" && product.moderation_reason && (
+                    <p className="mt-0.5 text-xs text-red-600">Rejected: {product.moderation_reason}</p>
+                  )}
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
-                  <Badge tone={product.status === "published" ? "green" : "neutral"}>
-                    {product.status}
-                  </Badge>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={busyId === product.id}
-                    onClick={() => void onToggle(product.id, product.status)}
-                  >
-                    {product.status === "published" ? "Unpublish" : "Publish"}
-                  </Button>
+                  <ProductStatusBadge status={product.status} />
+                  {product.status === "published" ? (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={busyId === product.id}
+                      onClick={() => void onToggle(product.id, product.status)}
+                    >
+                      Unpublish
+                    </Button>
+                  ) : product.status === "pending" ? (
+                    <span className="px-3 py-1.5 text-xs font-medium text-amber-700">In review</span>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={busyId === product.id}
+                      onClick={() => void onToggle(product.id, product.status)}
+                    >
+                      Submit for review
+                    </Button>
+                  )}
                   <Link
                     to={`/seller/products/${product.id}/edit`}
                     aria-label="Edit"

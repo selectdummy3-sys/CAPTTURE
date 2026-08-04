@@ -1,7 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { BadgeCheck, Banknote, ClipboardList, Image, LayoutDashboard, Mail, Package, Ticket } from "lucide-react";
 
-import { usePendingSellersCount } from "@/hooks/useAdmin";
+import { usePendingSellersCount, usePendingProductsCount } from "@/hooks/useAdmin";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -17,13 +17,15 @@ const links = [
 
 export function AdminLayout() {
   const { data: pendingSellers = 0 } = usePendingSellersCount();
+  const { data: pendingProducts = 0 } = usePendingProductsCount();
   return (
     <div className="mx-auto flex max-w-1440 flex-col gap-8 px-4 py-10 sm:px-6 lg:flex-row">
       <aside className="lg:w-56 lg:shrink-0">
         <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-wide text-neutral-400">Admin</p>
         <nav className="flex gap-1 overflow-x-auto lg:flex-col">
           {links.map(({ to, label, icon: Icon, end }) => {
-            const showBadge = to === "/admin/sellers" && pendingSellers > 0;
+            const count = to === "/admin/sellers" ? pendingSellers : to === "/admin/products" ? pendingProducts : 0;
+            const showBadge = count > 0;
             return (
               <NavLink
                 key={to}
@@ -40,7 +42,7 @@ export function AdminLayout() {
                 {label}
                 {showBadge && (
                   <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center bg-amber-500 px-1.5 text-[10px] font-bold text-white">
-                    {pendingSellers > 99 ? "99+" : pendingSellers}
+                    {count > 99 ? "99+" : count}
                   </span>
                 )}
               </NavLink>

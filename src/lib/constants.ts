@@ -72,7 +72,9 @@ export const APPLICATION_STATUS_LABELS: Record<string, string> = {
 
 export const PRODUCT_STATUS_LABELS: Record<string, string> = {
   draft: "Draft",
+  pending: "Pending review",
   published: "Published",
+  rejected: "Rejected",
   archived: "Archived",
 };
 

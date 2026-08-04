@@ -211,20 +211,48 @@ export function useAdminDeleteProduct() {
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["admin", "products"] });
+      void qc.invalidateQueries({ queryKey: ["admin", "pending-products-count"] });
       void qc.invalidateQueries({ queryKey: ["admin", "stats"] });
+      void qc.invalidateQueries({ queryKey: ["products"] });
+      void qc.invalidateQueries({ queryKey: ["seller-products"] });
+      void qc.invalidateQueries({ queryKey: ["store-products"] });
     },
   });
 }
 
-export function useAdminToggleProductStatus() {
+export function useAdminSetProductStatus() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase.from("products").update({ status }).eq("id", id);
-      if (error) throw error;
+    mutationFn: async ({ id, status, reason }: { id: string; status: string; reason?: string }) => {
+      const { error } = await supabase.rpc("set_product_status", {
+        p_product_id: id,
+        p_status: status,
+        ...(reason ? { p_reason: reason } : {}),
+      });
+      if (error) throw new Error(error.message);
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["admin", "products"] });
+      void qc.invalidateQueries({ queryKey: ["admin", "pending-products-count"] });
+      void qc.invalidateQueries({ queryKey: ["admin", "stats"] });
+      void qc.invalidateQueries({ queryKey: ["products"] });
+      void qc.invalidateQueries({ queryKey: ["seller-products"] });
+      void qc.invalidateQueries({ queryKey: ["store-products"] });
+    },
+  });
+}
+
+/** Admin: count products awaiting moderation. */
+export function usePendingProductsCount() {
+  return useQuery({
+    queryKey: ["admin", "pending-products-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("products")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pending");
+      if (error) throw error;
+      return count ?? 0;
     },
   });
 }

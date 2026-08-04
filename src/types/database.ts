@@ -691,6 +691,7 @@ export type Database = {
           id: string
           is_flash_sale: boolean
           material: string | null
+          moderation_reason: string | null
           name: string
           price: number
           sale_price: number | null
@@ -716,6 +717,7 @@ export type Database = {
           id?: string
           is_flash_sale?: boolean
           material?: string | null
+          moderation_reason?: string | null
           name: string
           price: number
           sale_price?: number | null
@@ -741,6 +743,7 @@ export type Database = {
           id?: string
           is_flash_sale?: boolean
           material?: string | null
+          moderation_reason?: string | null
           name?: string
           price?: number
           sale_price?: number | null
@@ -1200,6 +1203,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      set_product_status: {
+        Args: { p_product_id: string; p_reason?: string; p_status: string }
+        Returns: undefined
       }
       send_message: {
         Args: { p_body: string; p_is_bulk?: boolean; p_seller_id?: string | null; p_subject: string }

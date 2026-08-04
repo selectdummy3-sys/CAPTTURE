@@ -71,7 +71,7 @@ export interface Address {
   postal_code: string;
 }
 
-export type ProductStatus = "draft" | "published" | "archived";
+export type ProductStatus = "draft" | "pending" | "published" | "rejected" | "archived";
 export type OrderStatus =
   | "pending"
   | "paid"

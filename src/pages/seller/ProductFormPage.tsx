@@ -45,8 +45,7 @@ export function ProductFormPage() {
   const [flashEnds, setFlashEnds] = useState(
     editing?.flash_sale_ends_at ? editing.flash_sale_ends_at.slice(0, 16) : ""
   );
-  const [status, setStatus] = useState<"draft" | "published">(editing?.status === "published" ? "published" : "draft");
-  const [submitting, setSubmitting] = useState(false);
+  const [status, setStatus] = useState<"draft" | "published">(editing?.status === "published" ? "published" : "draft");  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleNameChange = (value: string) => {
@@ -192,9 +191,25 @@ export function ProductFormPage() {
         <Field label="Status">
           <Select value={status} onChange={(e) => setStatus(e.target.value as "draft" | "published")}>
             <option value="draft">Draft</option>
-            <option value="published">Published</option>
+            <option value="published">Publish for review</option>
           </Select>
+          <p className="mt-1 text-xs text-neutral-500">
+            New and re-submitted products are reviewed by CAPPTURE before going live.
+          </p>
         </Field>
+
+        {editing?.status === "pending" && (
+          <div className="border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+            This product is awaiting admin review. Saving will keep it in the review queue; choose "Publish for
+            review" to re-submit it.
+          </div>
+        )}
+        {editing?.status === "rejected" && (
+          <div className="border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            This product was rejected{editing.moderation_reason ? `: ${editing.moderation_reason}` : "."} Make the
+            required changes, then choose "Publish for review" to submit it again.
+          </div>
+        )}
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 

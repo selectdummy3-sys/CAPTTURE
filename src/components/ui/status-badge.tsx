@@ -25,7 +25,9 @@ const appTones: Record<string, BadgeTone> = {
 
 const productTones: Record<string, BadgeTone> = {
   draft: "neutral",
+  pending: "amber",
   published: "green",
+  rejected: "red",
   archived: "neutral",
 };
 
