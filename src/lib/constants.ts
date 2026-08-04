@@ -28,6 +28,24 @@ export const ORDER_STATUSES = [
 
 export const PAYMENT_METHODS = ["cod", "eft"] as const;
 
+export const SUPPLY_PRODUCT_TYPES = ["physical", "digital", "service"] as const;
+
+export const SUPPLY_ORDER_STATUSES = [
+  "pending",
+  "paid",
+  "processing",
+  "shipped",
+  "delivered",
+  "cancelled",
+  "refunded",
+] as const;
+
+export const SUPPLY_PAYMENT_METHODS = ["online", "eft"] as const;
+
+export const SUPPLY_PAYMENT_STATUSES = ["unpaid", "pending_confirmation", "paid"] as const;
+
+export const SUPPLY_STORAGE_BUCKET = "supply-images";
+
 export const PAYMENT_STATUSES = ["unpaid", "pending_confirmation", "paid"] as const;
 
 export const STORAGE_BUCKETS = {
@@ -80,6 +98,17 @@ export const PRODUCT_STATUS_LABELS: Record<string, string> = {
 
 export const PAYMENT_METHOD_LABELS: Record<string, string> = {
   cod: "Cash on delivery",
+  eft: "Bank transfer (EFT)",
+};
+
+export const SUPPLY_PRODUCT_TYPE_LABELS: Record<string, string> = {
+  physical: "Physical",
+  digital: "Digital",
+  service: "Service",
+};
+
+export const SUPPLY_PAYMENT_METHOD_LABELS: Record<string, string> = {
+  online: "Pay online",
   eft: "Bank transfer (EFT)",
 };
 

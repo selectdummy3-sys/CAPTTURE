@@ -107,6 +107,43 @@ const AdminWithdrawals = lazy(() =>
   import("@/pages/admin/AdminWithdrawals").then((m) => ({ default: m.default }))
 );
 
+const SupplyLayout = lazy(() =>
+  import("@/components/supply/SupplyLayout").then((m) => ({ default: m.SupplyLayout }))
+);
+const SuppliesHomePage = lazy(() =>
+  import("@/pages/supply/SuppliesHomePage").then((m) => ({ default: m.SuppliesHomePage }))
+);
+const SuppliesShopPage = lazy(() =>
+  import("@/pages/supply/SuppliesShopPage").then((m) => ({ default: m.SuppliesShopPage }))
+);
+const SupplyProductPage = lazy(() =>
+  import("@/pages/supply/SupplyProductPage").then((m) => ({ default: m.SupplyProductPage }))
+);
+const SupplyCartPage = lazy(() =>
+  import("@/pages/supply/SupplyCartPage").then((m) => ({ default: m.SupplyCartPage }))
+);
+const SupplyCheckoutPage = lazy(() =>
+  import("@/pages/supply/SupplyCheckoutPage").then((m) => ({ default: m.SupplyCheckoutPage }))
+);
+const SupplyOrdersPage = lazy(() =>
+  import("@/pages/supply/SupplyOrdersPage").then((m) => ({ default: m.SupplyOrdersPage }))
+);
+const SupplySuccessPage = lazy(() =>
+  import("@/pages/supply/SupplySuccessPage").then((m) => ({ default: m.SupplySuccessPage }))
+);
+const AdminSupplyOverview = lazy(() =>
+  import("@/pages/admin/AdminSupplyOverview").then((m) => ({ default: m.AdminSupplyOverview }))
+);
+const AdminSupplyProducts = lazy(() =>
+  import("@/pages/admin/AdminSupplyProducts").then((m) => ({ default: m.AdminSupplyProducts }))
+);
+const AdminSupplyCategories = lazy(() =>
+  import("@/pages/admin/AdminSupplyCategories").then((m) => ({ default: m.AdminSupplyCategories }))
+);
+const AdminSupplyOrders = lazy(() =>
+  import("@/pages/admin/AdminSupplyOrders").then((m) => ({ default: m.AdminSupplyOrders }))
+);
+
 function Loadable({ children }: { children: React.ReactNode }) {
   return <Suspense fallback={<LoadingScreen />}>{children}</Suspense>;
 }
@@ -158,6 +195,16 @@ export function App() {
           <Route path="settings" element={<SellerSettings />} />
         </Route>
 
+        <Route path="/supplies" element={<RequireAuth><RequireSeller><SupplyLayout /></RequireSeller></RequireAuth>}>
+          <Route index element={<SuppliesHomePage />} />
+          <Route path="shop" element={<SuppliesShopPage />} />
+          <Route path="product/:slug" element={<SupplyProductPage />} />
+          <Route path="cart" element={<SupplyCartPage />} />
+          <Route path="checkout" element={<SupplyCheckoutPage />} />
+          <Route path="orders" element={<SupplyOrdersPage />} />
+          <Route path="order/success" element={<SupplySuccessPage />} />
+        </Route>
+
         <Route path="/admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
           <Route index element={<AdminDashboard />} />
           <Route path="products" element={<AdminProducts />} />
@@ -167,6 +214,10 @@ export function App() {
           <Route path="coupons" element={<AdminCoupons />} />
           <Route path="messages" element={<AdminMessages />} />
           <Route path="hero" element={<AdminHero />} />
+          <Route path="supplies" element={<AdminSupplyOverview />} />
+          <Route path="supplies/products" element={<AdminSupplyProducts />} />
+          <Route path="supplies/categories" element={<AdminSupplyCategories />} />
+          <Route path="supplies/orders" element={<AdminSupplyOrders />} />
         </Route>
 
         <Route

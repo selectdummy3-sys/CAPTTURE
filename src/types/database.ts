@@ -1077,6 +1077,256 @@ export type Database = {
           },
         ]
       }
+      supply_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      supply_couriers: {
+        Row: {
+          created_at: string
+          estimated_days: number
+          fee: number
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          estimated_days?: number
+          fee?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          estimated_days?: number
+          fee?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      supply_order_items: {
+        Row: {
+          id: string
+          line_total: number
+          order_id: string
+          price: number
+          product_id: string | null
+          product_image: string | null
+          product_name: string
+          quantity: number
+        }
+        Insert: {
+          id?: string
+          line_total: number
+          order_id: string
+          price: number
+          product_id?: string | null
+          product_image?: string | null
+          product_name: string
+          quantity: number
+        }
+        Update: {
+          id?: string
+          line_total?: number
+          order_id?: string
+          price?: number
+          product_id?: string | null
+          product_image?: string | null
+          product_name?: string
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supply_order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "supply_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supply_order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "supply_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supply_orders: {
+        Row: {
+          courier: string | null
+          created_at: string
+          delivered_at: string | null
+          delivery_fee: number
+          id: string
+          notes: string | null
+          order_number: string
+          payment_method: string
+          payment_status: string
+          seller_id: string
+          shipping_address: Json
+          status: string
+          subtotal: number
+          total: number
+          tracking_number: string | null
+          updated_at: string
+        }
+        Insert: {
+          courier?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          delivery_fee?: number
+          id?: string
+          notes?: string | null
+          order_number?: string
+          payment_method?: string
+          payment_status?: string
+          seller_id: string
+          shipping_address?: Json
+          status?: string
+          subtotal?: number
+          total?: number
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Update: {
+          courier?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          delivery_fee?: number
+          id?: string
+          notes?: string | null
+          order_number?: string
+          payment_method?: string
+          payment_status?: string
+          seller_id?: string
+          shipping_address?: Json
+          status?: string
+          subtotal?: number
+          total?: number
+          tracking_number?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supply_orders_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supply_products: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          delivery_days: number | null
+          description: string | null
+          featured_image: string | null
+          id: string
+          images: string[]
+          is_active: boolean
+          name: string
+          price: number
+          sale_price: number | null
+          sku: string | null
+          slug: string
+          specifications: Json
+          stock: number | null
+          type: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          delivery_days?: number | null
+          description?: string | null
+          featured_image?: string | null
+          id?: string
+          images?: string[]
+          is_active?: boolean
+          name: string
+          price: number
+          sale_price?: number | null
+          sku?: string | null
+          slug: string
+          specifications?: Json
+          stock?: number | null
+          type?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          delivery_days?: number | null
+          description?: string | null
+          featured_image?: string | null
+          id?: string
+          images?: string[]
+          is_active?: boolean
+          name?: string
+          price?: number
+          sale_price?: number | null
+          sku?: string | null
+          slug?: string
+          specifications?: Json
+          stock?: number | null
+          type?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supply_products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "supply_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       user_public: {
@@ -1100,7 +1350,10 @@ export type Database = {
     }
     Functions: {
       current_seller: { Args: never; Returns: string }
+      current_seller_id: { Args: never; Returns: string }
       generate_order_number: { Args: never; Returns: string }
+      generate_supply_order_number: { Args: never; Returns: string }
+      get_supply_stats: { Args: never; Returns: Json }
       get_seller_best_selling_products: {
         Args: { p_limit?: number; p_seller_id: string }
         Returns: Array<{ id: string; name: string; sales: number; revenue: number }>
@@ -1151,6 +1404,7 @@ export type Database = {
       }
       increment_view: { Args: { p_product_id: string }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
+      is_seller_user: { Args: never; Returns: boolean }
       mark_message_read: { Args: { p_message_id: string }; Returns: undefined }
       notify_user: {
         Args: {
@@ -1210,6 +1464,39 @@ export type Database = {
         SetofOptions: {
           from: "*"
           to: "orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      place_supply_order: {
+        Args: {
+          p_courier_id: string | null
+          p_items: Json
+          p_notes?: string
+          p_payment_method?: string
+          p_shipping_address: Json
+        }
+        Returns: {
+          courier: string | null
+          created_at: string
+          delivered_at: string | null
+          delivery_fee: number
+          id: string
+          notes: string | null
+          order_number: string
+          payment_method: string
+          payment_status: string
+          seller_id: string
+          shipping_address: Json
+          status: string
+          subtotal: number
+          total: number
+          tracking_number: string | null
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "supply_orders"
           isOneToOne: true
           isSetofReturn: false
         }

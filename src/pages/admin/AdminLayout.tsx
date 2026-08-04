@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { BadgeCheck, Banknote, ClipboardList, Image, LayoutDashboard, Mail, Package, Ticket } from "lucide-react";
+import { BadgeCheck, Banknote, Boxes, ClipboardList, FolderTree, Image, LayoutDashboard, Mail, Package, ShoppingCart, Ticket } from "lucide-react";
 
 import { usePendingSellersCount, usePendingProductsCount } from "@/hooks/useAdmin";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,11 @@ const links = [
   { to: "/admin/coupons", label: "Coupons", icon: Ticket },
   { to: "/admin/messages", label: "Messages", icon: Mail },
   { to: "/admin/hero", label: "Hero", icon: Image },
+  { divider: true, to: "", label: "Supplies", icon: Boxes },
+  { to: "/admin/supplies", label: "Supply Overview", icon: Boxes, end: true },
+  { to: "/admin/supplies/products", label: "Supply Products", icon: Package },
+  { to: "/admin/supplies/categories", label: "Categories", icon: FolderTree },
+  { to: "/admin/supplies/orders", label: "Supply Orders", icon: ShoppingCart },
 ];
 
 export function AdminLayout() {
@@ -23,7 +28,14 @@ export function AdminLayout() {
       <aside className="lg:w-56 lg:shrink-0">
         <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-wide text-neutral-400">Admin</p>
         <nav className="flex gap-1 overflow-x-auto lg:flex-col scroll-hint-x">
-          {links.map(({ to, label, icon: Icon, end }) => {
+          {links.map(({ to, label, icon: Icon, end, divider }) => {
+            if (divider) {
+              return (
+                <div key={`divider-${label}`} className="mt-4 hidden px-3 text-[10px] font-semibold uppercase tracking-wide text-neutral-400 lg:block">
+                  {label}
+                </div>
+              );
+            }
             const count = to === "/admin/sellers" ? pendingSellers : to === "/admin/products" ? pendingProducts : 0;
             const showBadge = count > 0;
             return (

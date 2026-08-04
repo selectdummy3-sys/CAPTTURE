@@ -17,6 +17,11 @@ export type StoreFollower = Tables<"store_followers">;
 export type RecentlyViewed = Tables<"recently_viewed">;
 export type Message = Tables<"messages">;
 export type WithdrawalRequest = Tables<"withdrawal_requests">;
+export type SupplyCategory = Tables<"supply_categories">;
+export type SupplyCourier = Tables<"supply_couriers">;
+export type SupplyProduct = Tables<"supply_products">;
+export type SupplyOrder = Tables<"supply_orders">;
+export type SupplyOrderItem = Tables<"supply_order_items">;
 
 /** Seller info embedded on products / orders via a join. */
 export type SellerSummary = Pick<
@@ -81,3 +86,58 @@ export type OrderStatus =
   | "delivered"
   | "cancelled"
   | "refunded";
+
+export type SupplyProductType = "physical" | "digital" | "service";
+export type SupplyOrderStatus =
+  | "pending"
+  | "paid"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled"
+  | "refunded";
+export type SupplyPaymentMethod = "online" | "eft";
+export type SupplyPaymentStatus = "unpaid" | "pending_confirmation" | "paid";
+
+export type SupplyAddress = {
+  recipient: string;
+  phone: string;
+  line1: string;
+  line2?: string;
+  city: string;
+  province: string;
+  postal_code: string;
+};
+
+export type SupplyProductWithCategory = SupplyProduct & {
+  category?: Pick<SupplyCategory, "id" | "name" | "slug"> | null;
+};
+
+export type SupplyOrderWithRelations = SupplyOrder & {
+  seller?: Pick<Seller, "id" | "business_name" | "store_username" | "logo_url"> | null;
+  items?: SupplyOrderItem[];
+};
+
+export type SupplyStats = {
+  totalRevenue: number;
+  totalOrders: number;
+  paidOrders: number;
+  pendingOrders: number;
+  revenue30d: number;
+  productsCount: number;
+  activeProducts: number;
+  lowStockCount: number;
+  categoriesCount: number;
+};
+
+export type SupplyCartItem = {
+  productId: string;
+  name: string;
+  slug: string;
+  price: number;
+  originalPrice: number | null;
+  image: string | null;
+  stock: number | null;
+  type: SupplyProductType;
+  quantity: number;
+};
