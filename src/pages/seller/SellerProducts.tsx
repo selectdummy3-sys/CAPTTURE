@@ -51,7 +51,7 @@ export function SellerProducts() {
         </Link>
       </div>
 
-      <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1">
+      <div className="mt-4 relative flex gap-1.5 overflow-x-auto pb-1 scroll-hint-x">
         {TABS.map((t) => (
           <button
             key={t}
@@ -102,23 +102,25 @@ export function SellerProducts() {
                     <p className="mt-0.5 text-xs text-red-600">Rejected: {product.moderation_reason}</p>
                   )}
                 </div>
-                <div className="flex shrink-0 items-center gap-2">
+                <div className="flex shrink-0 items-center gap-2 flex-wrap sm:flex-nowrap">
                   <ProductStatusBadge status={product.status} />
                   {product.status === "published" ? (
                     <Button
                       variant="outline"
                       size="sm"
+                      className="touch-target w-full sm:w-auto"
                       disabled={busyId === product.id}
                       onClick={() => void onToggle(product.id, product.status)}
                     >
                       Unpublish
                     </Button>
                   ) : product.status === "pending" ? (
-                    <span className="px-3 py-1.5 text-xs font-medium text-amber-700">In review</span>
+                    <span className="px-3 py-1.5 text-xs font-medium text-amber-700 touch-target">In review</span>
                   ) : (
                     <Button
                       variant="outline"
                       size="sm"
+                      className="touch-target w-full sm:w-auto"
                       disabled={busyId === product.id}
                       onClick={() => void onToggle(product.id, product.status)}
                     >
@@ -128,7 +130,7 @@ export function SellerProducts() {
                   <Link
                     to={`/seller/products/${product.id}/edit`}
                     aria-label="Edit"
-                    className="p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+                    className="p-2 touch-target text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
                   >
                     <Pencil className="h-4 w-4" />
                   </Link>
@@ -137,7 +139,7 @@ export function SellerProducts() {
                     aria-label="Delete"
                     disabled={busyId === product.id}
                     onClick={() => void onDelete(product.id, product.name)}
-                    className="p-2 text-neutral-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
+                    className="p-2 touch-target text-neutral-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

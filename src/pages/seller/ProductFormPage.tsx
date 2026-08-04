@@ -213,12 +213,12 @@ export function ProductFormPage() {
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <div className="flex gap-3">
-          <Button type="submit" disabled={submitting}>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button type="submit" disabled={submitting} className="w-full sm:w-auto flex-1">
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {editing ? "Save changes" : "Create product"}
           </Button>
-          <Button type="button" variant="outline" onClick={() => navigate("/seller/products")}>
+          <Button type="button" variant="outline" onClick={() => navigate("/seller/products")} className="w-full sm:w-auto">
             Cancel
           </Button>
         </div>

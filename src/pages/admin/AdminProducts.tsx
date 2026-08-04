@@ -80,7 +80,7 @@ export function AdminProducts() {
         <p className="text-sm text-neutral-500">{filtered.length} products</p>
       </div>
 
-      <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1">
+      <div className="mt-4 relative flex gap-1.5 overflow-x-auto pb-1 scroll-hint-x">
         {TABS.map((t) => (
           <button
             key={t}
@@ -149,30 +149,36 @@ export function AdminProducts() {
                     <p className="mt-0.5 text-xs text-red-600">Rejected: {product.moderation_reason}</p>
                   )}
                 </div>
-                <div className="flex shrink-0 items-center gap-1.5">
+                <div className="flex shrink-0 items-center gap-1.5 flex-wrap sm:flex-nowrap">
                   <ProductStatusBadge status={product.status} />
                   {product.images && product.images.length > 0 && (
                     <Button
                       variant="ghost"
                       size="sm"
+                      className="touch-target"
                       onClick={() => setViewImages({ name: product.name, images: product.images })}
                     >
                       <Eye className="h-4 w-4" />
+                      <span className="sr-only">View images</span>
                     </Button>
                   )}
                   {product.status === "pending" ? (
-                    <>
+                    <div className="flex flex-col sm:flex-row gap-1.5 flex-1 sm:flex-none">
                       <Button
                         variant="primary"
                         size="sm"
+                        className="touch-target w-full sm:w-auto"
                         disabled={busyId === product.id}
                         onClick={() => void run(product.id, "published")}
                       >
-                        <Check className="h-4 w-4" /> Approve
+                        <Check className="h-4 w-4" />
+                        <span className="hidden sm:inline">Approve</span>
+                        <span className="sm:hidden">Approve</span>
                       </Button>
                       <Button
                         variant="danger-outline"
                         size="sm"
+                        className="touch-target w-full sm:w-auto"
                         disabled={busyId === product.id}
                         onClick={() => {
                           setReason("");
@@ -180,32 +186,40 @@ export function AdminProducts() {
                           setRejectTarget(product);
                         }}
                       >
-                        <X className="h-4 w-4" /> Reject
+                        <X className="h-4 w-4" />
+                        <span className="hidden sm:inline">Reject</span>
+                        <span className="sm:hidden">Reject</span>
                       </Button>
-                    </>
+                    </div>
                   ) : product.status === "rejected" ? (
-                    <>
+                    <div className="flex flex-col sm:flex-row gap-1.5 flex-1 sm:flex-none">
                       <Button
                         variant="primary"
                         size="sm"
+                        className="touch-target w-full sm:w-auto"
                         disabled={busyId === product.id}
                         onClick={() => void run(product.id, "published")}
                       >
-                        <Check className="h-4 w-4" /> Approve
+                        <Check className="h-4 w-4" />
+                        <span className="hidden sm:inline">Approve</span>
+                        <span className="sm:hidden">Approve</span>
                       </Button>
                       <Button
                         variant="danger-outline"
                         size="sm"
+                        className="touch-target w-full sm:w-auto"
                         disabled={busyId === product.id}
                         onClick={() => void run(product.id, "draft")}
                       >
-                        Move to draft
+                        <span className="hidden sm:inline">Move to draft</span>
+                        <span className="sm:hidden">Draft</span>
                       </Button>
-                    </>
+                    </div>
                   ) : (
                     <Button
                       variant="outline"
                       size="sm"
+                      className="touch-target w-full sm:w-auto"
                       disabled={busyId === product.id}
                       onClick={() => void run(product.id, product.status === "published" ? "draft" : "published")}
                     >
@@ -217,7 +231,7 @@ export function AdminProducts() {
                     aria-label="Delete"
                     disabled={busyId === product.id}
                     onClick={() => void onDelete(product.id, product.name)}
-                    className="p-2 text-neutral-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
+                    className="p-2 touch-target text-neutral-500 hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

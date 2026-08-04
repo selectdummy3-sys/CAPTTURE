@@ -101,4 +101,39 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  /* Mobile touch targets */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Scroll shadow hints for horizontal scroll areas */
+  .scroll-hint-x {
+    background-image: linear-gradient(to right, transparent, white 80%);
+  }
+  .scroll-hint-x:not(:hover)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 32px;
+    background: linear-gradient(to right, transparent, white);
+    pointer-events: none;
+  }
+
+  /* Mobile dialog full width */
+  @media (max-width: 639px) {
+    .mobile-full-width {
+      width: 100%;
+    }
+    .mobile-stack > * + * {
+      margin-top: 0.5rem;
+    }
+    .mobile-stack-reverse {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+  }
 }
