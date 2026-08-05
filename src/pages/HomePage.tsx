@@ -23,7 +23,7 @@ export function HomePage() {
     <div className="pb-20">
       {/* Hero */}
       <section className="bg-neutral-950 text-white">
-        <div className="mx-auto grid max-w-1440 items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:py-20">
+        <div className="mx-auto grid max-w-1440 items-center gap-10 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-16">
           <div>
             <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
               {hero?.title ? (
@@ -56,28 +56,28 @@ export function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="relative hidden lg:block">
+          <div className="relative hidden aspect-[4/3] lg:block">
             {hero?.image_url ? (
               <img
                 src={hero.image_url.startsWith("http") ? hero.image_url : supabase.storage.from("store-assets").getPublicUrl(hero.image_url).data.publicUrl}
                 alt={hero.title}
-                className="w-full object-cover"
+                className="h-full w-full object-cover"
                 style={{ objectPosition: hero.image_position || "center" }}
               />
             ) : (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid h-full grid-cols-2 gap-4">
                 <div className="space-y-4">
                   <img
                     src="https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=800&auto=format&fit=crop"
                     alt="Fashion product"
-                    className="aspect-[3/4] w-full object-cover"
+                    className="h-full w-full object-cover"
                   />
                 </div>
                 <div className="mt-8 space-y-4">
                   <img
                     src="https://images.unsplash.com/photo-1524593689594-eae072f5bd3f?q=80&w=800&auto=format&fit=crop"
                     alt="Sneakers"
-                    className="aspect-[3/4] w-full object-cover"
+                    className="h-full w-full object-cover"
                   />
                 </div>
               </div>
