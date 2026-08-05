@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Instagram, Facebook, Twitter, Mail } from "lucide-react";
+import { MapPin, Mail } from "lucide-react";
 
 import { Logo } from "@/components/ui/logo";
 
@@ -21,51 +21,72 @@ const columns = [
     ],
   },
   {
-    title: "Help",
+    title: "Support",
     links: [
+      { label: "Help centre", to: "/help" },
       { label: "Delivery & returns", to: "/help" },
-      { label: "FAQ", to: "/help" },
       { label: "Contact us", to: "/contact" },
     ],
   },
 ];
 
+const paymentMethods = ["Cash on delivery", "EFT"];
+
 export function Footer() {
   return (
     <footer className="border-t border-neutral-800 bg-neutral-950 text-neutral-300">
-      <div className="mx-auto max-w-1440 px-4 py-14 sm:px-6">
-        <div className="grid gap-10 md:grid-cols-5">
-          <div className="md:col-span-2">
+      <div className="h-1 bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700" />
+      <div className="mx-auto max-w-1440 px-4 pb-8 pt-16 sm:px-6">
+        <div className="grid gap-12 md:grid-cols-12">
+          <div className="md:col-span-4">
             <div className="[&_span]:text-white">
               <Logo size="md" />
             </div>
-            <p className="mt-4 max-w-sm text-sm text-neutral-400">
+            <p className="mt-4 max-w-sm text-sm leading-relaxed text-neutral-400">
               South Africa's marketplace for homegrown fashion. Discover independent
-              designers, tailors and sneakerheads — all in one place.
+              designers, tailors and sneaker sellers, all in one place.
             </p>
-            <div className="mt-5 flex items-center gap-3">
-              <a href="#" aria-label="Instagram" className="bg-neutral-800 p-2 hover:bg-neutral-700">
-                <Instagram className="h-4 w-4" />
+
+            <div className="mt-6 space-y-3 text-sm">
+              <a
+                href="mailto:hello@cappture.co.za"
+                className="group flex items-center gap-3 text-neutral-400 transition-colors hover:text-white"
+              >
+                <span className="grid h-9 w-9 shrink-0 place-items-center bg-neutral-800 transition-colors group-hover:bg-brand-600">
+                  <Mail className="h-4 w-4" />
+                </span>
+                hello@cappture.co.za
               </a>
-              <a href="#" aria-label="Facebook" className="bg-neutral-800 p-2 hover:bg-neutral-700">
-                <Facebook className="h-4 w-4" />
+              <a
+                href="mailto:support@cappture.co.za"
+                className="group flex items-center gap-3 text-neutral-400 transition-colors hover:text-white"
+              >
+                <span className="grid h-9 w-9 shrink-0 place-items-center bg-neutral-800 transition-colors group-hover:bg-brand-600">
+                  <Mail className="h-4 w-4" />
+                </span>
+                support@cappture.co.za
               </a>
-              <a href="#" aria-label="Twitter" className="bg-neutral-800 p-2 hover:bg-neutral-700">
-                <Twitter className="h-4 w-4" />
-              </a>
-              <a href="mailto:hello@cappture.co.za" aria-label="Email" className="bg-neutral-800 p-2 hover:bg-neutral-700">
-                <Mail className="h-4 w-4" />
-              </a>
+              <p className="flex items-center gap-3 text-neutral-400">
+                <span className="grid h-9 w-9 shrink-0 place-items-center bg-neutral-800">
+                  <MapPin className="h-4 w-4" />
+                </span>
+                Johannesburg, South Africa
+              </p>
             </div>
           </div>
 
           {columns.map((col) => (
-            <div key={col.title}>
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-white">{col.title}</h3>
-              <ul className="mt-4 space-y-2.5">
+            <div key={col.title} className="md:col-span-2">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+                {col.title}
+              </h3>
+              <ul className="mt-5 space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
-                    <Link to={link.to} className="text-sm text-neutral-400 hover:text-white">
+                    <Link
+                      to={link.to}
+                      className="text-sm text-neutral-400 transition-colors hover:text-white hover:underline hover:underline-offset-4"
+                    >
                       {link.label}
                     </Link>
                   </li>
@@ -73,13 +94,44 @@ export function Footer() {
               </ul>
             </div>
           ))}
+
+          <div className="md:col-span-2">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+              Pay your way
+            </h3>
+            <ul className="mt-5 space-y-2.5">
+              {paymentMethods.map((method) => (
+                <li
+                  key={method}
+                  className="inline-flex items-center rounded-full border border-neutral-700 bg-neutral-900 px-3 py-1 text-xs font-medium text-neutral-300"
+                >
+                  {method}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-5 text-xs leading-relaxed text-neutral-500">
+              No card? No problem. Pay the maker in cash when your order arrives, or transfer
+              by EFT before dispatch.
+            </p>
+          </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-neutral-800 pt-6 sm:flex-row">
+        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-neutral-800 pt-6 sm:flex-row">
           <p className="text-xs text-neutral-500">
             © {new Date().getFullYear()} CAPPTURE (Pty) Ltd. All rights reserved.
           </p>
-          <p className="text-xs text-neutral-500">Proudly South African 🇿🇦</p>
+          <div className="flex items-center gap-4 text-xs text-neutral-500">
+            <Link to="/terms" className="transition-colors hover:text-white">
+              Terms
+            </Link>
+            <Link to="/privacy" className="transition-colors hover:text-white">
+              Privacy
+            </Link>
+            <Link to="/help" className="transition-colors hover:text-white">
+              Help
+            </Link>
+          </div>
+          <p className="text-xs font-medium text-neutral-400">Proudly South African</p>
         </div>
       </div>
     </footer>

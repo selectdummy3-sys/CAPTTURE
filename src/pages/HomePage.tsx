@@ -54,9 +54,6 @@ export function HomePage() {
               >
                 {hero?.cta_text || "Shop the drop"} <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link to="/sell" className={buttonClass("outline", "lg", "border-white/30 text-white hover:bg-white/10")}>
-                Sell on CAPPTURE
-              </Link>
             </div>
           </div>
           <div className="relative hidden lg:block">
