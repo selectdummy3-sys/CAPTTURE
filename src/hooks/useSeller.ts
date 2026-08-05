@@ -218,6 +218,7 @@ export function useUpdateSellerProfile() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["seller-profile"] });
       void queryClient.invalidateQueries({ queryKey: ["auth-profile"] });
+      void queryClient.invalidateQueries({ queryKey: ["stores"] });
     },
   });
 }
