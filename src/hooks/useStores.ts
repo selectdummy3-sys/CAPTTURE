@@ -11,6 +11,19 @@ export interface StoreWithStats extends Seller {
 
 const storeSelect = "*, followers:store_followers(count), products:products(count)";
 
+type StoreRow = Omit<StoreWithStats, "followers_count" | "products_count"> & {
+  followers?: { count: number }[] | null;
+  products?: { count: number }[] | null;
+};
+
+function mapStoreStats(row: StoreRow): StoreWithStats {
+  return {
+    ...row,
+    followers_count: row.followers?.[0]?.count ?? 0,
+    products_count: row.products?.[0]?.count ?? 0,
+  };
+}
+
 export function useApprovedSellers(limit = 12) {
   return useQuery({
     queryKey: ["stores", "approved", limit],
@@ -23,7 +36,7 @@ export function useApprovedSellers(limit = 12) {
         .order("created_at", { ascending: false })
         .limit(limit);
       if (error) throw error;
-      return (data ?? []) as unknown as StoreWithStats[];
+      return ((data ?? []) as unknown as StoreRow[]).map(mapStoreStats);
     },
     staleTime: 5 * 60 * 1000,
   });
@@ -41,7 +54,7 @@ export function useStore(username: string | undefined) {
         .eq("application_status", "approved")
         .maybeSingle();
       if (error) throw error;
-      return (data ?? null) as unknown as StoreWithStats | null;
+      return data ? mapStoreStats(data as unknown as StoreRow) : null;
     },
     enabled: Boolean(username),
   });
