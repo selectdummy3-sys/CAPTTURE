@@ -77,7 +77,7 @@ export function StorePage() {
   return (
     <div className="pb-20">
       <div className="relative h-40 bg-neutral-200 sm:h-52">
-        {banner && <img src={banner} alt="" className="h-full w-full object-contain" />}
+        {banner && <img src={banner} alt="" className="h-full w-full object-cover" />}
       </div>
 
       <div className="mx-auto max-w-1440 px-4 sm:px-6">
