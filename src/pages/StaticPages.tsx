@@ -4,8 +4,8 @@ const CONTENT: Record<string, { title: string; body: string[] }> = {
   about: {
     title: "About CAPTTURE",
     body: [
-      "CAPTTURE is a South African fashion marketplace built for homegrown creators. We connect independent designers, tailors and sneaker sellers directly with customers across the country.",
-      "Every store on CAPTTURE is vetted before it can sell. Orders ship directly from the maker to your door, with cash-on-delivery and EFT as the payment options.",
+      "CAPTTURE is a South African fashion marketplace built for homegrown creators. We connect independent designers and tailors directly with customers across the country.",
+      "Every store on CAPTTURE is vetted before it can sell. Orders ship directly from the maker to your door, paid by EFT.",
       "We're proudly South African, and we believe local fashion deserves a stage. This is it.",
     ],
   },
@@ -15,7 +15,7 @@ const CONTENT: Record<string, { title: string; body: string[] }> = {
       "These terms govern your use of the CAPTTURE marketplace. By creating an account or placing an order you agree to them.",
       "Orders placed on CAPTTURE are fulfilled by independent sellers. CAPTTURE facilitates the transaction and provides buyer protection against orders that never arrive or are materially not as described.",
       "Sellers are responsible for the accuracy of their listings, the quality of their products and dispatch within the stated timeframe.",
-      "Payment is via cash on delivery or EFT. EFT orders are confirmed once payment reflects; COD orders are payable in cash at delivery.",
+      "Payment is by EFT. Orders are confirmed once payment reflects in the seller's bank account.",
     ],
   },
   privacy: {
@@ -31,7 +31,7 @@ const CONTENT: Record<string, { title: string; body: string[] }> = {
     body: [
       "Delivery: orders ship from each seller, with a flat R60 shipping fee per order and free shipping on orders over R1,000.",
       "Returns: if an item arrives damaged or not as described, raise it via your order within 7 days and we'll help you resolve it.",
-      "Payments: choose cash on delivery or EFT at checkout. EFT orders need to be confirmed once payment reflects.",
+      "Payments: choose EFT at checkout. Orders are confirmed once payment reflects.",
       "Still stuck? Email hello@cappture.co.za and a human will get back to you.",
     ],
   },

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { CheckCircle2, CreditCard, Banknote } from "lucide-react";
+import { CheckCircle2, CreditCard } from "lucide-react";
 
 import { buttonClass } from "@/components/ui/button";
 import { formatZAR } from "@/lib/utils";
@@ -13,7 +13,6 @@ interface SuccessState {
 export function OrderSuccessPage() {
   const { state } = useLocation() as { state: SuccessState | null };
   const numbers = state?.orderNumbers ?? [];
-  const method = state?.paymentMethod ?? "cod";
   const total = state?.grandTotal ?? 0;
 
   return (
@@ -38,15 +37,7 @@ export function OrderSuccessPage() {
             </div>
             <p className="mt-2 text-neutral-500">Total: <span className="font-semibold text-neutral-900">{formatZAR(total)}</span></p>
             <div className="mt-3 flex items-center justify-center gap-2 text-neutral-600">
-              {method === "cod" ? (
-                <>
-                  <Banknote className="h-4 w-4" /> Pay <span className="font-medium">cash on delivery</span>
-                </>
-              ) : (
-                <>
-                  <CreditCard className="h-4 w-4" /> Awaiting EFT confirmation
-                </>
-              )}
+              <CreditCard className="h-4 w-4" /> Awaiting EFT confirmation
             </div>
           </div>
         )}

@@ -30,7 +30,7 @@ const columns = [
   },
 ];
 
-const paymentMethods = ["Cash on delivery", "EFT"];
+const paymentMethods = ["EFT"];
 
 export function Footer() {
   return (
@@ -44,7 +44,7 @@ export function Footer() {
             </div>
             <p className="mt-4 max-w-sm text-sm leading-relaxed text-neutral-400">
               South Africa's marketplace for homegrown fashion. Discover independent
-              designers, tailors and sneaker sellers, all in one place.
+              designers and tailors, all in one place.
             </p>
 
             <div className="mt-6 space-y-3 text-sm">
@@ -110,8 +110,7 @@ export function Footer() {
               ))}
             </ul>
             <p className="mt-5 text-xs leading-relaxed text-neutral-500">
-              No card? No problem. Pay the maker in cash when your order arrives, or transfer
-              by EFT before dispatch.
+              No card? No problem. Pay the maker securely by EFT before dispatch.
             </p>
           </div>
         </div>

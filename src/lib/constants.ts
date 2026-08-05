@@ -26,7 +26,7 @@ export const ORDER_STATUSES = [
   "refunded",
 ] as const;
 
-export const PAYMENT_METHODS = ["cod", "eft"] as const;
+export const PAYMENT_METHODS = ["eft"] as const;
 
 export const SUPPLY_PRODUCT_TYPES = ["physical", "digital", "service"] as const;
 

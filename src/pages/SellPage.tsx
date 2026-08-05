@@ -23,7 +23,7 @@ const steps = [
 ];
 
 const benefits = [
-  "COD and EFT supported — no card gateway needed",
+  "EFT supported — no card gateway needed",
   "Only 8% commission on successful sales",
   "Free store page with your own handle",
   "Built-in order management dashboard",

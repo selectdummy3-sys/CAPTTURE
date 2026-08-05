@@ -194,7 +194,7 @@ export function CartPage() {
             Checkout · {formatZAR(total)}
           </Button>
           <p className="mt-3 text-center text-xs text-neutral-400">
-            Cash on delivery and EFT accepted
+            EFT accepted
           </p>
         </aside>
       </div>

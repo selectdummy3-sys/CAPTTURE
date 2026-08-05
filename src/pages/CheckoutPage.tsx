@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Banknote, CreditCard, Loader2, PackageCheck } from "lucide-react";
+import { CreditCard, Loader2, PackageCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { PROVINCES } from "@/lib/constants";
-import { cn, formatZAR } from "@/lib/utils";
+import { formatZAR } from "@/lib/utils";
 import type { Json } from "@/types/database";
 
 const FREE_SHIPPING_ABOVE = 1000;
@@ -48,7 +48,7 @@ export function CheckoutPage() {
   const clearCart = useCartStore((s) => s.clear);
   const navigate = useNavigate();
 
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "eft">("cod");
+  const paymentMethod = "eft" as const;
   const [couponCode, setCouponCode] = useState("");
   const [appliedCode, setAppliedCode] = useState("");
   const [notes, setNotes] = useState("");
@@ -234,41 +234,18 @@ export function CheckoutPage() {
           {/* Payment */}
           <section className="border border-neutral-200 p-5">
             <h2 className="font-semibold text-neutral-900">Payment method</h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => setPaymentMethod("cod")}
-                className={cn(
-                  "flex items-start gap-3 border p-4 text-left transition-colors",
-                  paymentMethod === "cod" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
-                )}
-              >
-                <Banknote className="mt-0.5 h-5 w-5 text-neutral-500" />
-                <div>
-                  <p className="font-medium text-neutral-900">Cash on delivery</p>
-                  <p className="text-xs text-neutral-500">Pay in cash when your order arrives</p>
-                </div>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPaymentMethod("eft")}
-                className={cn(
-                  "flex items-start gap-3 border p-4 text-left transition-colors",
-                  paymentMethod === "eft" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
-                )}
-              >
+            <div className="mt-4">
+              <div className="flex items-start gap-3 border border-brand-500 bg-brand-50 p-4">
                 <CreditCard className="mt-0.5 h-5 w-5 text-neutral-500" />
                 <div>
                   <p className="font-medium text-neutral-900">EFT / bank transfer</p>
                   <p className="text-xs text-neutral-500">We'll confirm once your payment reflects</p>
                 </div>
-              </button>
-            </div>
-            {paymentMethod === "eft" && (
+              </div>
               <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
                 Bank details will be shown on your order confirmation. Please use your order number as the payment reference.
               </p>
-            )}
+            </div>
           </section>
 
           {/* Notes */}

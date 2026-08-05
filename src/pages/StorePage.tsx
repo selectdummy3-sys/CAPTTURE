@@ -77,13 +77,13 @@ export function StorePage() {
   return (
     <div className="pb-20">
       <div className="relative h-40 bg-neutral-200 sm:h-52">
-        {banner && <img src={banner} alt="" className="h-full w-full object-cover" />}
+        {banner && <img src={banner} alt="" className="h-full w-full object-contain" />}
       </div>
 
       <div className="mx-auto max-w-1440 px-4 sm:px-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div className="flex items-center gap-3">
-            <div className="relative z-10 flex h-16 w-16 items-center justify-center overflow-hidden border-4 border-white bg-white shadow-lg sm:h-20 sm:w-20">
+            <div className="relative z-10 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-white shadow-lg sm:h-20 sm:w-20">
               {logo ? (
                 <img src={logo} alt={store.business_name} className="h-full w-full rounded-full object-cover" />
               ) : (

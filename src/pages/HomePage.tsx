@@ -45,7 +45,7 @@ export function HomePage() {
               )}
             </h1>
             <p className="mt-5 max-w-lg text-lg text-neutral-400">
-              {hero?.subtitle || "Shop South African designers, tailors and sneaker sellers. Direct from the maker to your door — with COD and EFT that just works."}
+              {hero?.subtitle || "Shop South African designers and tailors. Direct from the maker to your door — paid by EFT."}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -75,8 +75,8 @@ export function HomePage() {
                 </div>
                 <div className="mt-8 space-y-4">
                   <img
-                    src="https://images.unsplash.com/photo-1524593689594-eae072f5bd3f?q=80&w=800&auto=format&fit=crop"
-                    alt="Sneakers"
+                    src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=800&auto=format&fit=crop"
+                    alt="Hoodie"
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -104,7 +104,7 @@ export function HomePage() {
             </div>
             <div>
               <p className="text-sm font-semibold text-neutral-900">Pay your way</p>
-              <p className="text-xs text-neutral-500">Cash on delivery or EFT</p>
+              <p className="text-xs text-neutral-500">Bank transfer (EFT)</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
