@@ -46,15 +46,12 @@ export function useSupplyCategories() {
   });
 }
 
-export function useSupplyProducts(opts?: { categorySlug?: string; search?: string; sort?: string }) {
+export function useSupplyProducts(opts?: { search?: string; sort?: string }) {
   return useQuery({
-    queryKey: ["supply", "products", opts?.categorySlug ?? "all", opts?.search ?? "", opts?.sort ?? "newest"],
+    queryKey: ["supply", "products", opts?.search ?? "", opts?.sort ?? "newest"],
     queryFn: async () => {
       let q = supabase.from("supply_products").select(supplyProductSelect).eq("is_active", true);
 
-      if (opts?.categorySlug) {
-        q = q.eq("category.slug", opts.categorySlug);
-      }
       if (opts?.search) {
         q = q.ilike("name", `%${opts.search}%`);
       }

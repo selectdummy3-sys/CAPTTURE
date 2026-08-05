@@ -25,10 +25,14 @@ export function SuppliesShopPage() {
 
   const { data: categories } = useSupplyCategories();
   const { data: products, isLoading } = useSupplyProducts({
-    categorySlug: category || undefined,
     search: search || undefined,
     sort,
   });
+
+  const filteredProducts = useMemo(() => {
+    if (!category) return products ?? [];
+    return (products ?? []).filter((product) => product.category?.slug === category);
+  }, [products, category]);
 
   const activeCategory = useMemo(
     () => categories?.find((c) => c.slug === category) ?? null,
@@ -104,7 +108,7 @@ export function SuppliesShopPage() {
             <Skeleton key={i} className="aspect-[4/5]" />
           ))}
         </div>
-      ) : (products ?? []).length === 0 ? (
+      ) : filteredProducts.length === 0 ? (
         <EmptyState
           icon={<PackageSearch className="h-10 w-10" />}
           title="No supplies found"
@@ -113,7 +117,7 @@ export function SuppliesShopPage() {
         />
       ) : (
         <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
-          {(products ?? []).map((product) => (
+          {filteredProducts.map((product) => (
             <SupplyProductCard key={product.id} product={product} />
           ))}
         </div>
