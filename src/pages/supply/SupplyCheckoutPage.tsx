@@ -3,10 +3,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
-import { Banknote, CreditCard, PackageCheck, Truck } from "lucide-react";
+import { Banknote, CreditCard, PackageCheck, Truck, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useSellerBalance } from "@/hooks/useWithdrawals";
 import { supplyImageUrl, useSupplyCouriers, usePlaceSupplyOrder } from "@/hooks/useSupply";
 import {
   supplyHasPhysical,
@@ -35,16 +36,18 @@ const addressSchema = z.object({
 type AddressValues = z.infer<typeof addressSchema>;
 
 export function SupplyCheckoutPage() {
-  const { profile } = useAuth();
+  const { profile, isApprovedSeller } = useAuth();
   const items = useSupplyCartStore((s) => s.items);
   const clearCart = useSupplyCartStore((s) => s.clear);
   const subtotal = useSupplyCartSubtotal();
   const navigate = useNavigate();
 
-  const [paymentMethod, setPaymentMethod] = useState<"online" | "eft">("online");
+  const [paymentMethod, setPaymentMethod] = useState<"online" | "eft" | "wallet">("online");
   const [courierId, setCourierId] = useState<string>("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const { data: walletBalance = 0 } = useSellerBalance();
 
   const placeOrder = usePlaceSupplyOrder();
 
@@ -84,6 +87,10 @@ export function SupplyCheckoutPage() {
     }
     if (hasPhysical && !courierId) {
       toast.error("Please select a courier");
+      return;
+    }
+    if (paymentMethod === "wallet" && walletBalance < total) {
+      toast.error("Your wallet balance is less than the order total");
       return;
     }
     setSubmitting(true);
@@ -243,11 +250,36 @@ export function SupplyCheckoutPage() {
                   <p className="text-xs text-neutral-500">We'll confirm once your payment reflects</p>
                 </div>
               </button>
+              {isApprovedSeller ? (
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod("wallet")}
+                  className={cn(
+                    "flex items-start gap-3 border p-4 text-left transition-colors",
+                    paymentMethod === "wallet"
+                      ? "border-brand-500 bg-brand-50"
+                      : "border-neutral-200 hover:border-neutral-300"
+                  )}
+                >
+                  <Wallet className="mt-0.5 h-5 w-5 text-neutral-500" />
+                  <div>
+                    <p className="font-medium text-neutral-900">Pay with balance</p>
+                    <p className="text-xs text-neutral-500">
+                      Available: {formatZAR(walletBalance)}
+                    </p>
+                  </div>
+                </button>
+              ) : null}
             </div>
             {paymentMethod === "eft" && (
               <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
                 Bank details will be shown on your order confirmation. Please use your order number as
                 the payment reference.
+              </p>
+            )}
+            {paymentMethod === "wallet" && (
+              <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
+                Your wallet balance will be debited immediately when the order is placed.
               </p>
             )}
           </section>
@@ -307,10 +339,12 @@ export function SupplyCheckoutPage() {
           </dl>
 
           <Button type="submit" variant="accent" size="lg" className="mt-5 w-full" loading={submitting}>
-            Place order · {formatZAR(total)}
+            {paymentMethod === "wallet"
+              ? `Pay with balance · ${formatZAR(total)}`
+              : `Place order · ${formatZAR(total)}`}
           </Button>
           <p className="mt-2 text-center text-xs text-neutral-400">
-            Digital items unlock instantly after an online payment.
+            Digital items unlock instantly after an online or wallet payment.
           </p>
         </aside>
       </form>

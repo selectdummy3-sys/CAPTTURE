@@ -50,6 +50,16 @@ export function SupplySuccessPage() {
         </div>
       )}
 
+      {state.paymentMethod === "wallet" && (
+        <div className="mt-4 rounded border border-green-100 bg-green-50 p-4 text-left text-sm text-green-800">
+          <p className="font-semibold">Paid from your wallet balance</p>
+          <p className="mt-1">
+            Your order is paid in full. The amount was deducted from your seller wallet balance
+            immediately.
+          </p>
+        </div>
+      )}
+
       {state.hasPhysical && state.paymentMethod === "online" && (
         <div className="mt-4 rounded border border-blue-100 bg-blue-50 p-4 text-left text-sm text-blue-800">
           <p className="flex items-center gap-2 font-semibold">

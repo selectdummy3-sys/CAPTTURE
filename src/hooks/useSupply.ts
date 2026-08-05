@@ -142,7 +142,7 @@ export function usePlaceSupplyOrder() {
       items: Array<{ product_id: string; quantity: number }>;
       shippingAddress: Address;
       courierId: string | null;
-      paymentMethod: "online" | "eft";
+      paymentMethod: "online" | "eft" | "wallet";
       notes?: string;
     }) => {
       const { data, error } = await supabase.rpc("place_supply_order", {
@@ -158,10 +158,14 @@ export function usePlaceSupplyOrder() {
       if (error) throw new Error(error.message);
       return data as SupplyOrder;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({ queryKey: ["supply", "orders"] });
       void queryClient.invalidateQueries({ queryKey: ["supply", "products"] });
       void queryClient.invalidateQueries({ queryKey: ["supply", "stats"] });
+      if (variables.paymentMethod === "wallet") {
+        void queryClient.invalidateQueries({ queryKey: ["seller", "balance"] });
+        void queryClient.invalidateQueries({ queryKey: ["seller-earnings"] });
+      }
     },
   });
 }

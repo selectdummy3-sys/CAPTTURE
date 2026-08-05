@@ -20,6 +20,7 @@ const paymentTones: Record<string, BadgeTone> = {
 const methodTones: Record<string, BadgeTone> = {
   online: "brand",
   eft: "neutral",
+  wallet: "green",
 };
 
 export function SupplyOrderStatusBadge({ status }: { status: string }) {
