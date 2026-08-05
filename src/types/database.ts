@@ -1550,6 +1550,8 @@ export type Database = {
         Args: { p_body: string; p_is_bulk?: boolean; p_seller_id?: string | null; p_subject: string }
         Returns: string | null
       }
+      track_product_view: { Args: { p_product_id: string }; Returns: undefined }
+      track_store_visit: { Args: { p_seller_id: string }; Returns: undefined }
       delete_seller: { Args: { p_seller_id: string }; Returns: undefined }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }

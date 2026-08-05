@@ -391,19 +391,26 @@ export function useLowStockProducts() {
 
 export function useTodaySales() {
   const { seller } = useAuth();
-  return useQuery<number>({
+  return useQuery<{ today: number; yesterday: number }>({
     queryKey: ["seller-stats", "today-sales", seller?.id],
     queryFn: async () => {
-      if (!seller) return 0;
+      if (!seller) return { today: 0, yesterday: 0 };
       const today = new Date().toISOString().split("T")[0];
+      const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
       const { data, error } = await supabase
         .from("orders")
-        .select("total")
+        .select("total, created_at")
         .eq("seller_id", seller.id)
-        .gte("created_at", today)
+        .gte("created_at", yesterday)
         .in("status", ["paid", "processing", "shipped", "delivered"]);
       if (error) throw error;
-      return (data ?? []).reduce((acc, o) => acc + o.total, 0);
+      let todayTotal = 0;
+      let yesterdayTotal = 0;
+      for (const order of data ?? []) {
+        if (order.created_at.slice(0, 10) >= today) todayTotal += order.total;
+        else yesterdayTotal += order.total;
+      }
+      return { today: todayTotal, yesterday: yesterdayTotal };
     },
     enabled: Boolean(seller),
     refetchInterval: 60000,

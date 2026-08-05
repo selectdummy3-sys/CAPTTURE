@@ -1,5 +1,5 @@
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { BarChart3, DollarSign, Eye, ShoppingBag, UserCheck } from "lucide-react";
+import { DollarSign, Eye, ShoppingBag, UserCheck } from "lucide-react";
 
 import { useSellerAnalytics, type AnalyticsDataPoint } from "@/hooks/useSellerDashboard";
 import { StatCard } from "@/components/ui/stat-card";
@@ -193,11 +193,6 @@ export function SellerAnalytics() {
           <SalesChart data={monthlySales.data ?? []} />
         </ChartCard>
       </div>
-
-      <p className="flex items-center gap-1.5 text-xs text-neutral-400">
-        <BarChart3 className="h-3.5 w-3.5" />
-        Charts update every few minutes. View and store-visit figures are estimates.
-      </p>
     </div>
   );
 }

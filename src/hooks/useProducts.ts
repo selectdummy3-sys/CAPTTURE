@@ -234,7 +234,7 @@ export function useIncrementView() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.rpc("increment_view", { p_product_id: id });
+      const { error } = await supabase.rpc("track_product_view", { p_product_id: id });
       if (error) throw error;
     },
     onSuccess: () => {

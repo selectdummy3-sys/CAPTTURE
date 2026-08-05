@@ -22,6 +22,10 @@ export function SellerDashboard() {
   const stats = useSellerStats();
   const { data: recentOrders = [], isLoading: ordersLoading } = useSellerOrders();
   const todaySales = useTodaySales();
+  const today = todaySales.data?.today ?? 0;
+  const yesterday = todaySales.data?.yesterday ?? 0;
+  const delta =
+    yesterday > 0 ? Math.round(((today - yesterday) / yesterday) * 100) : null;
   const monthlyRevenue = useMonthlyRevenue();
   const storeViews = useStoreViews();
   const lowStock = useLowStockProducts();
@@ -44,9 +48,9 @@ export function SellerDashboard() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Today's Sales"
-          value={formatCompactZAR(todaySales.data ?? 0)}
+          value={formatCompactZAR(today)}
           icon={<DollarSign className="h-5 w-5 text-green-600" />}
-          hint="+12% vs yesterday"
+          hint={delta != null ? (delta >= 0 ? "+" : "") + delta + "% vs yesterday" : undefined}
         />
         <StatCard
           label="Monthly Revenue"

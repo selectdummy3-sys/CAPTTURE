@@ -46,7 +46,9 @@ export function ImageUpload({
   const urls = useMemo(
     () =>
       value.map((path) =>
-        supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl
+        path.startsWith("http")
+          ? path
+          : supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl
       ),
     [value, bucket]
   );

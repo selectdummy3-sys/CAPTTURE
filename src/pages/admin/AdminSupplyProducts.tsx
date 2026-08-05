@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Field } from "@/components/form/Field";
+import { ImageUpload } from "@/components/ui/image-upload";
 import { SUPPLY_PRODUCT_TYPES, SUPPLY_PRODUCT_TYPE_LABELS } from "@/lib/constants";
 import { cn, discountPercent, formatZAR, slugify } from "@/lib/utils";
 import { toast } from "sonner";
@@ -33,7 +34,7 @@ interface ProductForm {
   sku: string;
   deliveryDays: string;
   isActive: boolean;
-  featuredImage: string;
+  images: string[];
 }
 
 const DEFAULT_FORM: ProductForm = {
@@ -48,7 +49,7 @@ const DEFAULT_FORM: ProductForm = {
   sku: "",
   deliveryDays: "",
   isActive: true,
-  featuredImage: "",
+  images: [],
 };
 
 export function AdminSupplyProducts() {
@@ -62,6 +63,7 @@ export function AdminSupplyProducts() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [form, setForm] = useState<ProductForm>(DEFAULT_FORM);
+  const [urlInput, setUrlInput] = useState("");
 
   const filtered = products.filter((p) => {
     if (!search) return true;
@@ -74,6 +76,7 @@ export function AdminSupplyProducts() {
 
   const openCreate = () => {
     setForm(DEFAULT_FORM);
+    setUrlInput("");
     setFormOpen(true);
   };
 
@@ -91,9 +94,26 @@ export function AdminSupplyProducts() {
       sku: product.sku ?? "",
       deliveryDays: product.delivery_days != null ? String(product.delivery_days) : "",
       isActive: product.is_active,
-      featuredImage: product.featured_image ?? "",
+      images:
+        product.images && product.images.length > 0
+          ? [...product.images]
+          : product.featured_image
+            ? [product.featured_image]
+            : [],
     });
+    setUrlInput("");
     setFormOpen(true);
+  };
+
+  const addUrlImage = () => {
+    const url = urlInput.trim();
+    if (!url) return;
+    if (form.images.includes(url)) {
+      setUrlInput("");
+      return;
+    }
+    setForm((f) => ({ ...f, images: [...f.images, url] }));
+    setUrlInput("");
   };
 
   const save = async () => {
@@ -119,8 +139,8 @@ export function AdminSupplyProducts() {
         sku: form.sku || undefined,
         deliveryDays: form.deliveryDays ? Number(form.deliveryDays) : null,
         specifications: {},
-        featuredImage: form.featuredImage || null,
-        images: form.featuredImage ? [form.featuredImage] : [],
+        featuredImage: form.images[0] ?? null,
+        images: form.images,
         isActive: form.isActive,
       });
       toast.success(form.id ? "Product updated" : "Product created");
@@ -360,12 +380,30 @@ export function AdminSupplyProducts() {
               </Field>
             )}
           </div>
-          <Field label="Featured image URL (optional)">
-            <Input
-              value={form.featuredImage}
-              onChange={(e) => setField("featuredImage", e.target.value)}
-              placeholder="https://images.unsplash.com/..."
+          <Field label="Images" hint="First image is used as the cover. Upload from your device or paste a link.">
+            <ImageUpload
+              bucket="supply-images"
+              folder="supplies"
+              value={form.images}
+              onChange={(paths) => setField("images", paths)}
+              maxFiles={6}
             />
+            <div className="mt-3 flex gap-2">
+              <Input
+                value={urlInput}
+                onChange={(e) => setUrlInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addUrlImage();
+                  }
+                }}
+                placeholder="https://…"
+              />
+              <Button type="button" variant="outline" onClick={addUrlImage} className="shrink-0">
+                Add link
+              </Button>
+            </div>
           </Field>
           <label className="flex items-center gap-2 text-sm">
             <input

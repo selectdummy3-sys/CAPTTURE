@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { MapPin, Users } from "lucide-react";
 import { toast } from "sonner";
@@ -20,6 +21,15 @@ export function StorePage() {
   const { data: followers } = useStoreFollowersCount(store?.id);
   const { data: following = false } = useIsFollowing(store?.id);
   const toggleFollow = useToggleFollow(store?.id);
+
+  useEffect(() => {
+    if (!store || store.user_id === user?.id) return;
+    void supabase
+      .rpc("track_store_visit", { p_seller_id: store.id })
+      .then(({ error }) => {
+        if (error) console.error("Failed to track store visit", error);
+      });
+  }, [store, user?.id]);
 
   if (isLoading) {
     return (
