@@ -82,7 +82,7 @@ export function StorePage() {
 
       <div className="mx-auto max-w-1440 px-4 sm:px-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex items-end gap-3">
+          <div className="flex items-center gap-3">
             <div className="relative z-10 flex h-16 w-16 items-center justify-center overflow-hidden border-4 border-white bg-white shadow-lg sm:h-20 sm:w-20">
               {logo ? (
                 <img src={logo} alt={store.business_name} className="h-full w-full rounded-full object-cover" />
@@ -90,7 +90,7 @@ export function StorePage() {
                 <span className="text-2xl font-bold text-neutral-500">{store.business_name.slice(0, 1)}</span>
               )}
             </div>
-            <div className="pb-1">
+            <div>
               <h1 className="text-xl font-bold tracking-tight text-neutral-900 sm:text-2xl">{store.business_name}</h1>
               <p className="text-sm text-neutral-500">@{store.store_username}</p>
               <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-neutral-500">
