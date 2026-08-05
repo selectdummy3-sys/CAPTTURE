@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
+import { deleteStoredFiles } from "@/lib/storageCleanup";
 import type { Json } from "@/types/database";
 
 export interface ProductDraft {
@@ -127,7 +128,8 @@ export function useUpdateProduct(productId: string | undefined) {
 
       const existingUrls = (existing ?? []).map((i) => i.url);
       const keepUrls = new Set(draft.imagePaths);
-      const toDelete = (existing ?? []).filter((i) => !keepUrls.has(i.url)).map((i) => i.id);
+      const removed = (existing ?? []).filter((i) => !keepUrls.has(i.url));
+      const toDelete = removed.map((i) => i.id);
       const toAdd = draft.imagePaths.filter((url) => !existingUrls.includes(url));
 
       if (toDelete.length > 0) {
@@ -144,6 +146,11 @@ export function useUpdateProduct(productId: string | undefined) {
         );
         if (addError) throw new Error(addError.message);
       }
+
+      await deleteStoredFiles(
+        "product-images",
+        removed.map((i) => i.url)
+      );
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["seller-products"] });
@@ -158,12 +165,20 @@ export function useDeleteProduct() {
   return useMutation({
     mutationFn: async (productId: string) => {
       if (!seller) throw new Error("Seller account required");
+      const [{ data: product }, { data: images }] = await Promise.all([
+        supabase.from("products").select("featured_image").eq("id", productId).eq("seller_id", seller.id).maybeSingle(),
+        supabase.from("product_images").select("url").eq("product_id", productId),
+      ]);
       const { error } = await supabase
         .from("products")
         .delete()
         .eq("id", productId)
         .eq("seller_id", seller.id);
       if (error) throw new Error(error.message);
+      await deleteStoredFiles(
+        "product-images",
+        [...(images ?? []).map((i) => i.url), product?.featured_image ?? null]
+      );
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["seller-products"] });
@@ -189,6 +204,7 @@ export function useToggleProductStatus() {
 }
 
 export function useUpdateSellerProfile() {
+  const { seller } = useAuth();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (input: {
@@ -215,10 +231,14 @@ export function useUpdateSellerProfile() {
       });
       if (error) throw new Error(error.message);
     },
-    onSuccess: () => {
+    onSuccess: (_data, input) => {
       void queryClient.invalidateQueries({ queryKey: ["seller-profile"] });
       void queryClient.invalidateQueries({ queryKey: ["auth-profile"] });
       void queryClient.invalidateQueries({ queryKey: ["stores"] });
+      void deleteStoredFiles("store-assets", [
+        input.logoUrl && input.logoUrl !== seller?.logo_url ? seller?.logo_url : null,
+        input.bannerUrl && input.bannerUrl !== seller?.banner_url ? seller?.banner_url : null,
+      ]);
     },
   });
 }
