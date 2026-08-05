@@ -32,6 +32,7 @@ export function useApprovedSellers(limit = 12) {
         .from("sellers")
         .select(storeSelect)
         .eq("application_status", "approved")
+        .eq("products.status", "published")
         .order("featured", { ascending: false })
         .order("created_at", { ascending: false })
         .limit(limit);
@@ -52,6 +53,7 @@ export function useStore(username: string | undefined) {
         .select(storeSelect)
         .eq("store_username", username)
         .eq("application_status", "approved")
+        .eq("products.status", "published")
         .maybeSingle();
       if (error) throw error;
       return data ? mapStoreStats(data as unknown as StoreRow) : null;
