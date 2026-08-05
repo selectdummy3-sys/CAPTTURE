@@ -23,7 +23,7 @@ export function HomePage() {
     <div className="pb-20">
       {/* Hero */}
       <section className="bg-neutral-950 text-white">
-        <div className="mx-auto grid max-w-1440 items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:py-24">
+        <div className="mx-auto grid max-w-1440 items-center gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:py-28">
           <div>
             <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
               {hero?.title ? (
