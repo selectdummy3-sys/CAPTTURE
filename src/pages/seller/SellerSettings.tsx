@@ -111,7 +111,7 @@ export function SellerSettings() {
               <img
                 src={supabase.storage.from("store-assets").getPublicUrl(bannerUrl).data.publicUrl}
                 alt=""
-                className="h-16 w-32 object-cover"
+                className="aspect-[3/1] w-32 object-cover"
               />
             )}
             <ImageUploadButton bucket="store-assets" onUploaded={setBannerUrl} crop={{ aspect: 3, width: 1200, height: 400 }} />
