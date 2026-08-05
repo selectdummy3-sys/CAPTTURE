@@ -3,11 +3,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { CreditCard, Loader2, PackageCheck } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { CreditCard, Loader2, PackageCheck, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useSellerBalance } from "@/hooks/useWithdrawals";
 import { supabase } from "@/lib/supabase";
 import { useCartStore, type CartItem } from "@/store/useCartStore";
 import { productImageUrl } from "@/components/storefront/ProductCard";
@@ -43,16 +44,19 @@ interface CheckoutGroup {
 }
 
 export function CheckoutPage() {
-  const { profile } = useAuth();
+  const { profile, seller, isApprovedSeller } = useAuth();
+  const queryClient = useQueryClient();
   const items = useCartStore((s) => s.items);
   const clearCart = useCartStore((s) => s.clear);
   const navigate = useNavigate();
 
-  const paymentMethod = "eft" as const;
+  const [paymentMethod, setPaymentMethod] = useState<"eft" | "wallet">("eft");
   const [couponCode, setCouponCode] = useState("");
   const [appliedCode, setAppliedCode] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  const { data: walletBalance = 0 } = useSellerBalance();
 
   const {
     register,
@@ -85,6 +89,9 @@ export function CheckoutPage() {
       subtotal: list.reduce((a, i) => a + i.price * i.quantity, 0),
     }));
   }, [items]);
+
+  const canPayWithWallet =
+    isApprovedSeller && groups.length > 0 && groups.every((g) => g.sellerId !== seller?.id);
 
   const { data: coupon, error: couponError, isFetching: couponFetching } = useQuery({
     queryKey: ["coupon", appliedCode],
@@ -145,7 +152,7 @@ export function CheckoutPage() {
     const placed: string[] = [];
     try {
       for (const group of groups) {
-        const { data, error } = await supabase.rpc("place_order", {
+        const rpcArgs = {
           p_seller_id: group.sellerId,
           p_items: group.items.map((i) => ({
             product_id: i.productId,
@@ -153,13 +160,23 @@ export function CheckoutPage() {
             size: i.size ?? null,
             colour: i.colour ?? null,
           })) as unknown as Json,
-          p_payment_method: paymentMethod,
           p_shipping_address: address,
           ...(notes.trim() ? { p_notes: notes.trim() } : {}),
           ...(appliedCode ? { p_coupon_code: appliedCode } : {}),
-        });
+        };
+        const { data, error } =
+          paymentMethod === "wallet"
+            ? await supabase.rpc("pay_with_balance", rpcArgs)
+            : await supabase.rpc("place_order", {
+                ...rpcArgs,
+                p_payment_method: paymentMethod,
+              });
         if (error) throw new Error(error.message);
         if (data?.order_number) placed.push(data.order_number);
+      }
+      if (paymentMethod === "wallet") {
+        void queryClient.invalidateQueries({ queryKey: ["seller", "balance"] });
+        void queryClient.invalidateQueries({ queryKey: ["seller-earnings"] });
       }
       clearCart();
       const ids = totals.map((t) => t.group.sellerId);
@@ -234,17 +251,65 @@ export function CheckoutPage() {
           {/* Payment */}
           <section className="border border-neutral-200 p-5">
             <h2 className="font-semibold text-neutral-900">Payment method</h2>
-            <div className="mt-4">
-              <div className="flex items-start gap-3 border border-brand-500 bg-brand-50 p-4">
+            <div className="mt-4 space-y-3">
+              <label
+                className={`flex cursor-pointer items-start gap-3 border p-4 ${paymentMethod === "eft" ? "border-brand-500 bg-brand-50" : "border-neutral-200"}`}
+              >
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="eft"
+                  checked={paymentMethod === "eft"}
+                  onChange={() => setPaymentMethod("eft")}
+                  className="mt-0.5"
+                />
                 <CreditCard className="mt-0.5 h-5 w-5 text-neutral-500" />
                 <div>
                   <p className="font-medium text-neutral-900">EFT / bank transfer</p>
                   <p className="text-xs text-neutral-500">We'll confirm once your payment reflects</p>
                 </div>
-              </div>
-              <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
-                Bank details will be shown on your order confirmation. Please use your order number as the payment reference.
-              </p>
+              </label>
+
+              {canPayWithWallet ? (
+                <label
+                  className={`flex cursor-pointer items-start gap-3 border p-4 ${paymentMethod === "wallet" ? "border-brand-500 bg-brand-50" : "border-neutral-200"}`}
+                >
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="wallet"
+                    checked={paymentMethod === "wallet"}
+                    onChange={() => setPaymentMethod("wallet")}
+                    className="mt-0.5"
+                  />
+                  <Wallet className="mt-0.5 h-5 w-5 text-neutral-500" />
+                  <div>
+                    <p className="font-medium text-neutral-900">Pay with balance</p>
+                    <p className="text-xs text-neutral-500">
+                      Available: {formatZAR(walletBalance)}
+                    </p>
+                  </div>
+                </label>
+              ) : null}
+
+              {paymentMethod === "wallet" ? (
+                <div className="flex gap-2">
+                  {walletBalance < grandTotal ? (
+                    <p className="mt-3 bg-red-50 px-3 py-2 text-xs text-red-600">
+                      Your balance is less than the order total — the order won't go through until you
+                      top up or free up funds.
+                    </p>
+                  ) : (
+                    <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
+                      Your wallet balance will be debited immediately when the order is placed.
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
+                  Bank details will be shown on your order confirmation. Please use your order number as the payment reference.
+                </p>
+              )}
             </div>
           </section>
 
@@ -353,7 +418,7 @@ export function CheckoutPage() {
               <span className="text-lg font-bold">{formatZAR(grandTotal)}</span>
             </div>
             <Button type="submit" variant="accent" size="lg" className="mt-4 w-full" loading={submitting}>
-              Place order · {formatZAR(grandTotal)}
+              {paymentMethod === "wallet" ? `Pay with balance · ${formatZAR(grandTotal)}` : `Place order · ${formatZAR(grandTotal)}`}
             </Button>
             <p className="mt-2 text-center text-xs text-neutral-400">
               By placing your order you agree to our terms &amp; conditions.

@@ -26,7 +26,7 @@ export const ORDER_STATUSES = [
   "refunded",
 ] as const;
 
-export const PAYMENT_METHODS = ["eft"] as const;
+export const PAYMENT_METHODS = ["eft", "wallet"] as const;
 
 export const SUPPLY_PRODUCT_TYPES = ["physical", "digital", "service"] as const;
 
@@ -99,6 +99,7 @@ export const PRODUCT_STATUS_LABELS: Record<string, string> = {
 export const PAYMENT_METHOD_LABELS: Record<string, string> = {
   cod: "Cash on delivery",
   eft: "Bank transfer (EFT)",
+  wallet: "Wallet balance",
 };
 
 export const SUPPLY_PRODUCT_TYPE_LABELS: Record<string, string> = {

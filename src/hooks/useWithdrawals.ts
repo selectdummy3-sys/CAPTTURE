@@ -17,6 +17,32 @@ export function useSellerBalance() {
   });
 }
 
+export interface WalletTransaction {
+  id: string;
+  seller_id: string;
+  type: "purchase" | "refund";
+  amount: number;
+  order_id: string | null;
+  reference: string | null;
+  description: string | null;
+  created_at: string;
+}
+
+/** Seller: list wallet transactions (purchases and refunds). */
+export function useWalletTransactions() {
+  return useQuery({
+    queryKey: ["seller", "wallet-transactions"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("wallet_transactions")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return (data ?? []) as WalletTransaction[];
+    },
+  });
+}
+
 /** Seller: list own withdrawal requests. */
 export function useSellerWithdrawals() {
   return useQuery({

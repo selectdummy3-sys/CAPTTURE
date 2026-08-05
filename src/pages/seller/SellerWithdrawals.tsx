@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Banknote, Clock, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Banknote, Clock, CheckCircle2, XCircle, Loader2, Wallet, ShoppingBag, RotateCcw } from "lucide-react";
 
 import {
   useSellerBalance,
   useSellerWithdrawals,
   useRequestWithdrawal,
+  useWalletTransactions,
 } from "@/hooks/useWithdrawals";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,6 +25,7 @@ const STATUS_CONFIG: Record<string, { label: string; icon: typeof Clock; color: 
 export default function SellerWithdrawals() {
   const { data: balance = 0, isLoading: balanceLoading } = useSellerBalance();
   const { data: withdrawals = [], isLoading } = useSellerWithdrawals();
+  const { data: walletTx = [], isLoading: walletLoading } = useWalletTransactions();
   const requestWithdrawal = useRequestWithdrawal();
 
   const [openRequest, setOpenRequest] = useState(false);
@@ -71,6 +73,54 @@ export default function SellerWithdrawals() {
         >
           <Banknote className="mr-2 h-4 w-4" /> Request withdrawal
         </Button>
+      </div>
+
+      {/* Wallet activity */}
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold text-neutral-900">Wallet activity</h2>
+        <p className="mt-0.5 text-xs text-neutral-500">
+          Purchases made with your balance and refunds back into it.
+        </p>
+        {walletLoading ? (
+          <div className="mt-4 space-y-2">
+            {[1, 2].map((i) => (
+              <div key={i} className="h-14 animate-pulse bg-neutral-100" />
+            ))}
+          </div>
+        ) : walletTx.length === 0 ? (
+          <EmptyState
+            icon={<Wallet className="h-12 w-12" />}
+            title="No wallet activity"
+            description="When you pay with your balance, the transaction will appear here."
+          />
+        ) : (
+          <div className="mt-4 space-y-2">
+            {walletTx.map((tx) => {
+              const isPurchase = tx.type === "purchase";
+              return (
+                <div key={tx.id} className="flex items-center justify-between border border-neutral-200 bg-white p-4">
+                  <div className="flex items-center gap-3">
+                    <div className={`grid h-9 w-9 place-items-center ${isPurchase ? "bg-red-50 text-red-600" : "bg-green-50 text-green-600"}`}>
+                      {isPurchase ? <ShoppingBag className="h-4 w-4" /> : <RotateCcw className="h-4 w-4" />}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-neutral-900">
+                        {isPurchase ? "Purchase" : "Refund"}
+                        {tx.reference ? ` · ${tx.reference}` : ""}
+                      </p>
+                      <p className="text-xs text-neutral-400">
+                        {tx.description ?? "Wallet transaction"} · {formatDate(tx.created_at)}
+                      </p>
+                    </div>
+                  </div>
+                  <span className={`text-sm font-semibold ${isPurchase ? "text-red-600" : "text-green-600"}`}>
+                    {isPurchase ? "-" : "+"}R{Math.abs(Number(tx.amount)).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* History */}

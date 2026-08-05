@@ -1,12 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import { CheckCircle2, CreditCard } from "lucide-react";
+import { CheckCircle2, CreditCard, Wallet } from "lucide-react";
 
 import { buttonClass } from "@/components/ui/button";
 import { formatZAR } from "@/lib/utils";
 
 interface SuccessState {
   orderNumbers?: string[];
-  paymentMethod?: "cod" | "eft";
+  paymentMethod?: "cod" | "eft" | "wallet";
   grandTotal?: number;
 }
 
@@ -37,7 +37,15 @@ export function OrderSuccessPage() {
             </div>
             <p className="mt-2 text-neutral-500">Total: <span className="font-semibold text-neutral-900">{formatZAR(total)}</span></p>
             <div className="mt-3 flex items-center justify-center gap-2 text-neutral-600">
-              <CreditCard className="h-4 w-4" /> Awaiting EFT confirmation
+              {state?.paymentMethod === "wallet" ? (
+                <>
+                  <Wallet className="h-4 w-4" /> Paid from your wallet balance
+                </>
+              ) : (
+                <>
+                  <CreditCard className="h-4 w-4" /> Awaiting EFT confirmation
+                </>
+              )}
             </div>
           </div>
         )}

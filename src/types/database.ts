@@ -993,6 +993,54 @@ export type Database = {
           },
         ]
       }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          order_id: string | null
+          reference: string | null
+          seller_id: string
+          type: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id?: string | null
+          reference?: string | null
+          seller_id: string
+          type: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id?: string | null
+          reference?: string | null
+          seller_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wallet_transactions_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wishlist_items: {
         Row: {
           created_at: string
@@ -1349,6 +1397,7 @@ export type Database = {
       }
     }
     Functions: {
+      admin_commission_stats: { Args: never; Returns: Json }
       current_seller: { Args: never; Returns: string }
       current_seller_id: { Args: never; Returns: string }
       generate_order_number: { Args: never; Returns: string }
@@ -1435,6 +1484,42 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      pay_with_balance: {
+        Args: {
+          p_billing_address?: Json
+          p_coupon_code?: string
+          p_items: Json
+          p_notes?: string
+          p_seller_id: string
+          p_shipping_address: Json
+        }
+        Returns: {
+          billing_address: Json | null
+          coupon_id: string | null
+          created_at: string
+          delivered_at: string | null
+          discount: number
+          id: string
+          notes: string | null
+          order_number: string
+          payment_method: string | null
+          payment_status: string
+          seller_id: string
+          shipping: number
+          shipping_address: Json
+          status: string
+          subtotal: number
+          total: number
+          updated_at: string
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       place_order: {
         Args: {
           p_billing_address?: Json
@@ -1511,6 +1596,7 @@ export type Database = {
       }
       request_withdrawal: { Args: { p_amount: number }; Returns: string }
       seller_balance: { Args: never; Returns: number }
+      set_commission_settings: { Args: { p_enabled: boolean; p_rate: number }; Returns: undefined }
       set_seller_status: {
         Args: { p_reason?: string; p_seller_id: string; p_status: string }
         Returns: {
