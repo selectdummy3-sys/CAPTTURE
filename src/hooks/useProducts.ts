@@ -195,6 +195,34 @@ export function useRelatedProducts(categoryId?: string | null, excludeId?: strin
   });
 }
 
+export function useAlsoBought(productId: string | undefined, limit = 8) {
+  return useQuery({
+    queryKey: ["products", "also-bought", productId],
+    queryFn: async () => {
+      if (!productId) return [];
+      const { data, error } = await supabase.rpc("get_also_bought", {
+        p_product_id: productId,
+        p_limit: limit,
+      });
+      if (error) throw error;
+      const ids = (data ?? []).map((row) => row.product_id);
+      if (ids.length === 0) return [];
+      const { data: products, error: productsError } = await supabase
+        .from("products")
+        .select(productRelationsSelect)
+        .in("id", ids);
+      if (productsError) throw productsError;
+      const byId = new Map((products ?? []).map((p) => [p.id, p]));
+      return ids.flatMap((id) => {
+        const p = byId.get(id);
+        return p ? [p] : [];
+      });
+    },
+    enabled: Boolean(productId),
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 export function useSellerProducts(sellerId: string | undefined, status?: string) {
   return useQuery({
     queryKey: ["seller-products", sellerId, status],

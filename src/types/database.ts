@@ -1354,6 +1354,10 @@ export type Database = {
       generate_order_number: { Args: never; Returns: string }
       generate_supply_order_number: { Args: never; Returns: string }
       get_supply_stats: { Args: never; Returns: Json }
+      get_also_bought: {
+        Args: { p_limit?: number; p_product_id: string }
+        Returns: Array<{ product_id: string; bought_together: number }>
+      }
       get_seller_best_selling_products: {
         Args: { p_limit?: number; p_seller_id: string }
         Returns: Array<{ id: string; name: string; sales: number; revenue: number }>

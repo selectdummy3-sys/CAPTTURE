@@ -3,11 +3,12 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Heart, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 
-import { useIncrementView, useProduct } from "@/hooks/useProducts";
+import { useIncrementView, useAlsoBought, useProduct, useRelatedProducts } from "@/hooks/useProducts";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsWishlisted, useToggleWishlist } from "@/hooks/useWishlist";
 import { useCartStore } from "@/store/useCartStore";
 import { useGalleryImages } from "@/components/storefront/ProductGallery";
+import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { Price } from "@/components/ui/price";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,6 +19,8 @@ export function ProductDetailPage() {
   const navigate = useNavigate();
   const { data: product, isLoading } = useProduct(slug ?? "");
   const incrementView = useIncrementView();
+  const alsoBought = useAlsoBought(product?.id);
+  const related = useRelatedProducts(product?.category_id, product?.id, 4);
 
   const [size, setSize] = useState<string | null>(null);
   const [colour, setColour] = useState<string | null>(null);
@@ -262,6 +265,26 @@ export function ProductDetailPage() {
           </div>
         </div>
       </div>
+
+      {(alsoBought.isLoading || (alsoBought.data?.length ?? 0) > 0) && (
+        <section className="mt-16">
+          <h2 className="text-lg font-bold tracking-tight text-neutral-900">What others also bought</h2>
+          <div className="mt-5">
+            <ProductGrid products={alsoBought.data} loading={alsoBought.isLoading} skeletons={4} />
+          </div>
+        </section>
+      )}
+
+      {!alsoBought.isLoading &&
+        (alsoBought.data?.length ?? 0) === 0 &&
+        (related.isLoading || (related.data?.length ?? 0) > 0) && (
+          <section className="mt-16">
+            <h2 className="text-lg font-bold tracking-tight text-neutral-900">You may also like</h2>
+            <div className="mt-5">
+              <ProductGrid products={related.data} loading={related.isLoading} skeletons={4} />
+            </div>
+          </section>
+        )}
     </div>
   );
 }
