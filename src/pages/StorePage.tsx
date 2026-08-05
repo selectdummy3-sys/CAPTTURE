@@ -34,7 +34,7 @@ export function StorePage() {
   if (isLoading) {
     return (
       <div className="mx-auto max-w-1440 px-4 py-10 sm:px-6">
-        <Skeleton className="aspect-[16/6] w-full" />
+        <Skeleton className="aspect-[16/6] w-full lg:aspect-[16/3]" />
         <Skeleton className="mt-6 h-6 w-64" />
         <Skeleton className="mt-8 h-72 w-full" />
       </div>
@@ -76,7 +76,7 @@ export function StorePage() {
 
   return (
     <div className="pb-20">
-      <div className="relative aspect-[16/6] bg-neutral-200">
+      <div className="relative aspect-[16/6] bg-neutral-200 lg:aspect-[16/3]">
         {banner && <img src={banner} alt="" className="h-full w-full object-cover" />}
       </div>
 
