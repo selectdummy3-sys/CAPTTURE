@@ -48,7 +48,7 @@ function InvoiceView({ order }: { order: OrderWithRelations }) {
     <div className="space-y-6 print:space-y-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-lg font-bold text-neutral-900">{order.seller?.business_name ?? "CAPPTURE"}</p>
+          <p className="text-lg font-bold text-neutral-900">{order.seller?.business_name ?? "CAPTTURE"}</p>
           <p className="text-xs text-neutral-400">cappture.co.za</p>
         </div>
         <div className="text-right">

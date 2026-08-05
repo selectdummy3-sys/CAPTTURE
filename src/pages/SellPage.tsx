@@ -42,7 +42,7 @@ export function SellPage() {
             Turn your craft into a <span className="text-brand-400">living</span>.
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-lg text-neutral-400">
-            CAPPTURE gives South African fashion sellers a storefront, orders and payouts — so you
+            CAPTTURE gives South African fashion sellers a storefront, orders and payouts — so you
             can focus on making.
           </p>
           <div className="mt-8">
@@ -92,7 +92,7 @@ export function SellPage() {
             </ol>
           </div>
           <div className="h-fit border border-neutral-200 bg-white p-6 shadow-sm">
-            <h3 className="font-semibold text-neutral-900">Why sellers choose CAPPTURE</h3>
+            <h3 className="font-semibold text-neutral-900">Why sellers choose CAPTTURE</h3>
             <ul className="mt-4 space-y-3">
               {benefits.map((b) => (
                 <li key={b} className="flex items-start gap-2 text-sm text-neutral-700">

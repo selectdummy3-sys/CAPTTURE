@@ -32,7 +32,7 @@ export default function SellerInbox() {
           </span>
         )}
       </div>
-      <p className="mt-1 text-sm text-neutral-500">Messages from the CAPPTURE admin team.</p>
+      <p className="mt-1 text-sm text-neutral-500">Messages from the CAPTTURE admin team.</p>
 
       <div className="mt-6">
         {isLoading ? (

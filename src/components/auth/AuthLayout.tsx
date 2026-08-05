@@ -22,7 +22,7 @@ export function AuthLayout({ title, subtitle, children, footer }: {
         </div>
         {footer && <p className="mt-6 text-center text-sm text-neutral-500">{footer}</p>}
         <p className="mt-8 text-center text-xs text-neutral-400">
-          <Link to="/" className="hover:text-neutral-600">← Back to CAPPTURE</Link>
+          <Link to="/" className="hover:text-neutral-600">← Back to CAPTTURE</Link>
         </p>
       </div>
     </div>

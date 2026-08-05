@@ -194,7 +194,7 @@ export function ProductFormPage() {
             <option value="published">Publish for review</option>
           </Select>
           <p className="mt-1 text-xs text-neutral-500">
-            New and re-submitted products are reviewed by CAPPTURE before going live.
+            New and re-submitted products are reviewed by CAPTTURE before going live.
           </p>
         </Field>
 

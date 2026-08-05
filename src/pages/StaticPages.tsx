@@ -2,18 +2,18 @@ import { Link } from "react-router-dom";
 
 const CONTENT: Record<string, { title: string; body: string[] }> = {
   about: {
-    title: "About CAPPTURE",
+    title: "About CAPTTURE",
     body: [
-      "CAPPTURE is a South African fashion marketplace built for homegrown creators. We connect independent designers, tailors and sneaker sellers directly with customers across the country.",
-      "Every store on CAPPTURE is vetted before it can sell. Orders ship directly from the maker to your door, with cash-on-delivery and EFT as the payment options.",
+      "CAPTTURE is a South African fashion marketplace built for homegrown creators. We connect independent designers, tailors and sneaker sellers directly with customers across the country.",
+      "Every store on CAPTTURE is vetted before it can sell. Orders ship directly from the maker to your door, with cash-on-delivery and EFT as the payment options.",
       "We're proudly South African, and we believe local fashion deserves a stage. This is it.",
     ],
   },
   terms: {
     title: "Terms & Conditions",
     body: [
-      "These terms govern your use of the CAPPTURE marketplace. By creating an account or placing an order you agree to them.",
-      "Orders placed on CAPPTURE are fulfilled by independent sellers. CAPPTURE facilitates the transaction and provides buyer protection against orders that never arrive or are materially not as described.",
+      "These terms govern your use of the CAPTTURE marketplace. By creating an account or placing an order you agree to them.",
+      "Orders placed on CAPTTURE are fulfilled by independent sellers. CAPTTURE facilitates the transaction and provides buyer protection against orders that never arrive or are materially not as described.",
       "Sellers are responsible for the accuracy of their listings, the quality of their products and dispatch within the stated timeframe.",
       "Payment is via cash on delivery or EFT. EFT orders are confirmed once payment reflects; COD orders are payable in cash at delivery.",
     ],
@@ -23,7 +23,7 @@ const CONTENT: Record<string, { title: string; body: string[] }> = {
     body: [
       "We collect the information you give us — name, contact details and delivery address — to process orders and keep your account secure.",
       "Your delivery details are shared with the sellers who fulfil your orders, and with no one else. We never sell your personal information.",
-      "Payment is handled without CAPPTURE ever storing your banking credentials. You can request deletion of your account at any time by contacting support.",
+      "Payment is handled without CAPTTURE ever storing your banking credentials. You can request deletion of your account at any time by contacting support.",
     ],
   },
   help: {

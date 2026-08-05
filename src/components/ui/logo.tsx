@@ -37,7 +37,7 @@ export function Logo({ size = "md", className, linkTo }: LogoProps) {
         </svg>
       </span>
       <span className={cn("font-bold tracking-tight text-neutral-900", textClass)}>
-        CAP<span className="text-brand-600">PTURE</span>
+        CAP<span className="text-brand-600">TTURE</span>
       </span>
     </span>
   );

@@ -9,7 +9,7 @@ export function AdminDashboard() {
     <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Platform overview</h1>
-        <p className="text-sm text-neutral-500">Everything happening on CAPPTURE.</p>
+        <p className="text-sm text-neutral-500">Everything happening on CAPTTURE.</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

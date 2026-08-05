@@ -231,7 +231,7 @@ export function App() {
         <Route
           path="/signup"
           element={
-            <AuthLayout title="Create your account" subtitle="Join CAPPTURE and start shopping local.">
+            <AuthLayout title="Create your account" subtitle="Join CAPTTURE and start shopping local.">
               <SignupPage />
             </AuthLayout>
           }

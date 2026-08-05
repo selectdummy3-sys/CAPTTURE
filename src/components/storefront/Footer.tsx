@@ -9,7 +9,7 @@ const columns = [
     links: [
       { label: "All products", to: "/shop" },
       { label: "Stores", to: "/stores" },
-      { label: "Sell on CAPPTURE", to: "/sell" },
+      { label: "Sell on CAPTTURE", to: "/sell" },
     ],
   },
   {
@@ -118,7 +118,7 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-neutral-800 pt-6 sm:flex-row">
           <p className="text-xs text-neutral-500">
-            © {new Date().getFullYear()} CAPPTURE (Pty) Ltd. All rights reserved.
+            © {new Date().getFullYear()} CAPTTURE (Pty) Ltd. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-xs text-neutral-500">
             <Link to="/terms" className="transition-colors hover:text-white">

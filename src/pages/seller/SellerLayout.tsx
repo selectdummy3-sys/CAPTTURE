@@ -76,7 +76,7 @@ export function SellerLayout() {
     return (
       <div className="mx-auto max-w-lg px-4 py-24 text-center">
         <Store className="mx-auto h-10 w-10 text-brand-500" />
-        <h1 className="mt-4 text-2xl font-bold tracking-tight text-neutral-900">Sell on CAPPTURE</h1>
+        <h1 className="mt-4 text-2xl font-bold tracking-tight text-neutral-900">Sell on CAPTTURE</h1>
         <p className="mt-2 text-neutral-500">
           Create a store, list your products and start selling to customers across South Africa.
         </p>

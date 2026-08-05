@@ -113,7 +113,7 @@ export function HomePage() {
             </div>
             <div>
               <p className="text-sm font-semibold text-neutral-900">Buyer protection</p>
-              <p className="text-xs text-neutral-500">Orders backed by CAPPTURE guarantee</p>
+              <p className="text-xs text-neutral-500">Orders backed by CAPTTURE guarantee</p>
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@ export function HomePage() {
           <div className="mx-auto max-w-1440 px-4 sm:px-6">
             <SectionHeading
               title="Meet the makers"
-              description="Independent stores on the CAPPTURE marketplace."
+              description="Independent stores on the CAPTTURE marketplace."
               action={
                 <Link to="/stores" className="text-sm font-medium text-brand-700 hover:underline">
                   Browse stores
@@ -253,7 +253,7 @@ export function HomePage() {
             Ready to turn your craft into a brand?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-neutral-400">
-            Join hundreds of South African makers selling on CAPPTURE. Set up your store in
+            Join hundreds of South African makers selling on CAPTTURE. Set up your store in
             minutes and reach customers everywhere.
           </p>
           <div className="mt-8">

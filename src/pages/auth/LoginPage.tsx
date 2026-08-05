@@ -42,10 +42,10 @@ export function LoginPage() {
   return (
     <AuthLayout
       title="Welcome back"
-      subtitle="Sign in to continue shopping on CAPPTURE."
+      subtitle="Sign in to continue shopping on CAPTTURE."
       footer={
         <>
-          New to CAPPTURE?{" "}
+          New to CAPTTURE?{" "}
           <Link to="/signup" className="font-medium text-brand-700 hover:underline">
             Create an account
           </Link>

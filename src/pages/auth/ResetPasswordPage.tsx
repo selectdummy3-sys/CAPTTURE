@@ -33,7 +33,7 @@ export function ResetPasswordPage() {
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
   useEffect(() => {
-    document.title = "Set new password | CAPPTURE";
+    document.title = "Set new password | CAPTTURE";
   }, []);
 
   const onSubmit = async (values: FormValues) => {

@@ -50,7 +50,7 @@ export function SignupPage() {
       setNeedsVerification(true);
       return;
     }
-    toast.success("Account created — welcome to CAPPTURE!");
+    toast.success("Account created — welcome to CAPTTURE!");
     navigate("/", { replace: true });
   };
 
@@ -74,7 +74,7 @@ export function SignupPage() {
   return (
     <AuthLayout
       title="Create your account"
-      subtitle="Join CAPPTURE — shop local fashion from South African sellers."
+      subtitle="Join CAPTTURE — shop local fashion from South African sellers."
       footer={
         <>
           Already have an account?{" "}

@@ -149,7 +149,7 @@ export function Header() {
             Stores
           </NavLink>
           <NavLink to="/sell" className={navLink}>
-            Sell on CAPPTURE
+            Sell on CAPTTURE
           </NavLink>
         </nav>
 
@@ -236,7 +236,7 @@ export function Header() {
                 Stores
               </NavLink>
               <NavLink to="/sell" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
-                Sell on CAPPTURE
+                Sell on CAPTTURE
               </NavLink>
               <div className="mt-4 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">Categories</div>
               {categories?.map((c) => (
