@@ -1398,6 +1398,7 @@ export type Database = {
     }
     Functions: {
       admin_commission_stats: { Args: never; Returns: Json }
+      admin_seller_finance: { Args: { p_seller_id: string }; Returns: Json }
       current_seller: { Args: never; Returns: string }
       current_seller_id: { Args: never; Returns: string }
       generate_order_number: { Args: never; Returns: string }

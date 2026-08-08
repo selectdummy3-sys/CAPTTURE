@@ -1,13 +1,13 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { BadgeCheck, Check, Eye, FileText, Mail, Phone, RotateCcw, Trash2, X } from "lucide-react";
 
-import { useAllSellers, useDeleteSeller, useSetSellerStatus } from "@/hooks/useAdmin";
+import { useAdminSellerFinance, useAllSellers, useDeleteSeller, useSetSellerStatus } from "@/hooks/useAdmin";
 import { Button, type ButtonVariant } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Dialog } from "@/components/ui/dialog";
 import { APPLICATION_STATUS_LABELS } from "@/lib/constants";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatZAR } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 
 type AdminSellerRow = NonNullable<ReturnType<typeof useAllSellers>["data"]>[number];
@@ -56,6 +56,15 @@ function DetailRow({ label, children }: { label: string; children: ReactNode }) 
   );
 }
 
+function FinanceBox({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border border-neutral-200 p-4">
+      <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">{label}</p>
+      <p className="mt-1 text-xl font-bold text-neutral-900">{value}</p>
+    </div>
+  );
+}
+
 function SellerDetailDialog({
   seller,
   open,
@@ -67,6 +76,7 @@ function SellerDetailDialog({
 }) {
   const [docUrl, setDocUrl] = useState<string | null>(null);
   const [proofUrl, setProofUrl] = useState<string | null>(null);
+  const { data: finance, isLoading: financeLoading } = useAdminSellerFinance(seller.id);
 
   useEffect(() => {
     let cancelled = false;
@@ -185,6 +195,34 @@ function SellerDetailDialog({
             <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">Followers</p>
             <p className="mt-1 text-2xl font-bold text-neutral-900">{seller.followers ?? 0}</p>
           </div>
+        </div>
+
+        <div className="border-t border-neutral-200 pt-5">
+          <h3 className="text-sm font-semibold text-neutral-900">Finances</h3>
+          <p className="mt-1 text-xs text-neutral-500">Net figures after marketplace commission.</p>
+          {financeLoading ? (
+            <div className="mt-3 grid gap-4 sm:grid-cols-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-16 animate-pulse bg-neutral-100" />
+              ))}
+            </div>
+          ) : finance ? (
+            <>
+              <div className="mt-3 grid gap-4 sm:grid-cols-3">
+                <FinanceBox label="Seller earned (net)" value={formatZAR(finance.net)} />
+                <FinanceBox label="Platform commission" value={formatZAR(finance.commission)} />
+                <FinanceBox label="Gross sales" value={formatZAR(finance.gross)} />
+              </div>
+              <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                <FinanceBox label="Available" value={formatZAR(finance.available)} />
+                <FinanceBox label="Pending" value={formatZAR(finance.pending)} />
+                <FinanceBox label="Withdrawn" value={formatZAR(finance.withdrawn)} />
+              </div>
+              <p className="mt-3 text-xs text-neutral-400">
+                {finance.orders} order{finance.orders === 1 ? "" : "s"}
+              </p>
+            </>
+          ) : null}
         </div>
 
         {Object.keys(bank).length > 0 && (

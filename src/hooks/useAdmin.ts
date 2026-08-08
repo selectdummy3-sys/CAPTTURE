@@ -30,6 +30,30 @@ export function useAllSellers() {
   });
 }
 
+/** Admin: per-seller finance summary (gross, net, commission). */
+export interface AdminSellerFinance {
+  orders: number;
+  gross: number;
+  commission: number;
+  net: number;
+  available: number;
+  pending: number;
+  withdrawn: number;
+}
+
+export function useAdminSellerFinance(sellerId: string | null) {
+  return useQuery({
+    queryKey: ["admin", "seller-finance", sellerId],
+    queryFn: async () => {
+      if (!sellerId) return null;
+      const { data, error } = await supabase.rpc("admin_seller_finance", { p_seller_id: sellerId });
+      if (error) throw error;
+      return (data ?? null) as AdminSellerFinance | null;
+    },
+    enabled: Boolean(sellerId),
+  });
+}
+
 export function useSetSellerStatus() {
   const queryClient = useQueryClient();
   return useMutation({
