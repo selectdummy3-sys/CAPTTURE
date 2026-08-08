@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useCategories } from "@/hooks/useCategories";
 import { useUnreadCount } from "@/hooks/useNotifications";
+import { useAnnouncement } from "@/hooks/useAdminSettings";
 import { useCartCount } from "@/store/useCartStore";
 import { Avatar } from "@/components/ui/avatar";
 import { Logo } from "@/components/ui/logo";
@@ -108,6 +109,7 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const { data: categories } = useCategories();
+  const { data: announcement } = useAnnouncement();
   const cartCount = useCartCount();
   const navigate = useNavigate();
 
@@ -129,11 +131,18 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-paper/90 backdrop-blur">
       <div className="bg-neutral-950 text-center text-xs text-neutral-400">
-        <p className="mx-auto max-w-1440 px-4 py-2 uppercase tracking-editorial">
-          <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-300 align-middle" />
-          Free shipping over <span className="text-neutral-100">R1,000</span> · EFT available ·{" "}
-          <span className="text-brand-300">100% South African</span>
-        </p>
+        {announcement?.enabled && announcement.text ? (
+          <p className="mx-auto max-w-1440 px-4 py-2 uppercase tracking-editorial">
+            <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-300 align-middle" />
+            <span className="text-neutral-100">{announcement.text}</span>
+          </p>
+        ) : (
+          <p className="mx-auto max-w-1440 px-4 py-2 uppercase tracking-editorial">
+            <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-300 align-middle" />
+            Free shipping over <span className="text-neutral-100">R1,000</span> · EFT available ·{" "}
+            <span className="text-brand-300">100% South African</span>
+          </p>
+        )}
       </div>
       <div className="stitch h-px bg-brand-500/60" />
 

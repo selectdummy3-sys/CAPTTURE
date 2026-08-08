@@ -1596,6 +1596,7 @@ export type Database = {
       }
       request_withdrawal: { Args: { p_amount: number }; Returns: string }
       seller_balance: { Args: never; Returns: number }
+      set_announcement: { Args: { p_enabled: boolean; p_text: string }; Returns: undefined }
       set_commission_settings: { Args: { p_enabled: boolean; p_rate: number }; Returns: undefined }
       set_seller_status: {
         Args: { p_reason?: string; p_seller_id: string; p_status: string }

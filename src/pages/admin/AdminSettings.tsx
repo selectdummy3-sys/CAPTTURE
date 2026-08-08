@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
-import { Percent, Wallet } from "lucide-react";
+import { Megaphone, Percent, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 import {
   useAdminCommissionStats,
+  useAnnouncement,
   useCommissionSettings,
+  useSetAnnouncement,
   useSetCommissionSettings,
 } from "@/hooks/useAdminSettings";
 import { StatCard } from "@/components/ui/stat-card";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Field } from "@/components/form/Field";
 import { Button } from "@/components/ui/button";
 import { formatZAR } from "@/lib/utils";
@@ -21,9 +24,16 @@ export default function AdminSettings() {
   const { data: stats, isLoading: statsLoading } = useAdminCommissionStats();
   const save = useSetCommissionSettings();
 
+  const { data: announcement, isLoading: announcementLoading } = useAnnouncement();
+  const saveAnnouncement = useSetAnnouncement();
+
   const [enabled, setEnabled] = useState(true);
   const [rate, setRate] = useState("8");
   const [saving, setSaving] = useState(false);
+
+  const [announcementText, setAnnouncementText] = useState("");
+  const [announcementEnabled, setAnnouncementEnabled] = useState(false);
+  const [savingAnnouncement, setSavingAnnouncement] = useState(false);
 
   useEffect(() => {
     if (settings) {
@@ -31,6 +41,13 @@ export default function AdminSettings() {
       setRate(String(toPercent(settings.rate)));
     }
   }, [settings]);
+
+  useEffect(() => {
+    if (announcement) {
+      setAnnouncementText(announcement.text);
+      setAnnouncementEnabled(announcement.enabled);
+    }
+  }, [announcement]);
 
   const dirty = settings
     ? enabled !== settings.enabled || rate !== String(toPercent(settings.rate))
@@ -50,6 +67,22 @@ export default function AdminSettings() {
       toast.error(e instanceof Error ? e.message : "Failed to save commission settings");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveAnnouncement = async () => {
+    if (announcementText.length > 500) {
+      toast.error("Announcement must be at most 500 characters");
+      return;
+    }
+    setSavingAnnouncement(true);
+    try {
+      await saveAnnouncement.mutateAsync({ text: announcementText.trim(), enabled: announcementEnabled });
+      toast.success("Announcement saved");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to save announcement");
+    } finally {
+      setSavingAnnouncement(false);
     }
   };
 
@@ -128,6 +161,52 @@ export default function AdminSettings() {
         <div className="mt-5 flex justify-end">
           <Button onClick={handleSave} disabled={!dirty || saving} loading={saving}>
             Save changes
+          </Button>
+        </div>
+      </section>
+
+      {/* Announcement bar */}
+      <section className="mt-8 max-w-xl border border-neutral-200 bg-white p-5">
+        <div className="flex items-center gap-2">
+          <Megaphone className="h-5 w-5 text-neutral-500" />
+          <h2 className="font-semibold text-neutral-900">Announcement bar</h2>
+        </div>
+        <p className="mt-1 text-sm text-neutral-500">
+          A short message shown at the top of every storefront page. Great for promotions and shipping
+          notices.
+        </p>
+
+        <div className="mt-5 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-neutral-900">Show announcement</p>
+            <p className="text-xs text-neutral-500">
+              {announcementEnabled ? "Visible to shoppers" : "Hidden from shoppers"}
+            </p>
+          </div>
+          <Switch
+            checked={announcementEnabled}
+            onCheckedChange={setAnnouncementEnabled}
+            disabled={announcementLoading || savingAnnouncement}
+          />
+        </div>
+
+        <div className="mt-5">
+          <Field label="Message">
+            <Textarea
+              rows={3}
+              maxLength={500}
+              value={announcementText}
+              placeholder="e.g. Free shipping over R1,000 this weekend"
+              disabled={announcementLoading || savingAnnouncement}
+              onChange={(e) => setAnnouncementText(e.target.value)}
+            />
+          </Field>
+          <p className="mt-1 text-xs text-neutral-400">{announcementText.length}/500</p>
+        </div>
+
+        <div className="mt-5 flex justify-end">
+          <Button onClick={handleSaveAnnouncement} disabled={savingAnnouncement} loading={savingAnnouncement}>
+            Save announcement
           </Button>
         </div>
       </section>

@@ -15,6 +15,43 @@ export interface CommissionStats {
   total: number;
 }
 
+export interface AnnouncementSettings {
+  enabled: boolean;
+  text: string;
+}
+
+export function useAnnouncement() {
+  return useQuery({
+    queryKey: ["admin", "announcement-settings"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("platform_settings")
+        .select("value")
+        .eq("key", "announcement")
+        .maybeSingle();
+      if (error) throw error;
+      const value = (data?.value ?? {}) as Json & { text?: string; enabled?: boolean };
+      return { text: value.text ?? "", enabled: value.enabled ?? false } as AnnouncementSettings;
+    },
+  });
+}
+
+export function useSetAnnouncement() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: AnnouncementSettings) => {
+      const { error } = await supabase.rpc("set_announcement", {
+        p_text: input.text,
+        p_enabled: input.enabled,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["admin", "announcement-settings"] });
+    },
+  });
+}
+
 export function useCommissionSettings() {
   return useQuery({
     queryKey: ["admin", "commission-settings"],
