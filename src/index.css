@@ -42,6 +42,15 @@
   }
 }
 
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
@@ -74,6 +83,14 @@
   }
   .animate-panel-out {
     animation: panel-out 0.15s ease-in both;
+  }
+  .animate-marquee {
+    animation: marquee 45s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-marquee {
+      animation: none;
+    }
   }
 
   .scrollbar-none {

@@ -20,12 +20,24 @@ export default {
       colors: {
         brand: brand,
         ink: {
-          DEFAULT: "#0A0A0A",
+          DEFAULT: "#0C0C0C",
           soft: "#171717",
         },
         paper: {
-          DEFAULT: "#F5F3EE",
-          deep: "#E9E6DE",
+          DEFAULT: "#F3F0E9",
+          deep: "#E8E4DA",
+        },
+        accent: {
+          50: "#FBF6EC",
+          100: "#F5EBD3",
+          200: "#EBD9A8",
+          300: "#DEC276",
+          400: "#D0A94E",
+          500: "#B98A2E",
+          600: "#96702A",
+          700: "#755625",
+          800: "#5A4120",
+          900: "#402E18",
         },
       },
       fontFamily: {
@@ -40,10 +52,13 @@ export default {
           "sans-serif",
         ],
         display: [
-          "Bodoni Moda",
-          "Playfair Display",
-          "Georgia",
-          "serif",
+          "Space Grotesk",
+          "Inter",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif",
         ],
       },
       letterSpacing: {
