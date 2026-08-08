@@ -326,7 +326,7 @@ export function ImageCropper({
 
   const handleConfirm = async (file: File) => {
     if (!user) return;
-    const path = storagePath(user.id, file);
+    const path = await storagePath(bucket, user.id, file);
     const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
     if (error) throw error;
     onUploaded(path);

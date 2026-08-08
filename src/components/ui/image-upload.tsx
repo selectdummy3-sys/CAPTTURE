@@ -57,7 +57,7 @@ export function ImageUpload({
     async (file: File) => {
       if (!user) return "";
       const baseFolder = folder ?? `${user.id}`;
-      const path = storagePath(baseFolder, file);
+      const path = await storagePath(bucket, baseFolder, file);
       const { error: uploadError } = await supabase.storage
         .from(bucket)
         .upload(path, file, { upsert: false, cacheControl: "31536000" });
@@ -224,7 +224,7 @@ export function ImageUploadButton({
 
   const uploadFile = async (file: File) => {
     if (!user) return "";
-    const path = storagePath(user.id, file);
+    const path = await storagePath(bucket, user.id, file);
     const { error } = await supabase.storage.from(bucket).upload(path, file, { upsert: true });
     if (error) throw error;
     return path;

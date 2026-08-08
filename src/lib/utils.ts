@@ -2,6 +2,8 @@ import { clsx, type ClassValue } from "clsx";
 import { format, formatDistanceToNow } from "date-fns";
 import { twMerge } from "tailwind-merge";
 
+import { supabase } from "@/lib/supabase";
+
 /** Merge Tailwind classes with conflict resolution. */
 export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
@@ -73,13 +75,24 @@ export function initials(name: string | null | undefined): string {
     .join("");
 }
 
-/** Sanitise an uploaded filename into a storage-safe path. */
-export function storagePath(folder: string, file: File): string {
+/** Sanitise an uploaded filename into a storage-safe path, keeping a readable name and deduping collisions with -1, -2, … */
+export async function storagePath(bucket: string, folder: string, file: File): Promise<string> {
   const safeName = file.name
     .replace(/[^a-zA-Z0-9._-]/g, "_")
     .slice(-60);
-  const id = crypto.randomUUID().slice(0, 8);
-  return `${folder}/${id}-${safeName}`;
+  const { data: existing } = await supabase.storage
+    .from(bucket)
+    .list(folder, { limit: 200 });
+  const taken = new Set((existing ?? []).map((f) => f.name));
+  if (!taken.has(safeName)) return `${folder}/${safeName}`;
+  const dot = safeName.lastIndexOf(".");
+  const base = dot > 0 ? safeName.slice(0, dot) : safeName;
+  const ext = dot > 0 ? safeName.slice(dot) : "";
+  for (let i = 1; i < 1000; i++) {
+    const candidate = `${base}-${i}${ext}`;
+    if (!taken.has(candidate)) return `${folder}/${candidate}`;
+  }
+  return `${folder}/${base}-${Date.now()}${ext}`;
 }
 
 export function toNumber(value: string | number | null | undefined): number {
