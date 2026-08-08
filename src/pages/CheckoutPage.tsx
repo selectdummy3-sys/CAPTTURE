@@ -8,6 +8,7 @@ import { CreditCard, Loader2, PackageCheck } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useLiveSellerNames } from "@/hooks/useStores";
 import { supabase } from "@/lib/supabase";
 import { useCartStore, type CartItem } from "@/store/useCartStore";
 import { productImageUrl } from "@/components/storefront/ProductCard";
@@ -85,6 +86,21 @@ export function CheckoutPage() {
       subtotal: list.reduce((a, i) => a + i.price * i.quantity, 0),
     }));
   }, [items]);
+
+  const sellerIds = useMemo(
+    () => Array.from(new Set(items.map((i) => i.sellerId).filter(Boolean))),
+    [items]
+  );
+  const { data: sellerMap } = useLiveSellerNames(sellerIds);
+
+  const displayGroups = useMemo(
+    () =>
+      groups.map((group) => ({
+        ...group,
+        sellerName: sellerMap?.[group.sellerId]?.business_name ?? group.sellerName,
+      })),
+    [groups, sellerMap]
+  );
 
   const { data: coupon, error: couponError, isFetching: couponFetching } = useQuery({
     queryKey: ["coupon", appliedCode],
@@ -271,9 +287,11 @@ export function CheckoutPage() {
 
         {/* Summary */}
         <aside className="h-fit space-y-4 lg:sticky lg:top-32">
-          {totals.map(({ group, discount, shipping, total }) => (
+          {totals.map(({ group, discount, shipping, total }) => {
+            const liveSeller = displayGroups.find((g) => g.sellerId === group.sellerId);
+            return (
             <div key={group.sellerId} className="border border-neutral-200 bg-white p-5 shadow-sm">
-              <p className="font-display text-lg font-medium uppercase tracking-tight text-neutral-900">{group.sellerName}</p>
+              <p className="font-display text-lg font-medium uppercase tracking-tight text-neutral-900">{liveSeller?.sellerName ?? group.sellerName}</p>
               <div className="mt-3 space-y-2">
                 {group.items.map((item) => (
                   <div key={`${item.productId}|${item.size ?? ""}|${item.colour ?? ""}`} className="flex items-center gap-3">
@@ -313,7 +331,8 @@ export function CheckoutPage() {
                 </div>
               </dl>
             </div>
-          ))}
+            );
+          })}
 
           {/* Coupon */}
           <div className="border border-neutral-200 bg-white p-5 shadow-sm">

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useLiveSellerNames } from "@/hooks/useStores";
 import { useCartStore, useCartSubtotal, type CartItem } from "@/store/useCartStore";
 import { productImageUrl } from "@/components/storefront/ProductCard";
 import { Button, buttonClass } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import { formatZAR } from "@/lib/utils";
 const FREE_SHIPPING_ABOVE = 1000;
 const SHIPPING_FEE = 60;
 
-function Line({ item }: { item: CartItem }) {
+function Line({ item, sellerName }: { item: CartItem; sellerName: string }) {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const remove = useCartStore((s) => s.remove);
   const key = `${item.productId}|${item.size ?? ""}|${item.colour ?? ""}`;
@@ -36,7 +37,7 @@ function Line({ item }: { item: CartItem }) {
             <p className="mt-0.5 text-xs text-neutral-500">
               {[item.size, item.colour].filter(Boolean).join(" · ") || "One size"}
             </p>
-            <p className="mt-0.5 text-xs text-neutral-400">Sold by {item.sellerName}</p>
+            <p className="mt-0.5 text-xs text-neutral-400">Sold by {sellerName}</p>
           </div>
           <button
             type="button"
@@ -85,6 +86,12 @@ export function CartPage() {
   const subtotal = useCartSubtotal();
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  const sellerIds = useMemo(
+    () => Array.from(new Set(items.map((i) => i.sellerId).filter(Boolean))),
+    [items]
+  );
+  const { data: sellerMap } = useLiveSellerNames(sellerIds);
 
   const groups = useMemo(() => {
     const map = new Map<string, CartItem[]>();
@@ -151,17 +158,20 @@ export function CartPage() {
           {groups.map((group, gi) => {
             const groupSubtotal = group.reduce((a, i) => a + i.price * i.quantity, 0);
             const groupShipping = groupSubtotal >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING_FEE;
+            const live = sellerMap?.[group[0].sellerId];
+            const sellerName = live?.business_name ?? group[0].sellerName;
+            const sellerUsername = live?.store_username ?? group[0].sellerUsername;
             return (
               <div key={gi} className="mb-6 border border-neutral-200 p-5">
                 <Link
-                  to={`/store/${group[0].sellerUsername}`}
+                  to={sellerUsername ? `/store/${sellerUsername}` : "#"}
                   className="text-sm font-semibold text-neutral-900 hover:text-brand-700"
                 >
-                  {group[0].sellerName}
+                  {sellerName}
                 </Link>
                 <div className="mt-2">
                   {group.map((item) => (
-                    <Line key={`${item.productId}|${item.size ?? ""}|${item.colour ?? ""}`} item={item} />
+                    <Line key={`${item.productId}|${item.size ?? ""}|${item.colour ?? ""}`} item={item} sellerName={sellerName} />
                   ))}
                 </div>
                 <div className="flex items-center justify-between pt-3 text-sm">

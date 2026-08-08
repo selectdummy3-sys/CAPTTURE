@@ -1,8 +1,34 @@
+import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import type { Seller } from "@/types";
+
+export interface LiveSellerName {
+  id: string;
+  business_name: string | null;
+  store_username: string | null;
+}
+
+export function useLiveSellerNames(sellerIds: string[]) {
+  const ids = useMemo(() => Array.from(new Set(sellerIds.filter(Boolean))), [sellerIds]);
+  return useQuery({
+    queryKey: ["sellers", "names", ids],
+    queryFn: async () => {
+      if (ids.length === 0) return {};
+      const { data, error } = await supabase
+        .from("sellers")
+        .select("id, business_name, store_username")
+        .in("id", ids);
+      if (error) throw error;
+      const map: Record<string, LiveSellerName> = {};
+      for (const s of data ?? []) map[s.id] = s;
+      return map;
+    },
+    enabled: ids.length > 0,
+  });
+}
 
 export interface StoreWithStats extends Seller {
   followers_count?: number;
