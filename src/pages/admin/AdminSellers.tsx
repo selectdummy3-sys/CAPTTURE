@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { BadgeCheck, Check, Eye, FileText, Mail, Phone, RotateCcw, Trash2, X } from "lucide-react";
+import { createPortal } from "react-dom";
+import { BadgeCheck, Check, Eye, FileText, Mail, Phone, Printer, RotateCcw, Trash2, X } from "lucide-react";
 
 import { useAdminSellerFinance, useAllSellers, useDeleteSeller, useSetSellerStatus } from "@/hooks/useAdmin";
 import { Button, type ButtonVariant } from "@/components/ui/button";
@@ -65,6 +66,297 @@ function FinanceBox({ label, value }: { label: string; value: string }) {
   );
 }
 
+function BlankField({ label }: { label: string }) {
+  return (
+    <div>
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">{label}</p>
+      <div className="mt-1 h-7 border-b border-neutral-400" />
+    </div>
+  );
+}
+
+function BlankSignatureBlock() {
+  return (
+    <div>
+      <div className="mt-6 h-9 border-b border-neutral-900" />
+      <p className="mt-1 text-xs font-medium text-neutral-600">Signature</p>
+    </div>
+  );
+}
+
+function BlankTable({ headers, rows }: { headers: string[]; rows: number }) {
+  return (
+    <table className="mt-3 w-full border-collapse">
+      <thead>
+        <tr>
+          {headers.map((h) => (
+            <th
+              key={h}
+              className="border border-neutral-900 bg-neutral-100 px-2 py-1.5 text-left text-[11px] font-semibold uppercase tracking-wide text-neutral-700"
+            >
+              {h}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {Array.from({ length: rows }).map((_, i) => (
+          <tr key={i}>
+            {headers.map((h) => (
+              <td key={h} className="h-7 border border-neutral-400" />
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function SellerPrintView({ seller }: { seller: AdminSellerRow }) {
+  const bank = (seller.bank_details ?? {}) as Record<string, string>;
+  const socials = (seller.social_links ?? {}) as Record<string, string>;
+
+  return (
+    <div className="print-seller bg-white p-8 text-neutral-900">
+      <div className="flex items-end justify-between gap-4 border-b-2 border-neutral-900 pb-3">
+        <div>
+          <p className="text-xs font-medium uppercase tracking-widest text-neutral-500">CAPPTURE · Seller record</p>
+          <h1 className="mt-1 text-2xl font-bold">{seller.business_name}</h1>
+          <p className="mt-0.5 text-sm text-neutral-600">
+            @{seller.store_username} ·{" "}
+            {APPLICATION_STATUS_LABELS[seller.application_status] ?? seller.application_status}
+          </p>
+        </div>
+        <p className="text-xs text-neutral-500">
+          Printed{" "}
+          {new Date().toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}
+        </p>
+      </div>
+
+      <div className="mt-6 grid gap-8 sm:grid-cols-2">
+        <div>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Contact</h2>
+          <dl className="mt-2 space-y-2">
+            <DetailRow label="Owner">
+              <span className="inline-flex items-center gap-1.5">
+                {seller.user?.full_name ?? "—"}
+                {seller.user?.role === "admin" && <span className="text-xs text-neutral-500">(admin)</span>}
+              </span>
+            </DetailRow>
+            <DetailRow label="Business email">{seller.email}</DetailRow>
+            <DetailRow label="Phone">{seller.phone}</DetailRow>
+            <DetailRow label="Province">{seller.province}</DetailRow>
+          </dl>
+        </div>
+        <div>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Address</h2>
+          <dl className="mt-2 space-y-2">
+            <DetailRow label="Street">{seller.address_line1}</DetailRow>
+            <DetailRow label="City">{seller.city}</DetailRow>
+            <DetailRow label="Postal code">{seller.postal_code}</DetailRow>
+          </dl>
+        </div>
+      </div>
+
+      <div className="mt-6 grid gap-8 sm:grid-cols-2">
+        <div>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Business</h2>
+          <dl className="mt-2 space-y-2">
+            <DetailRow label="Description">{seller.description}</DetailRow>
+            <DetailRow label="Commission rate">
+              {seller.commission_rate != null ? `${(seller.commission_rate * 100).toFixed(1)}%` : null}
+            </DetailRow>
+            <DetailRow label="Featured">{seller.featured ? "Yes" : "No"}</DetailRow>
+            <DetailRow label="Joined">{formatDate(seller.created_at)}</DetailRow>
+            <DetailRow label="Approved">{seller.approved_at ? formatDate(seller.approved_at) : null}</DetailRow>
+            {seller.rejection_reason && (
+              <DetailRow label="Status reason">
+                <span className="text-neutral-700">{seller.rejection_reason}</span>
+              </DetailRow>
+            )}
+          </dl>
+        </div>
+        <div>
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Activity</h2>
+          <dl className="mt-2 space-y-2">
+            <DetailRow label="Products">{seller.products ?? 0}</DetailRow>
+            <DetailRow label="Followers">{seller.followers ?? 0}</DetailRow>
+            <DetailRow label="ID document">{seller.id_document_url ? "On file" : null}</DetailRow>
+            <DetailRow label="Proof of residence">{seller.proof_of_residence_url ? "On file" : null}</DetailRow>
+          </dl>
+        </div>
+      </div>
+
+      {Object.keys(bank).length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Payout details</h2>
+          <dl className="mt-2 grid gap-x-8 gap-y-2 sm:grid-cols-3">
+            {Object.entries(bank).map(([key, value]) => (
+              <DetailRow key={key} label={key.replace(/_/g, " ")}>
+                {value}
+              </DetailRow>
+            ))}
+          </dl>
+        </div>
+      )}
+
+      {Object.keys(socials).length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">Social links</h2>
+          <dl className="mt-2 space-y-2">
+            {Object.entries(socials).map(([key, value]) => (
+              <DetailRow key={key} label={key}>
+                {value}
+              </DetailRow>
+            ))}
+          </dl>
+        </div>
+      )}
+
+      <div className="mt-10 border-t border-neutral-900 pt-6">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          Section A — Identity &amp; compliance
+        </h2>
+        <div className="mt-3 grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
+          <BlankField label="ID / passport number" />
+          <BlankField label="CIPC registration no." />
+          <BlankField label="SARS income-tax no." />
+          <BlankField label="VAT no. (if registered)" />
+          <BlankField label="FICA verified by (name)" />
+          <BlankField label="FICA document used" />
+          <BlankField label="FICA verification date" />
+          <BlankField label="POPIA consent date" />
+          <BlankField label="POPIA covers (purpose)" />
+          <BlankField label="Consent revoked (date)" />
+        </div>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          Section B — Transaction &amp; proof-of-delivery log
+        </h2>
+        <BlankTable
+          headers={["Date", "Product", "Amount (R)", "Order no.", "Payment ref", "POD ref"]}
+          rows={8}
+        />
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          Section C — Digital evidence log
+        </h2>
+        <p className="mt-1 text-[11px] text-neutral-500">
+          Data-message evidence under ECTA s15. Record order IDs and references of screenshots retained.
+        </p>
+        <BlankTable headers={["Order ID", "Date", "IP address", "Device / browser", "Screenshot ref"]} rows={6} />
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          Section D — Dispute &amp; incident record
+        </h2>
+        <div className="mt-3 grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
+          <BlankField label="Complaint / incident type" />
+          <BlankField label="Opened (date)" />
+          <BlankField label="Resolved (date)" />
+        </div>
+        <div className="mt-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
+            Description &amp; correspondence log
+          </p>
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="mt-2 h-8 border-b border-neutral-400" />
+          ))}
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
+          <BlankField label="Resolution" />
+          <BlankField label="NCC / ombudsman referral date" />
+          <BlankField label="Referral reference" />
+        </div>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          Section E — Attachment manifest
+        </h2>
+        <div className="mt-3 space-y-1.5">
+          {[
+            "Copy of ID / passport",
+            "Proof of residence",
+            "Business registration (CIPC)",
+            "Signed agreement / contract",
+            "Invoices & receipts",
+            "Proof of delivery",
+            "Bank / payout confirmation",
+            "Correspondence",
+            "Screenshots / digital evidence",
+          ].map((item) => (
+            <div key={item} className="flex items-center gap-3">
+              <span className="inline-block h-4 w-4 shrink-0 border border-neutral-900" />
+              <span className="flex-1 text-sm text-neutral-800">{item}</span>
+              <span className="text-xs text-neutral-500">Pages:</span>
+              <div className="h-6 w-16 border-b border-neutral-400" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-8 border border-neutral-900 p-5">
+        <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
+          Section F — Sworn declaration
+        </h2>
+        <p className="mt-3 text-sm leading-relaxed text-neutral-800">
+          I, <span className="inline-block h-5 w-48 border-b border-neutral-900" />, declare that the information
+          recorded on this record is true and correct to the best of my knowledge and belief. I am aware that making a
+          false statement in this declaration may amount to perjury.
+        </p>
+        <div className="grid grid-cols-3 gap-8">
+          <BlankSignatureBlock />
+          <div>
+            <div className="mt-6 h-9 border-b border-neutral-900" />
+            <p className="mt-1 text-xs font-medium text-neutral-600">Date</p>
+          </div>
+          <div>
+            <div className="mt-6 h-9 border-b border-neutral-900" />
+            <p className="mt-1 text-xs font-medium text-neutral-600">Place</p>
+          </div>
+        </div>
+        <div className="mt-8 grid grid-cols-2 gap-8">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Witness 1</p>
+            <div className="mt-4 h-9 border-b border-neutral-900" />
+            <div className="mt-4 h-7 border-b border-neutral-400" />
+            <div className="mt-4 h-7 border-b border-neutral-400" />
+            <p className="mt-1 text-xs text-neutral-500">Signature / full name / ID no.</p>
+          </div>
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Witness 2</p>
+            <div className="mt-4 h-9 border-b border-neutral-900" />
+            <div className="mt-4 h-7 border-b border-neutral-400" />
+            <div className="mt-4 h-7 border-b border-neutral-400" />
+            <p className="mt-1 text-xs text-neutral-500">Signature / full name / ID no.</p>
+          </div>
+        </div>
+        <div className="mt-8 border-t border-neutral-300 pt-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
+            Commissioner of Oaths / Justice of the Peace
+          </p>
+          <p className="mt-2 text-xs leading-relaxed text-neutral-500">
+            I certify that the declarant has acknowledged that they know and understand the contents of this record, and
+            that the signature was affixed in my presence.
+          </p>
+          <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-4">
+            <BlankSignatureBlock />
+            <BlankField label="Commission / designation no." />
+            <BlankField label="Date" />
+            <BlankField label="Place" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SellerDetailDialog({
   seller,
   open,
@@ -77,6 +369,19 @@ function SellerDetailDialog({
   const [docUrl, setDocUrl] = useState<string | null>(null);
   const [proofUrl, setProofUrl] = useState<string | null>(null);
   const { data: finance, isLoading: financeLoading } = useAdminSellerFinance(seller.id);
+  const [printOpen, setPrintOpen] = useState(false);
+
+  useEffect(() => {
+    if (!printOpen) return;
+    const done = () => setPrintOpen(false);
+    window.addEventListener("afterprint", done);
+    return () => window.removeEventListener("afterprint", done);
+  }, [printOpen]);
+
+  const handlePrint = () => {
+    setPrintOpen(true);
+    window.print();
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -107,6 +412,7 @@ function SellerDetailDialog({
   const socials = (seller.social_links ?? {}) as Record<string, string>;
 
   return (
+    <>
     <Dialog
       open={open}
       onClose={onClose}
@@ -298,7 +604,14 @@ function SellerDetailDialog({
           </div>
         )}
       </div>
+      footer={
+        <Button variant="outline" onClick={handlePrint}>
+          <Printer className="h-4 w-4" /> Print
+        </Button>
+      }
     </Dialog>
+    {printOpen && createPortal(<SellerPrintView seller={seller} />, document.body)}
+  </>
   );
 }
 

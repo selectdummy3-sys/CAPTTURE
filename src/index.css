@@ -188,3 +188,23 @@
     }
   }
 }
+
+/* Print: seller record only (finances excluded) */
+.print-seller {
+  display: none;
+}
+
+@media print {
+  body {
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+  #root,
+  .fixed {
+    display: none !important;
+  }
+  .print-seller {
+    display: block !important;
+  }
+}
+
