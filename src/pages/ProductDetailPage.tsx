@@ -61,7 +61,7 @@ export function ProductDetailPage() {
       <div className="mx-auto max-w-1440 px-4 py-24 text-center sm:px-6">
         <h1 className="font-display text-5xl font-medium uppercase tracking-tight text-neutral-900">Product not found</h1>
         <p className="mt-3 text-neutral-500">This product may have been removed or is unavailable.</p>
-        <Link to="/shop" className="mt-8 inline-flex h-12 items-center gap-2 bg-brand-500 px-7 text-[11px] font-semibold uppercase tracking-editorial text-neutral-950 transition-colors hover:bg-brand-400">
+        <Link to="/shop" className="mt-8 inline-flex h-12 items-center gap-2 bg-brand-500 px-7 text-[11px] font-semibold uppercase tracking-editorial text-white transition-colors hover:bg-brand-400">
           Back to shop
         </Link>
       </div>
@@ -175,7 +175,7 @@ export function ProductDetailPage() {
                     className={cn(
                       "border px-4 py-2.5 text-sm font-medium transition-colors",
                       size === s
-                        ? "border-brand-500 bg-brand-500 text-neutral-950"
+                        ? "border-brand-500 bg-brand-500 text-white"
                         : "border-neutral-300 bg-white text-neutral-700 hover:border-brand-500"
                     )}
                   >
@@ -201,7 +201,7 @@ export function ProductDetailPage() {
                     className={cn(
                       "border px-4 py-2.5 text-sm font-medium transition-colors",
                       colour === c
-                        ? "border-brand-500 bg-brand-500 text-neutral-950"
+                        ? "border-brand-500 bg-brand-500 text-white"
                         : "border-neutral-300 bg-white text-neutral-700 hover:border-brand-500"
                     )}
                   >

@@ -32,7 +32,7 @@ export function SupplyProductCard({ product, className }: SupplyProductCardProps
           )}
         </div>
         {percent != null && (
-          <span className="absolute left-3 top-3 bg-brand-500 px-2.5 py-1 text-xs font-bold text-neutral-950 shadow">
+          <span className="absolute left-3 top-3 bg-brand-500 px-2.5 py-1 text-xs font-bold text-white shadow">
             -{percent}%
           </span>
         )}

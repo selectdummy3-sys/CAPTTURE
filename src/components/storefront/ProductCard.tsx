@@ -39,7 +39,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
           </div>
 
           {percent != null && (
-            <span className="label-tag absolute left-0 top-3 bg-brand-500 px-3 py-1 text-xs font-bold text-neutral-950 shadow">
+            <span className="label-tag absolute left-0 top-3 bg-brand-500 px-3 py-1 text-xs font-bold text-white shadow">
               -{percent}%
             </span>
           )}

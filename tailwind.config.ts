@@ -1,17 +1,17 @@
 import type { Config } from "tailwindcss";
 
-const gold = {
-  50: "#FBF6EC",
-  100: "#F5EBD3",
-  200: "#EBD9A8",
-  300: "#DEC276",
-  400: "#D0A94E",
-  500: "#B98A2E",
-  600: "#96702A",
-  700: "#755625",
-  800: "#5A4120",
-  900: "#402E18",
-  950: "#2B1D0D",
+const mono = {
+  50: "#FFFFFF",
+  100: "#F2F2F2",
+  200: "#E5E5E5",
+  300: "#CCCCCC",
+  400: "#525252",
+  500: "#111111",
+  600: "#000000",
+  700: "#000000",
+  800: "#000000",
+  900: "#000000",
+  950: "#000000",
 };
 
 const stone = {
@@ -33,17 +33,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: gold,
+        brand: mono,
         neutral: stone,
         ink: {
           DEFAULT: "#0C0A09",
           soft: "#1C1917",
         },
         paper: {
-          DEFAULT: "#F3F0E9",
-          deep: "#E8E3D8",
+          DEFAULT: "#FFFFFF",
+          deep: "#F2F2F2",
         },
-        accent: gold,
+        accent: mono,
       },
       fontFamily: {
         sans: [

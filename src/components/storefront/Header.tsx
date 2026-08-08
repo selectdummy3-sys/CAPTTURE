@@ -130,7 +130,7 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-paper/90 backdrop-blur">
       <div className="bg-neutral-950 text-center text-xs text-neutral-400">
         <p className="mx-auto max-w-1440 px-4 py-2 uppercase tracking-editorial">
-          <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-400 align-middle" />
+          <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-300 align-middle" />
           Free shipping over <span className="text-neutral-100">R1,000</span> · EFT available ·{" "}
           <span className="text-brand-300">100% South African</span>
         </p>
@@ -186,7 +186,7 @@ export function Header() {
           >
             <ShoppingBag className="h-5 w-5" />
             {cartCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center bg-brand-500 px-1 text-[10px] font-bold text-neutral-950">
+              <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center bg-brand-500 px-1 text-[10px] font-bold text-white">
                 {cartCount}
               </span>
             )}

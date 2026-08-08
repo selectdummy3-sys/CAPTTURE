@@ -136,7 +136,7 @@ export function Footer() {
               Help
             </Link>
           </div>
-          <p className="text-xs font-medium text-brand-400">Proudly South African</p>
+          <p className="text-xs font-medium text-brand-300">Proudly South African</p>
         </div>
       </div>
     </footer>

@@ -25,7 +25,7 @@ export function StoresPage() {
             Independent South African fashion sellers — from heritage tailoring to streetwear drops.
           </p>
         </div>
-        <Link to="/sell" className="inline-flex h-12 items-center gap-2 bg-brand-500 px-7 text-[11px] font-semibold uppercase tracking-editorial text-neutral-950 transition-colors hover:bg-brand-400">
+        <Link to="/sell" className="inline-flex h-12 items-center gap-2 bg-brand-500 px-7 text-[11px] font-semibold uppercase tracking-editorial text-white transition-colors hover:bg-brand-400">
           Open a store
         </Link>
       </div>

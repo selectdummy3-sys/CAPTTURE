@@ -39,7 +39,7 @@ export function SellPage() {
             <Store className="h-3.5 w-3.5" /> Seller program
           </p>
           <h1 className="mx-auto mt-8 max-w-3xl font-display text-5xl font-medium uppercase leading-[1.02] tracking-tight sm:text-6xl">
-            Turn your craft into a <span className="text-brand-400">living</span>.
+            Turn your craft into a <span className="text-brand-300">living</span>.
           </h1>
           <p className="mx-auto mt-6 max-w-xl text-lg text-neutral-400">
             CAPTTURE gives South African fashion sellers a storefront, orders and payouts — so you
@@ -86,7 +86,7 @@ export function SellPage() {
             <ol className="mt-8 space-y-6">
               {steps.map((step, i) => (
                 <li key={step.title} className="flex gap-4">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center bg-brand-500 font-display text-lg font-medium text-neutral-950">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center bg-brand-500 font-display text-lg font-medium text-white">
                     {i + 1}
                   </span>
                   <div>
