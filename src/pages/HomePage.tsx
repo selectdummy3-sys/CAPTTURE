@@ -138,11 +138,10 @@ export function HomePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/5" />
 
-        <p className="absolute left-4 top-20 z-20 text-[11px] uppercase tracking-editorial text-neutral-200 sm:left-6 sm:top-24">
-          South African Fashion Marketplace · Est. Johannesburg
-        </p>
-
         <div className="relative z-10 mx-auto w-full max-w-1440 px-4 pb-16 sm:px-6 sm:pb-28">
+          <p className="mb-4 text-[11px] uppercase tracking-editorial text-neutral-200 sm:mb-7">
+            South African Fashion Marketplace · Est. Johannesburg
+          </p>
           <h1 className="font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl xl:text-[9rem]">
             Wear the
             <br />
