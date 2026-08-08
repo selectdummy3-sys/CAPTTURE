@@ -76,7 +76,7 @@ export function Footer() {
                 <span className="grid h-9 w-9 shrink-0 place-items-center bg-neutral-800">
                   <MapPin className="h-4 w-4" />
                 </span>
-                Johannesburg, South Africa
+                Durban, South Africa
               </p>
             </div>
           </div>

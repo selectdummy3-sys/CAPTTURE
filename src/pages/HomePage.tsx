@@ -126,7 +126,7 @@ export function HomePage() {
   return (
     <div className="bg-paper">
       {/* ── Hero — full-bleed ────────────────────────────────── */}
-      <section className="relative flex min-h-[92vh] items-end overflow-hidden bg-ink text-white">
+      <section className="relative flex aspect-[3/4] items-end overflow-hidden bg-ink text-white sm:aspect-[4/3] lg:aspect-[16/9]">
         <img
           src={
             heroImage ??
@@ -140,9 +140,9 @@ export function HomePage() {
 
         <div className="relative z-10 mx-auto w-full max-w-1440 px-4 pb-16 sm:px-6 sm:pb-28">
           <p className="mb-4 text-[11px] uppercase tracking-editorial text-neutral-200 sm:mb-7">
-            South African Fashion Marketplace · Est. Johannesburg
+            South African Fashion Marketplace · Est. Durban
           </p>
-          <h1 className="font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl xl:text-[9rem]">
+          <h1 className="font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl">
             Wear the
             <br />
             <span className="text-accent-300">local</span> label.
