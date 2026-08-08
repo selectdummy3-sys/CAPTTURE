@@ -1,16 +1,16 @@
 import type { Config } from "tailwindcss";
 
 const brand = {
-  50: "#EFF6FF",
-  100: "#DBEAFE",
-  200: "#BFDBFE",
-  300: "#93C5FD",
-  400: "#60A5FA",
-  500: "#3B82F6",
-  600: "#2563EB",
-  700: "#1D4ED8",
-  800: "#1E40AF",
-  900: "#1E3A8A",
+  50: "#FFF1F1",
+  100: "#FFE3E0",
+  200: "#FFC9C4",
+  300: "#FF9E94",
+  400: "#FF6B55",
+  500: "#E4002B",
+  600: "#C2002B",
+  700: "#9C0027",
+  800: "#75001F",
+  900: "#520019",
 };
 
 export default {
@@ -22,6 +22,14 @@ export default {
         ink: {
           DEFAULT: "#0A0A0A",
           soft: "#171717",
+        },
+        paper: {
+          DEFAULT: "#F3F0EA",
+          deep: "#E8E3D8",
+        },
+        lime: {
+          DEFAULT: "#D9F24A",
+          dark: "#B7CE2E",
         },
       },
       fontFamily: {
@@ -35,13 +43,31 @@ export default {
           "Arial",
           "sans-serif",
         ],
+        display: [
+          "Anton",
+          "Impact",
+          "Haettenschweiler",
+          "Arial Narrow Bold",
+          "sans-serif",
+        ],
+        body: [
+          "Space Grotesk",
+          "Inter",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "sans-serif",
+        ],
       },
       letterSpacing: {
         editorial: "0.12em",
         overline: "0.18em",
+        drop: "0.04em",
       },
       maxWidth: {
         page: "1440px",
+        1440: "1440px",
       },
       boxShadow: {
         card: "0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.06)",
