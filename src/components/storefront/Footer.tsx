@@ -35,7 +35,6 @@ const paymentMethods = ["EFT"];
 export function Footer() {
   return (
     <footer className="border-t border-neutral-800 bg-neutral-950 text-neutral-300">
-      <div className="h-1 bg-gradient-to-r from-brand-700 via-brand-500 to-brand-700" />
       <div className="mx-auto max-w-1440 px-4 pb-8 pt-16 sm:px-6">
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-4">

@@ -1,16 +1,16 @@
 import type { Config } from "tailwindcss";
 
 const brand = {
-  50: "#FFF1F1",
-  100: "#FFE3E0",
-  200: "#FFC9C4",
-  300: "#FF9E94",
-  400: "#FF6B55",
-  500: "#E4002B",
-  600: "#C2002B",
-  700: "#9C0027",
-  800: "#75001F",
-  900: "#520019",
+  50: "#F7F7F7",
+  100: "#F0F0F0",
+  200: "#E5E5E5",
+  300: "#D4D4D4",
+  400: "#9C9C9C",
+  500: "#161616",
+  600: "#0A0A0A",
+  700: "#000000",
+  800: "#000000",
+  900: "#000000",
 };
 
 export default {
@@ -24,12 +24,8 @@ export default {
           soft: "#171717",
         },
         paper: {
-          DEFAULT: "#F3F0EA",
-          deep: "#E8E3D8",
-        },
-        lime: {
-          DEFAULT: "#D9F24A",
-          dark: "#B7CE2E",
+          DEFAULT: "#F5F3EE",
+          deep: "#E9E6DE",
         },
       },
       fontFamily: {
@@ -44,26 +40,15 @@ export default {
           "sans-serif",
         ],
         display: [
-          "Anton",
-          "Impact",
-          "Haettenschweiler",
-          "Arial Narrow Bold",
-          "sans-serif",
-        ],
-        body: [
-          "Space Grotesk",
-          "Inter",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Segoe UI",
-          "Roboto",
-          "sans-serif",
+          "Bodoni Moda",
+          "Playfair Display",
+          "Georgia",
+          "serif",
         ],
       },
       letterSpacing: {
         editorial: "0.12em",
         overline: "0.18em",
-        drop: "0.04em",
       },
       maxWidth: {
         page: "1440px",

@@ -123,10 +123,9 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/95 backdrop-blur">
-      <div className="bg-brand-500 text-center text-xs text-ink">
-        <p className="mx-auto max-w-1440 px-4 py-1.5 font-display uppercase tracking-drop">
-          Free shipping over <span className="font-semibold">R1,000</span> · EFT available ·{" "}
-          <span className="text-white">MADE IN MZANSI</span>
+      <div className="bg-neutral-950 text-center text-xs text-neutral-400">
+        <p className="mx-auto max-w-1440 px-4 py-2 uppercase tracking-editorial">
+          Free shipping over <span className="text-neutral-100">R1,000</span> · EFT available
         </p>
       </div>
 
