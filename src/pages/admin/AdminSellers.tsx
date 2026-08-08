@@ -369,17 +369,8 @@ function SellerDetailDialog({
   const [docUrl, setDocUrl] = useState<string | null>(null);
   const [proofUrl, setProofUrl] = useState<string | null>(null);
   const { data: finance, isLoading: financeLoading } = useAdminSellerFinance(seller.id);
-  const [printOpen, setPrintOpen] = useState(false);
-
-  useEffect(() => {
-    if (!printOpen) return;
-    const done = () => setPrintOpen(false);
-    window.addEventListener("afterprint", done);
-    return () => window.removeEventListener("afterprint", done);
-  }, [printOpen]);
 
   const handlePrint = () => {
-    setPrintOpen(true);
     window.print();
   };
 
@@ -610,7 +601,7 @@ function SellerDetailDialog({
         </Button>
       }
     </Dialog>
-    {printOpen && createPortal(<SellerPrintView seller={seller} />, document.body)}
+    {createPortal(<SellerPrintView seller={seller} />, document.body)}
   </>
   );
 }
