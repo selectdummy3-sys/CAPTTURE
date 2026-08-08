@@ -53,6 +53,108 @@ const studioSkills = [
     tag: "Data-driven decisions",
     desc: "A searchable intelligence base of proven layouts, palettes and interaction patterns.",
   },
+  {
+    num: "08",
+    title: "Frontend design",
+    tag: "Visual direction",
+    desc: "Distinctive, intentional interfaces — never templated defaults.",
+  },
+  {
+    num: "09",
+    title: "Canvas design",
+    tag: "Posters & art",
+    desc: "Beautiful static art and posters, print-ready as PNG and PDF.",
+  },
+  {
+    num: "10",
+    title: "Theme factory",
+    tag: "Theme toolkit",
+    desc: "Ten pre-set themes applied to any artifact, or new themes generated on the fly.",
+  },
+  {
+    num: "11",
+    title: "Algorithmic art",
+    tag: "Generative art",
+    desc: "Code-based art — flow fields, particle systems — built on seeded randomness.",
+  },
+  {
+    num: "12",
+    title: "Brand guidelines",
+    tag: "Official brand look",
+    desc: "Anthropic's brand colors and typography applied to any artifact.",
+  },
+  {
+    num: "13",
+    title: "Web artifacts builder",
+    tag: "HTML artifacts",
+    desc: "Multi-component React + Tailwind + shadcn/ui artifacts with state and routing.",
+  },
+  {
+    num: "14",
+    title: "Webapp testing",
+    tag: "QA & screenshots",
+    desc: "Playwright verification, UI debugging and browser screenshots on demand.",
+  },
+  {
+    num: "15",
+    title: "PPTX",
+    tag: "PowerPoint decks",
+    desc: "Slide decks, templates and speaker notes — read, edit or build from scratch.",
+  },
+  {
+    num: "16",
+    title: "DOCX",
+    tag: "Word documents",
+    desc: "Reports, memos, templates and tracked changes, professionally formatted.",
+  },
+  {
+    num: "17",
+    title: "PDF",
+    tag: "Everything PDF",
+    desc: "Read, merge, split, rotate, watermark, fill forms and OCR scanned pages.",
+  },
+  {
+    num: "18",
+    title: "XLSX",
+    tag: "Spreadsheets",
+    desc: "Create, clean, format and chart .xlsx, .csv and .tsv data properly.",
+  },
+  {
+    num: "19",
+    title: "Doc coauthoring",
+    tag: "Structured writing",
+    desc: "Proposals, specs and decision docs — iterated with the reader in mind.",
+  },
+  {
+    num: "20",
+    title: "Internal comms",
+    tag: "Team updates",
+    desc: "Status reports, newsletters, FAQs and leadership updates in-house formats.",
+  },
+  {
+    num: "21",
+    title: "Claude API",
+    tag: "LLM apps",
+    desc: "Model IDs, pricing, streaming, tool use, caching and agent patterns.",
+  },
+  {
+    num: "22",
+    title: "MCP builder",
+    tag: "MCP servers",
+    desc: "High-quality Model Context Protocol servers wired to external services.",
+  },
+  {
+    num: "23",
+    title: "Skill creator",
+    tag: "Build & eval skills",
+    desc: "Create, optimize and benchmark agent skills with variance-aware evals.",
+  },
+  {
+    num: "24",
+    title: "Slack GIF creator",
+    tag: "Animated GIFs",
+    desc: "Slack-optimized animated GIFs built to exact platform constraints.",
+  },
 ];
 
 const btnBrass =
@@ -263,7 +365,7 @@ export function HomePage() {
                   </Link>
                 </div>
                 <p className="mt-12 hidden text-[10px] uppercase tracking-editorial text-neutral-400 lg:block">
-                  01 — 07 · Capabilities
+                  01 — 24 · Capabilities
                 </p>
               </div>
             </div>
