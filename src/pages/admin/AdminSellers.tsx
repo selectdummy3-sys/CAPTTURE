@@ -84,34 +84,6 @@ function BlankSignatureBlock() {
   );
 }
 
-function BlankTable({ headers, rows }: { headers: string[]; rows: number }) {
-  return (
-    <table className="mt-3 w-full border-collapse">
-      <thead>
-        <tr>
-          {headers.map((h) => (
-            <th
-              key={h}
-              className="border border-neutral-900 bg-neutral-100 px-2 py-1.5 text-left text-[11px] font-semibold uppercase tracking-wide text-neutral-700"
-            >
-              {h}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {Array.from({ length: rows }).map((_, i) => (
-          <tr key={i}>
-            {headers.map((h) => (
-              <td key={h} className="h-7 border border-neutral-400" />
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
-
 function SellerPrintView({ seller }: { seller: AdminSellerRow }) {
   const bank = (seller.bank_details ?? {}) as Record<string, string>;
   const socials = (seller.social_links ?? {}) as Record<string, string>;
@@ -233,22 +205,51 @@ function SellerPrintView({ seller }: { seller: AdminSellerRow }) {
 
       <div className="mt-8">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
-          Section B — Transaction &amp; proof-of-delivery log
+          Section B — POPIA compliance &amp; breach register
         </h2>
-        <BlankTable
-          headers={["Date", "Product", "Amount (R)", "Order no.", "Payment ref", "POD ref"]}
-          rows={8}
-        />
+        <p className="mt-1 text-[11px] text-neutral-500">
+          Personal-data processing and security-breach records (POPIA s22). Keep each entry dated and signed.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
+          <BlankField label="Data processed (categories)" />
+          <BlankField label="Purpose of processing" />
+          <BlankField label="Lawful basis (consent / contract)" />
+          <BlankField label="Shared with (third parties)" />
+          <BlankField label="Security measures" />
+          <BlankField label="Retention period" />
+          <BlankField label="Breach date" />
+          <BlankField label="Breach description" />
+          <BlankField label="Affected data" />
+          <BlankField label="Data subjects notified (date)" />
+          <BlankField label="Regulator notified (date)" />
+          <BlankField label="Information Regulator ref" />
+        </div>
       </div>
 
       <div className="mt-8">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-neutral-500">
-          Section C — Digital evidence log
+          Section C — Supplier due-diligence checklist
         </h2>
-        <p className="mt-1 text-[11px] text-neutral-500">
-          Data-message evidence under ECTA s15. Record order IDs and references of screenshots retained.
-        </p>
-        <BlankTable headers={["Order ID", "Date", "IP address", "Device / browser", "Screenshot ref"]} rows={6} />
+        <div className="mt-3 grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
+          <BlankField label="CIPC registration no." />
+          <BlankField label="CIPC verified (date)" />
+          <BlankField label="Tax clearance certificate" />
+          <BlankField label="Tax clearance expiry" />
+          <BlankField label="BEE status level" />
+          <BlankField label="BEE certificate ref" />
+          <BlankField label="Bank account holder" />
+          <BlankField label="Bank / branch / account no." />
+          <BlankField label="Bank verified (date)" />
+          <BlankField label="References contacted" />
+          <BlankField label="Site / stock check (date)" />
+          <BlankField label="Verified by (name)" />
+        </div>
+        <div className="mt-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-neutral-500">Notes</p>
+          {[0, 1].map((i) => (
+            <div key={i} className="mt-2 h-8 border-b border-neutral-400" />
+          ))}
+        </div>
       </div>
 
       <div className="mt-8">
