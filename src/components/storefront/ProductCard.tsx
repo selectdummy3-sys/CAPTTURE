@@ -13,9 +13,10 @@ export function productImageUrl(path: string | null | undefined, bucket = "produ
 interface ProductCardProps {
   product: ProductWithDetails;
   className?: string;
+  dark?: boolean;
 }
 
-export function ProductCard({ product, className }: ProductCardProps) {
+export function ProductCard({ product, className, dark }: ProductCardProps) {
   const percent = discountPercent(product.price, product.sale_price);
   const image = productImageUrl(product.featured_image);
 
@@ -51,16 +52,21 @@ export function ProductCard({ product, className }: ProductCardProps) {
         </div>
 
         <div className="mt-3 space-y-1">
-          <p className="line-clamp-1 text-sm font-medium text-neutral-900">{product.name}</p>
-          <p className="stitch pb-0.5 text-xs text-neutral-500">
-            {product.seller?.business_name ?? "Independent seller"}
+          <p className={cn("line-clamp-1 text-sm font-medium", dark ? "text-white" : "text-neutral-900")}>
+            {product.name}
+          </p>
+          <p className={cn("stitch pb-0.5 text-xs", dark ? "text-neutral-400" : "text-neutral-500")}>
+            {product.seller?.business_name ||
+              (product.seller?.store_username ? `@${product.seller.store_username}` : "Independent seller")}
           </p>
           <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold text-neutral-900">
+            <p className={cn("text-sm font-semibold", dark ? "text-white" : "text-neutral-900")}>
               {formatZAR(product.sale_price ?? product.price)}
             </p>
             {product.sale_price != null && product.sale_price < product.price && (
-              <p className="text-xs text-neutral-400 line-through">{formatZAR(product.price)}</p>
+              <p className={cn("text-xs line-through", dark ? "text-neutral-500" : "text-neutral-400")}>
+                {formatZAR(product.price)}
+              </p>
             )}
           </div>
         </div>

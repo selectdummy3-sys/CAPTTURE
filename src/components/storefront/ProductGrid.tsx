@@ -12,6 +12,7 @@ interface ProductGridProps {
   emptyTitle?: string;
   emptyDescription?: string;
   className?: string;
+  dark?: boolean;
 }
 
 export function ProductGrid({
@@ -21,6 +22,7 @@ export function ProductGrid({
   emptyTitle = "No products found",
   emptyDescription = "Try adjusting your filters or search for something else.",
   className,
+  dark,
 }: ProductGridProps) {
   if (loading) {
     return (
@@ -49,7 +51,7 @@ export function ProductGrid({
   return (
     <div className={cn("grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4", className)}>
       {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+        <ProductCard key={product.id} product={product} dark={dark} />
       ))}
     </div>
   );

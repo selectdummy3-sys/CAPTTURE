@@ -130,25 +130,25 @@ export function HomePage() {
         <img
           src={
             heroImage ??
-            "https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=1920&auto=format&fit=crop"
+            "https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=1600&auto=format&fit=crop"
           }
           alt=""
           className="absolute inset-0 h-full w-full object-cover"
           style={{ objectPosition: hero?.image_position || "center" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/45 to-ink/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/5" />
 
-        <p className="absolute left-4 top-24 z-10 text-[11px] uppercase tracking-editorial text-neutral-300 sm:left-6">
+        <p className="absolute left-4 top-20 z-20 text-[11px] uppercase tracking-editorial text-neutral-200 sm:left-6 sm:top-24">
           South African Fashion Marketplace · Est. Johannesburg
         </p>
 
-        <div className="relative z-10 mx-auto w-full max-w-1440 px-4 pb-28 sm:px-6">
-          <h1 className="font-display text-7xl font-bold uppercase leading-[0.92] tracking-tight sm:text-8xl lg:text-[9rem]">
+        <div className="relative z-10 mx-auto w-full max-w-1440 px-4 pb-16 sm:px-6 sm:pb-28">
+          <h1 className="font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl xl:text-[9rem]">
             Wear the
             <br />
             <span className="text-accent-300">local</span> label.
           </h1>
-          <div className="mt-10 flex flex-wrap items-end justify-between gap-8 border-t border-white/15 pt-8">
+          <div className="mt-8 flex flex-wrap items-end justify-between gap-6 border-t border-white/15 pt-6 sm:mt-10 sm:gap-8 sm:pt-8">
             <p className="max-w-md font-light leading-relaxed text-neutral-300">
               {hero?.subtitle ||
                 "Shop South African designers and tailors. Direct from the maker to your door — paid by EFT."}
@@ -251,7 +251,7 @@ export function HomePage() {
             action={viewAllLink("/shop", "View all", true)}
           />
           <div className="mt-14">
-            <ProductGrid products={latest.data} loading={latest.isLoading} skeletons={8} />
+            <ProductGrid products={latest.data} loading={latest.isLoading} skeletons={8} dark />
           </div>
         </div>
       </section>
