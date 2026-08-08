@@ -59,9 +59,9 @@ export function ProductDetailPage() {
   if (!product) {
     return (
       <div className="mx-auto max-w-1440 px-4 py-24 text-center sm:px-6">
-        <h1 className="text-2xl font-bold text-neutral-900">Product not found</h1>
-        <p className="mt-2 text-neutral-500">This product may have been removed or is unavailable.</p>
-        <Link to="/shop" className="mt-6 inline-block border border-neutral-900 bg-neutral-900 px-6 py-3 text-sm font-medium text-white hover:bg-neutral-800">
+        <h1 className="font-display text-5xl font-medium uppercase tracking-tight text-neutral-900">Product not found</h1>
+        <p className="mt-3 text-neutral-500">This product may have been removed or is unavailable.</p>
+        <Link to="/shop" className="mt-8 inline-flex h-12 items-center gap-2 bg-brand-500 px-7 text-[11px] font-semibold uppercase tracking-editorial text-neutral-950 transition-colors hover:bg-brand-400">
           Back to shop
         </Link>
       </div>
@@ -106,11 +106,11 @@ export function ProductDetailPage() {
   };
 
   return (
-    <div className="mx-auto max-w-1440 px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-1440 px-4 py-12 sm:px-6 lg:py-16">
       <div className="grid gap-10 md:grid-cols-2">
         {/* Image — LEFT */}
         <div className="order-1">
-          <div className="w-full bg-neutral-100">
+          <div className="w-full overflow-hidden bg-paper-deep">
             {images[activeImage] ? (
               <img src={images[activeImage]} alt={product.name} className="aspect-square w-full object-cover" />
             ) : (
@@ -127,8 +127,8 @@ export function ProductDetailPage() {
                   type="button"
                   onClick={() => setActiveImage(i)}
                   className={cn(
-                    "shrink-0 overflow-hidden border-2",
-                    i === activeImage ? "border-neutral-900" : "border-transparent"
+                    "shrink-0 overflow-hidden border-2 transition-colors",
+                    i === activeImage ? "border-brand-500" : "border-transparent"
                   )}
                 >
                   <img src={img} alt="" className="h-16 w-16 object-cover" />
@@ -140,24 +140,32 @@ export function ProductDetailPage() {
 
         {/* Info — RIGHT */}
         <div className="order-2">
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900">{product.name}</h1>
+          <p className="flex items-center gap-3 text-[11px] uppercase tracking-editorial text-neutral-500">
+            <span className="h-px w-8 bg-brand-500" />
+            {product.category?.name ?? "The rack"}
+          </p>
+          <h1 className="mt-4 font-display text-4xl font-medium uppercase leading-[1.02] tracking-tight text-neutral-900 sm:text-5xl">
+            {product.name}
+          </h1>
           {product.seller && (
             <Link
               to={`/store/${product.seller.store_username}`}
-              className="mt-1 inline-block text-sm text-neutral-500 hover:text-neutral-800"
+              className="stitch mt-2 inline-block pb-1 text-sm text-neutral-500 transition-colors hover:text-brand-700"
             >
-              {product.seller.business_name}
+              by {product.seller.business_name}
             </Link>
           )}
 
-          <div className="mt-3">
+          <div className="mt-4">
             <Price price={product.price} salePrice={product.sale_price} size="lg" />
           </div>
 
           {/* Size */}
           {product.sizes.length > 0 && (
-            <div className="mt-6">
-              <p className="mb-2 text-sm font-medium text-neutral-900">Select a size</p>
+            <div className="mt-7">
+              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-editorial text-neutral-500">
+                Select a size
+              </p>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((s) => (
                   <button
@@ -167,8 +175,8 @@ export function ProductDetailPage() {
                     className={cn(
                       "border px-4 py-2.5 text-sm font-medium transition-colors",
                       size === s
-                        ? "border-neutral-900 bg-neutral-900 text-white"
-                        : "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-900"
+                        ? "border-brand-500 bg-brand-500 text-neutral-950"
+                        : "border-neutral-300 bg-white text-neutral-700 hover:border-brand-500"
                     )}
                   >
                     {s}
@@ -181,7 +189,9 @@ export function ProductDetailPage() {
           {/* Colour */}
           {product.colours.length > 0 && (
             <div className="mt-5">
-              <p className="mb-2 text-sm font-medium text-neutral-900">Select a colour</p>
+              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-editorial text-neutral-500">
+                Select a colour
+              </p>
               <div className="flex flex-wrap gap-2">
                 {product.colours.map((c) => (
                   <button
@@ -191,8 +201,8 @@ export function ProductDetailPage() {
                     className={cn(
                       "border px-4 py-2.5 text-sm font-medium transition-colors",
                       colour === c
-                        ? "border-neutral-900 bg-neutral-900 text-white"
-                        : "border-neutral-300 bg-white text-neutral-700 hover:border-neutral-900"
+                        ? "border-brand-500 bg-brand-500 text-neutral-950"
+                        : "border-neutral-300 bg-white text-neutral-700 hover:border-brand-500"
                     )}
                   >
                     {c}
@@ -203,10 +213,10 @@ export function ProductDetailPage() {
           )}
 
           {/* Add to cart */}
-          <div className="mt-6">
-            <Button className="w-full" size="lg" disabled={outOfStock} onClick={handleAddToCart}>
+          <div className="mt-7">
+            <Button variant="accent" className="w-full" size="lg" disabled={outOfStock} onClick={handleAddToCart}>
               <ShoppingBag className="h-5 w-5" />
-              {outOfStock ? "Sold out" : "Add to cart"}
+              {outOfStock ? "Sold out" : "Add to bag"}
             </Button>
           </div>
 
@@ -218,8 +228,8 @@ export function ProductDetailPage() {
               className={cn(
                 "flex w-full items-center justify-center gap-2 border py-3 text-sm font-medium transition-colors",
                 wishlisted
-                  ? "border-brand-500 bg-brand-50 text-brand-700"
-                  : "border-neutral-300 text-neutral-600 hover:border-neutral-900"
+                  ? "border-brand-500 bg-brand-50 text-brand-800"
+                  : "border-neutral-300 text-neutral-600 hover:border-brand-500"
               )}
             >
               <Heart className={cn("h-4 w-4", wishlisted && "fill-current")} />
@@ -237,7 +247,7 @@ export function ProductDetailPage() {
           )}
 
           {/* Product details */}
-          <div className="mt-6 border-t border-neutral-200 pt-6 space-y-3 text-sm">
+          <div className="mt-6 space-y-3 border-t border-neutral-200 pt-6 text-sm">
             {product.category && (
               <div className="flex gap-4">
                 <span className="w-24 text-neutral-500">Category</span>
@@ -263,13 +273,26 @@ export function ProductDetailPage() {
               </div>
             )}
           </div>
+
+          {/* Trust strip */}
+          <div className="mt-8 border border-neutral-200 bg-white p-4 text-sm text-neutral-600">
+            <p className="font-semibold uppercase tracking-editorial text-[11px] text-neutral-900">
+              Shipping &amp; trust
+            </p>
+            <p className="mt-2">Flat R60 delivery · free over R1,000. Pay by EFT with buyer protection.</p>
+          </div>
         </div>
       </div>
 
       {(alsoBought.isLoading || (alsoBought.data?.length ?? 0) > 0) && (
-        <section className="mt-16">
-          <h2 className="text-lg font-bold tracking-tight text-neutral-900">What others also bought</h2>
-          <div className="mt-5">
+        <section className="mt-20">
+          <div className="flex items-center gap-4">
+            <h2 className="font-display text-2xl font-medium uppercase tracking-tight text-neutral-900 sm:text-3xl">
+              What others also bought
+            </h2>
+            <div className="stitch flex-1 h-px bg-neutral-400/70" />
+          </div>
+          <div className="mt-6">
             <ProductGrid products={alsoBought.data} loading={alsoBought.isLoading} skeletons={4} />
           </div>
         </section>
@@ -278,9 +301,14 @@ export function ProductDetailPage() {
       {!alsoBought.isLoading &&
         (alsoBought.data?.length ?? 0) === 0 &&
         (related.isLoading || (related.data?.length ?? 0) > 0) && (
-          <section className="mt-16">
-            <h2 className="text-lg font-bold tracking-tight text-neutral-900">You may also like</h2>
-            <div className="mt-5">
+          <section className="mt-20">
+            <div className="flex items-center gap-4">
+              <h2 className="font-display text-2xl font-medium uppercase tracking-tight text-neutral-900 sm:text-3xl">
+                You may also like
+              </h2>
+              <div className="stitch flex-1 h-px bg-neutral-400/70" />
+            </div>
+            <div className="mt-6">
               <ProductGrid products={related.data} loading={related.isLoading} skeletons={4} />
             </div>
           </section>

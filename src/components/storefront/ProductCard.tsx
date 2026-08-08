@@ -1,15 +1,13 @@
 import { Link } from "react-router-dom";
 
 import type { ProductWithDetails } from "@/types";
-import { supabase } from "@/lib/supabase";
+import { assetUrl } from "@/lib/assets";
 import { discountPercent, formatZAR } from "@/lib/utils";
 import { WishlistButton } from "@/components/storefront/WishlistButton";
 import { cn } from "@/lib/utils";
 
 export function productImageUrl(path: string | null | undefined, bucket = "product-images"): string | null {
-  if (!path) return null;
-  if (path.startsWith("http")) return path;
-  return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+  return assetUrl(path, bucket);
 }
 
 interface ProductCardProps {
@@ -24,7 +22,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
   return (
     <div className={cn("group relative", className)}>
       <Link to={`/p/${product.slug}`} className="block">
-        <div className="relative overflow-hidden bg-neutral-100">
+        <div className="relative overflow-hidden bg-paper-deep transition-shadow duration-300 group-hover:shadow-card-hover">
           <div className="aspect-[4/5] w-full">
             {image ? (
               <img
@@ -41,7 +39,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
           </div>
 
           {percent != null && (
-            <span className="absolute left-3 top-3 bg-brand-500 px-2.5 py-1 text-xs font-bold text-neutral-950 shadow">
+            <span className="label-tag absolute left-0 top-3 bg-brand-500 px-3 py-1 text-xs font-bold text-neutral-950 shadow">
               -{percent}%
             </span>
           )}
@@ -54,7 +52,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
         <div className="mt-3 space-y-1">
           <p className="line-clamp-1 text-sm font-medium text-neutral-900">{product.name}</p>
-          <p className="text-xs text-neutral-500">{product.seller?.business_name ?? "Independent seller"}</p>
+          <p className="stitch pb-0.5 text-xs text-neutral-500">
+            {product.seller?.business_name ?? "Independent seller"}
+          </p>
           <div className="flex items-center gap-2">
             <p className="text-sm font-semibold text-neutral-900">
               {formatZAR(product.sale_price ?? product.price)}

@@ -92,13 +92,17 @@ export function ShopPage() {
   );
 
   return (
-    <div className="mx-auto max-w-1440 px-4 py-8 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="mx-auto max-w-1440 px-4 py-12 sm:px-6 lg:py-16">
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
+          <p className="flex items-center gap-3 text-[11px] uppercase tracking-editorial text-neutral-500">
+            <span className="h-px w-8 bg-brand-500" />
+            {category ? "Collection" : "The marketplace"}
+          </p>
+          <h1 className="mt-4 font-display text-5xl font-medium uppercase leading-[1.02] tracking-tight text-neutral-900 sm:text-6xl">
             {categoryName ?? (q ? `Results for "${q}"` : "Shop all")}
           </h1>
-          <p className="mt-1 text-sm text-neutral-500">
+          <p className="mt-3 text-sm text-neutral-500">
             {isLoading ? "Loading…" : `${data?.total ?? 0} product${data?.total === 1 ? "" : "s"}`}
           </p>
         </div>
@@ -126,28 +130,28 @@ export function ShopPage() {
       </div>
 
       {(q || category || gender || maxPrice) && (
-        <div className="mt-4 flex flex-wrap items-center gap-2">
+        <div className="mt-5 flex flex-wrap items-center gap-2">
           {q && (
-            <button onClick={() => setParam("q", "")} className="inline-flex items-center gap-1 bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
+            <button onClick={() => setParam("q", "")} className="inline-flex items-center gap-1 border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800 hover:bg-brand-100">
               "{q}" <X className="h-3 w-3" />
             </button>
           )}
           {categoryName && (
-            <button onClick={() => setParam("category", "")} className="inline-flex items-center gap-1 bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
+            <button onClick={() => setParam("category", "")} className="inline-flex items-center gap-1 border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800 hover:bg-brand-100">
               {categoryName} <X className="h-3 w-3" />
             </button>
           )}
           {gender && (
-            <button onClick={() => setParam("gender", "")} className="inline-flex items-center gap-1 bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
+            <button onClick={() => setParam("gender", "")} className="inline-flex items-center gap-1 border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800 hover:bg-brand-100">
               {GENDER_LABELS[gender]} <X className="h-3 w-3" />
             </button>
           )}
           {maxPrice && (
-            <button onClick={() => setMaxPrice("")} className="inline-flex items-center gap-1 bg-neutral-100 px-3 py-1 text-xs font-medium hover:bg-neutral-200">
+            <button onClick={() => setMaxPrice("")} className="inline-flex items-center gap-1 border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-800 hover:bg-brand-100">
               Under R{maxPrice} <X className="h-3 w-3" />
             </button>
           )}
-          <button onClick={clearAll} className="text-xs font-medium text-brand-700 hover:underline">
+          <button onClick={clearAll} className="text-xs font-semibold uppercase tracking-editorial text-brand-700 hover:underline">
             Clear all
           </button>
         </div>
@@ -171,15 +175,15 @@ export function ShopPage() {
       {filtersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-neutral-900/50" onClick={() => setFiltersOpen(false)} aria-hidden />
-          <div className="absolute right-0 top-0 h w-80 max-w-[85vw] overflow-y-auto bg-white p-5 shadow-xl">
+          <div className="absolute right-0 top-0 flex h-full w-80 max-w-[85vw] overflow-y-auto bg-paper p-5 shadow-xl">
             <div className="mb-6 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Filters</h2>
+              <h2 className="font-display text-2xl font-medium uppercase tracking-tight">Filters</h2>
               <button onClick={() => setFiltersOpen(false)} aria-label="Close filters" className="p-2 hover:bg-neutral-100">
                 <X className="h-5 w-5" />
               </button>
             </div>
             {filterPanel}
-            <Button className="mt-8 w-full" onClick={() => setFiltersOpen(false)}>
+            <Button variant="accent" className="mt-8 w-full" onClick={() => setFiltersOpen(false)}>
               Show results
             </Button>
           </div>

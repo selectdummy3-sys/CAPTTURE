@@ -56,14 +56,15 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    background-color: #f3f0e9;
   }
 
   body {
-    @apply bg-white text-neutral-900 font-sans;
+    @apply bg-paper text-neutral-900 font-sans;
   }
 
   ::selection {
-    @apply bg-brand-500/30 text-neutral-900;
+    @apply bg-brand-500/25 text-neutral-900;
   }
 
   :focus-visible {
@@ -72,6 +73,39 @@
 }
 
 @layer utilities {
+  /* Signature: a dashed garment seam used under headings & dividers */
+  .stitch {
+    background-image: linear-gradient(
+      to right,
+      currentColor 33%,
+      transparent 0%
+    );
+    background-size: 7px 1px;
+    background-repeat: repeat-x;
+    background-position: bottom;
+  }
+  .stitch-y {
+    background-image: linear-gradient(
+      to bottom,
+      currentColor 33%,
+      transparent 0%
+    );
+    background-size: 1px 7px;
+    background-repeat: repeat-y;
+    background-position: right;
+  }
+  /* Signature: a garment label / price-tag clip */
+  .label-tag {
+    clip-path: polygon(
+      0 0,
+      100% 0,
+      100% 100%,
+      calc(100% - 0.9rem) 100%,
+      calc(100% - 1.05rem) calc(100% - 0.9rem),
+      calc(100% - 1.2rem) 100%,
+      0 100%
+    );
+  }
   .animate-overlay-in {
     animation: overlay-in 0.18s ease-out both;
   }

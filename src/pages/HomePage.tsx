@@ -7,7 +7,7 @@ import { useFeaturedProducts, useLatestProducts } from "@/hooks/useProducts";
 import { useApprovedSellers } from "@/hooks/useStores";
 import { useHeroContent } from "@/hooks/useHeroContent";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
-import { supabase } from "@/lib/supabase";
+import { assetUrl } from "@/lib/assets";
 import { cn } from "@/lib/utils";
 
 const studioSkills = [
@@ -271,11 +271,7 @@ export function HomePage() {
   const { data: heroSlides } = useHeroContent();
 
   const hero = heroSlides?.[0];
-  const heroImage = hero?.image_url
-    ? hero.image_url.startsWith("http")
-      ? hero.image_url
-      : supabase.storage.from("store-assets").getPublicUrl(hero.image_url).data.publicUrl
-    : null;
+  const heroImage = assetUrl(hero?.image_url, "store-assets");
 
   return (
     <div className="bg-paper">
@@ -412,11 +408,7 @@ export function HomePage() {
             />
             <div className="mt-16 grid grid-cols-2 gap-x-5 gap-y-12 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-6">
               {categories.map((cat, i) => {
-                const img = cat.image_url
-                  ? cat.image_url.startsWith("http")
-                    ? cat.image_url
-                    : supabase.storage.from("store-assets").getPublicUrl(cat.image_url).data.publicUrl
-                  : null;
+                const img = assetUrl(cat.image_url, "store-assets");
                 return (
                   <Link
                     key={cat.id}
@@ -496,11 +488,7 @@ export function HomePage() {
             />
             <div className="-mx-4 mt-14 flex gap-6 overflow-x-auto px-4 pb-4 scrollbar-none sm:-mx-6 sm:px-6">
               {stores.data.map((store) => {
-                const logo = store.logo_url
-                  ? store.logo_url.startsWith("http")
-                    ? store.logo_url
-                    : supabase.storage.from("store-assets").getPublicUrl(store.logo_url).data.publicUrl
-                  : null;
+                const logo = assetUrl(store.logo_url, "store-assets");
                 return (
                   <Link
                     key={store.id}

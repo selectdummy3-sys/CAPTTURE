@@ -34,8 +34,15 @@ const paymentMethods = ["EFT"];
 
 export function Footer() {
   return (
-    <footer className="border-t border-neutral-800 bg-neutral-950 text-neutral-300">
-      <div className="mx-auto max-w-1440 px-4 pb-8 pt-16 sm:px-6">
+    <footer className="relative overflow-hidden border-t border-neutral-800 bg-neutral-950 text-neutral-300">
+      <span
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none whitespace-nowrap font-display text-[18vw] font-bold uppercase leading-none tracking-tight text-white/[0.03]"
+      >
+        CAPTTURE
+      </span>
+      <div className="stitch h-px bg-brand-600/60" />
+      <div className="relative mx-auto max-w-1440 px-4 pb-8 pt-16 sm:px-6">
         <div className="grid gap-12 md:grid-cols-12">
           <div className="md:col-span-4">
             <div className="[&_span]:text-white">
@@ -129,7 +136,7 @@ export function Footer() {
               Help
             </Link>
           </div>
-          <p className="text-xs font-medium text-neutral-400">Proudly South African</p>
+          <p className="text-xs font-medium text-brand-400">Proudly South African</p>
         </div>
       </div>
     </footer>

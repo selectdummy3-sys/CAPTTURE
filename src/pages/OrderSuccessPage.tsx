@@ -17,9 +17,9 @@ export function OrderSuccessPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
-      <div className="border border-neutral-200 p-8 text-center shadow-sm">
-        <CheckCircle2 className="mx-auto h-14 w-14 text-green-500" />
-        <h1 className="mt-4 text-2xl font-bold tracking-tight text-neutral-900">
+      <div className="border border-neutral-200 bg-white p-8 text-center shadow-card">
+        <CheckCircle2 className="mx-auto h-14 w-14 text-brand-500" />
+        <h1 className="mt-4 font-display text-4xl font-medium uppercase leading-tight tracking-tight text-neutral-900">
           Order{numbers.length > 1 ? "s" : ""} placed!
         </h1>
         <p className="mt-2 text-neutral-500">
@@ -28,7 +28,7 @@ export function OrderSuccessPage() {
         </p>
 
         {numbers.length > 0 && (
-          <div className="mt-6 bg-neutral-50 p-4 text-sm">
+          <div className="mt-6 border border-neutral-200 bg-paper p-4 text-sm">
             <p className="font-semibold text-neutral-900">Order number{numbers.length > 1 ? "s" : ""}</p>
             <div className="mt-1 space-y-0.5 font-mono text-neutral-700">
               {numbers.map((n) => (
@@ -46,7 +46,7 @@ export function OrderSuccessPage() {
           <Link to="/account/orders" className={buttonClass("primary", "md")}>
             Track your orders
           </Link>
-          <Link to="/shop" className={buttonClass("outline", "md")}>
+          <Link to="/shop" className={buttonClass("accent", "md")}>
             Continue shopping
           </Link>
         </div>

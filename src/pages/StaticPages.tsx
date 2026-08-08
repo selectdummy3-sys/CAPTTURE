@@ -49,14 +49,20 @@ export function StaticPage({ page }: { page: string }) {
   const content = CONTENT[page] ?? CONTENT.about;
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight text-neutral-900">{content.title}</h1>
-      <div className="mt-6 space-y-4">
+      <p className="flex items-center gap-3 text-[11px] uppercase tracking-editorial text-neutral-500">
+        <span className="h-px w-8 bg-brand-500" />
+        {page === "about" ? "The house" : page === "contact" ? "Get in touch" : "Good to know"}
+      </p>
+      <h1 className="mt-4 font-display text-4xl font-medium uppercase leading-[1.02] tracking-tight text-neutral-900 sm:text-5xl">
+        {content.title}
+      </h1>
+      <div className="mt-8 space-y-4">
         {content.body.map((para, i) => (
           <p key={i} className="leading-relaxed text-neutral-600">{para}</p>
         ))}
       </div>
       <div className="mt-10">
-        <Link to="/shop" className="text-sm font-medium text-brand-700 hover:underline">
+        <Link to="/shop" className="text-sm font-semibold uppercase tracking-editorial text-brand-700 hover:underline">
           ← Back to shopping
         </Link>
       </div>

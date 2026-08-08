@@ -119,15 +119,23 @@ export function Header() {
   };
 
   const navLink = ({ isActive }: { isActive: boolean }) =>
-    cn("text-sm font-medium transition-colors hover:text-neutral-900", isActive ? "text-neutral-900" : "text-neutral-600");
+    cn(
+      "relative text-sm font-medium transition-colors hover:text-neutral-900",
+      isActive
+        ? "text-neutral-900 after:absolute after:-bottom-[19px] after:left-0 after:right-0 after:h-0.5 after:bg-brand-500"
+        : "text-neutral-600"
+    );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white/95 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-neutral-200 bg-paper/90 backdrop-blur">
       <div className="bg-neutral-950 text-center text-xs text-neutral-400">
         <p className="mx-auto max-w-1440 px-4 py-2 uppercase tracking-editorial">
-          Free shipping over <span className="text-neutral-100">R1,000</span> · EFT available
+          <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-400 align-middle" />
+          Free shipping over <span className="text-neutral-100">R1,000</span> · EFT available ·{" "}
+          <span className="text-brand-300">100% South African</span>
         </p>
       </div>
+      <div className="stitch h-px bg-brand-500/60" />
 
       <div className="mx-auto flex h-16 max-w-1440 items-center gap-4 px-4 sm:px-6">
         <button
@@ -178,7 +186,7 @@ export function Header() {
           >
             <ShoppingBag className="h-5 w-5" />
             {cartCount > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center bg-brand-500 px-1 text-[10px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center bg-brand-500 px-1 text-[10px] font-bold text-neutral-950">
                 {cartCount}
               </span>
             )}
@@ -190,28 +198,29 @@ export function Header() {
       </div>
 
       {categories && categories.length > 0 && (
-        <nav className="hidden border-t border-neutral-100 lg:block" aria-label="Categories">
+        <nav className="hidden border-t border-neutral-200 lg:block" aria-label="Categories">
           <div className="mx-auto flex max-w-1440 items-center gap-1 overflow-x-auto px-4 py-2 sm:px-6">
-            <Link to="/shop" className="whitespace-nowrap px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-100">
+            <Link to="/shop" className="whitespace-nowrap px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-200/60">
               All
             </Link>
             {categories.map((c) => (
               <Link
                 key={c.id}
                 to={`/shop?category=${c.slug}`}
-                className="whitespace-nowrap px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-100"
+                className="whitespace-nowrap px-3 py-1 text-xs font-medium text-neutral-600 hover:bg-neutral-200/60"
               >
                 {c.name}
               </Link>
             ))}
           </div>
+          <div className="stitch h-px bg-neutral-400/70" />
         </nav>
       )}
 
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-neutral-900/50" onClick={() => setOpen(false)} aria-hidden />
-          <div className="absolute left-0 top-0 flex h w-80 max-w-[85vw] flex-col bg-white shadow-xl">
+          <div className="absolute left-0 top-0 flex h-full w-80 max-w-[85vw] flex-col bg-paper shadow-xl">
             <div className="flex items-center justify-between border-b border-neutral-100 p-4">
               <Logo size="sm" />
               <button type="button" onClick={() => setOpen(false)} aria-label="Close menu" className="p-2 hover:bg-neutral-100">

@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { Button, buttonClass } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { assetUrl } from "@/lib/assets";
 import { supabase } from "@/lib/supabase";
 
 export function StorePage() {
@@ -53,16 +54,8 @@ export function StorePage() {
     );
   }
 
-  const banner = store.banner_url
-    ? (store.banner_url.startsWith("http")
-        ? store.banner_url
-        : supabase.storage.from("store-assets").getPublicUrl(store.banner_url).data.publicUrl)
-    : null;
-  const logo = store.logo_url
-    ? (store.logo_url.startsWith("http")
-        ? store.logo_url
-        : supabase.storage.from("store-assets").getPublicUrl(store.logo_url).data.publicUrl)
-    : null;
+  const banner = assetUrl(store.banner_url, "store-assets");
+  const logo = assetUrl(store.logo_url, "store-assets");
 
   const onFollow = () => {
     if (!user) {
@@ -76,14 +69,15 @@ export function StorePage() {
 
   return (
     <div className="pb-20">
-      <div className="relative aspect-[3/1] bg-neutral-200">
+      <div className="relative aspect-[3/1] overflow-hidden bg-paper-deep">
         {banner && <img src={banner} alt="" className="h-full w-full object-cover" />}
+        <div className="stitch absolute inset-x-0 bottom-0 h-px bg-brand-500/50" />
       </div>
 
       <div className="mx-auto max-w-1440 px-4 sm:px-6">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="relative z-10 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-white shadow-lg sm:h-20 sm:w-20">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex items-center gap-4">
+            <div className="relative z-10 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-4 border-paper bg-white shadow-lg sm:h-20 sm:w-20">
               {logo ? (
                 <img src={logo} alt={store.business_name} className="h-full w-full rounded-full object-cover" />
               ) : (
@@ -91,7 +85,9 @@ export function StorePage() {
               )}
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight text-neutral-900 sm:text-2xl">{store.business_name}</h1>
+              <h1 className="font-display text-2xl font-medium uppercase leading-tight tracking-tight text-neutral-900 sm:text-3xl">
+                {store.business_name}
+              </h1>
               <p className="text-sm text-neutral-500">@{store.store_username}</p>
               <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-neutral-500">
                 <span className="inline-flex items-center gap-1"><MapPin className="h-3.5 w-3.5" /> {store.province}</span>
@@ -99,7 +95,7 @@ export function StorePage() {
               </div>
             </div>
           </div>
-          <Button variant={following ? "outline" : "primary"} onClick={onFollow}>
+          <Button variant={following ? "outline" : "accent"} onClick={onFollow}>
             {following ? "Following" : "Follow store"}
           </Button>
         </div>
@@ -108,9 +104,14 @@ export function StorePage() {
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-neutral-600">{store.description}</p>
         )}
 
-        <div className="mt-10">
-          <h2 className="text-lg font-semibold text-neutral-900">Products</h2>
-          <div className="mt-5">
+        <div className="mt-12">
+          <div className="flex items-center gap-4">
+            <h2 className="font-display text-2xl font-medium uppercase tracking-tight text-neutral-900 sm:text-3xl">
+              The rack
+            </h2>
+            <div className="stitch flex-1 h-px bg-neutral-400/70" />
+          </div>
+          <div className="mt-6">
             <ProductGrid
               products={products}
               loading={productsLoading}

@@ -1,16 +1,31 @@
 import type { Config } from "tailwindcss";
 
-const brand = {
-  50: "#F7F7F7",
-  100: "#F0F0F0",
-  200: "#E5E5E5",
-  300: "#D4D4D4",
-  400: "#9C9C9C",
-  500: "#161616",
-  600: "#0A0A0A",
-  700: "#000000",
-  800: "#000000",
-  900: "#000000",
+const gold = {
+  50: "#FBF6EC",
+  100: "#F5EBD3",
+  200: "#EBD9A8",
+  300: "#DEC276",
+  400: "#D0A94E",
+  500: "#B98A2E",
+  600: "#96702A",
+  700: "#755625",
+  800: "#5A4120",
+  900: "#402E18",
+  950: "#2B1D0D",
+};
+
+const stone = {
+  50: "#FAFAF9",
+  100: "#F5F5F4",
+  200: "#E7E5E4",
+  300: "#D6D3D1",
+  400: "#A8A29E",
+  500: "#78716C",
+  600: "#57534E",
+  700: "#44403C",
+  800: "#292524",
+  900: "#1C1917",
+  950: "#0C0A09",
 };
 
 export default {
@@ -18,27 +33,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: brand,
+        brand: gold,
+        neutral: stone,
         ink: {
-          DEFAULT: "#0C0C0C",
-          soft: "#171717",
+          DEFAULT: "#0C0A09",
+          soft: "#1C1917",
         },
         paper: {
           DEFAULT: "#F3F0E9",
-          deep: "#E8E4DA",
+          deep: "#E8E3D8",
         },
-        accent: {
-          50: "#FBF6EC",
-          100: "#F5EBD3",
-          200: "#EBD9A8",
-          300: "#DEC276",
-          400: "#D0A94E",
-          500: "#B98A2E",
-          600: "#96702A",
-          700: "#755625",
-          800: "#5A4120",
-          900: "#402E18",
-        },
+        accent: gold,
       },
       fontFamily: {
         sans: [

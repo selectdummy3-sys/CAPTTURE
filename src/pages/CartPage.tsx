@@ -114,14 +114,16 @@ export function CartPage() {
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-1440 px-4 py-16 sm:px-6">
-        <h1 className="text-2xl font-bold text-neutral-900">Your bag</h1>
+        <h1 className="font-display text-5xl font-medium uppercase leading-[1.02] tracking-tight text-neutral-900 sm:text-6xl">
+          Your bag
+        </h1>
         <div className="mt-6">
           <EmptyState
             icon={<ShoppingBag className="h-10 w-10" />}
             title="Your bag is empty"
             description="Explore the marketplace and find something you love."
             action={
-              <Link to="/shop" className={buttonClass("primary", "md")}>
+              <Link to="/shop" className={buttonClass("accent", "md")}>
                 Start shopping
               </Link>
             }
@@ -132,9 +134,15 @@ export function CartPage() {
   }
 
   return (
-    <div className="mx-auto max-w-1440 px-4 py-10 sm:px-6">
-      <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Your bag</h1>
-      <p className="mt-1 text-sm text-neutral-500">
+    <div className="mx-auto max-w-1440 px-4 py-12 sm:px-6 lg:py-16">
+      <p className="flex items-center gap-3 text-[11px] uppercase tracking-editorial text-neutral-500">
+        <span className="h-px w-8 bg-brand-500" />
+        Checkout
+      </p>
+      <h1 className="mt-4 font-display text-5xl font-medium uppercase leading-[1.02] tracking-tight text-neutral-900 sm:text-6xl">
+        Your bag
+      </h1>
+      <p className="mt-3 text-sm text-neutral-500">
         {items.length} item{items.length === 1 ? "" : "s"} · orders ship per seller
       </p>
 
@@ -169,9 +177,9 @@ export function CartPage() {
           })}
         </div>
 
-        <aside className="h-fit border border-neutral-200 p-5 lg:sticky lg:top-32">
-          <h2 className="font-semibold text-neutral-900">Order summary</h2>
-          <dl className="mt-4 space-y-2 text-sm">
+        <aside className="h-fit border border-neutral-200 bg-white p-6 shadow-sm lg:sticky lg:top-32">
+          <h2 className="font-display text-2xl font-medium uppercase tracking-tight text-neutral-900">Order summary</h2>
+          <dl className="mt-5 space-y-2 text-sm">
             <div className="flex justify-between">
               <dt className="text-neutral-500">Subtotal</dt>
               <dd className="font-medium text-neutral-900">{formatZAR(subtotal)}</dd>
@@ -181,16 +189,16 @@ export function CartPage() {
               <dd className="font-medium text-neutral-900">{shipping === 0 ? "Free" : formatZAR(shipping)}</dd>
             </div>
             {subtotal < FREE_SHIPPING_ABOVE && (
-              <p className="bg-brand-50 px-3 py-2 text-xs text-brand-800">
+              <p className="border border-brand-200 bg-brand-50 px-3 py-2 text-xs text-brand-800">
                 Add {formatZAR(FREE_SHIPPING_ABOVE - subtotal)} more to unlock free shipping on qualifying orders.
               </p>
             )}
           </dl>
-          <div className="mt-4 flex justify-between border-t border-neutral-100 pt-4">
+          <div className="mt-4 flex justify-between border-t border-neutral-200 pt-4">
             <span className="font-semibold text-neutral-900">Total</span>
             <span className="text-lg font-bold text-neutral-900">{formatZAR(total)}</span>
           </div>
-          <Button className="mt-5 w-full" size="lg" onClick={goToCheckout}>
+          <Button variant="accent" className="mt-5 w-full" size="lg" onClick={goToCheckout}>
             Checkout · {formatZAR(total)}
           </Button>
           <p className="mt-3 text-center text-xs text-neutral-400">
