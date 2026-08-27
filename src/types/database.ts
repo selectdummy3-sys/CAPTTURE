@@ -473,6 +473,7 @@ export type Database = {
           order_number: string
           payment_method: string | null
           payment_status: string
+          pep_delivery_tier: string
           pep_store_id: string | null
           seller_id: string
           shipping: number
@@ -496,6 +497,7 @@ export type Database = {
           order_number?: string
           payment_method?: string | null
           payment_status?: string
+          pep_delivery_tier?: string
           pep_store_id?: string | null
           seller_id: string
           shipping?: number
@@ -519,6 +521,7 @@ export type Database = {
           order_number?: string
           payment_method?: string | null
           payment_status?: string
+          pep_delivery_tier?: string
           pep_store_id?: string | null
           seller_id?: string
           shipping?: number
@@ -1568,6 +1571,7 @@ export type Database = {
           p_billing_address?: Json
           p_coupon_code?: string
           p_delivery_method?: string
+          p_pep_delivery_tier?: string
           p_pep_store_id?: string | null
           p_items: Json
           p_notes?: string
@@ -1587,6 +1591,7 @@ export type Database = {
           order_number: string
           payment_method: string | null
           payment_status: string
+          pep_delivery_tier: string
           pep_store_id: string | null
           seller_id: string
           shipping: number

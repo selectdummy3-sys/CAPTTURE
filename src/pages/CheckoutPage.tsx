@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { CreditCard, Home, Loader2, MapPin, PackageCheck, Store } from "lucide-react";
+import { CreditCard, Home, Loader2, MapPin, PackageCheck, Store, Truck } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -20,10 +20,13 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { PROVINCES } from "@/lib/constants";
 import { cn, formatZAR } from "@/lib/utils";
+import type { PepDeliveryTier } from "@/types";
 import type { Json } from "@/types/database";
 
 const FREE_SHIPPING_ABOVE = 1000;
 const SHIPPING_FEE = 60;
+const PEP_STANDARD_FEE = 60;
+const PEP_EXPRESS_FEE = 100;
 
 type DeliveryMethod = "shipping" | "pep_collect";
 
@@ -61,6 +64,7 @@ export function CheckoutPage() {
   const [pepProvince, setPepProvince] = useState("");
   const [pepCity, setPepCity] = useState("");
   const [pepStoreId, setPepStoreId] = useState("");
+  const [pepTier, setPepTier] = useState<PepDeliveryTier>("standard");
 
   const {
     register,
@@ -129,6 +133,11 @@ export function CheckoutPage() {
   }, [pepStores, pepProvince, pepCity]);
 
   const isCollect = delivery === "pep_collect";
+  const pepFee = isCollect
+    ? pepTier === "express"
+      ? PEP_EXPRESS_FEE
+      : PEP_STANDARD_FEE
+    : 0;
 
   const { data: coupon, error: couponError, isFetching: couponFetching } = useQuery({
     queryKey: ["coupon", appliedCode],
@@ -163,8 +172,11 @@ export function CheckoutPage() {
 
   const totals = groups.map((group) => {
     const discount = discountFor(group);
-    const shipping =
-      isCollect || group.subtotal - discount >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING_FEE;
+    const shipping = isCollect
+      ? pepFee
+      : group.subtotal - discount >= FREE_SHIPPING_ABOVE
+        ? 0
+        : SHIPPING_FEE;
     return { group, discount, shipping, total: group.subtotal - discount + shipping };
   });
 
@@ -220,6 +232,7 @@ export function CheckoutPage() {
           ...(notes.trim() ? { p_notes: notes.trim() } : {}),
           ...(appliedCode ? { p_coupon_code: appliedCode } : {}),
           p_delivery_method: delivery,
+          ...(isCollect ? { p_pep_delivery_tier: pepTier } : {}),
           ...(isCollect && pepStoreId ? { p_pep_store_id: pepStoreId } : {}),
         });
         if (error) throw new Error(error.message);
@@ -301,7 +314,7 @@ export function CheckoutPage() {
                 <Store className="mt-0.5 h-5 w-5 text-brand-600" />
                 <div>
                   <p className="font-medium text-neutral-900">PEP Click &amp; Collect</p>
-                  <p className="text-xs text-neutral-500">Collect free at your nearest PEP store</p>
+                  <p className="text-xs text-neutral-500">Collect at a PEP store · from {formatZAR(PEP_STANDARD_FEE)}</p>
                 </div>
               </button>
             </div>
@@ -375,6 +388,41 @@ export function CheckoutPage() {
                       <p className="mt-1 text-xs text-neutral-500">
                         Collect your order at this PEP store once it's ready.
                       </p>
+                    </div>
+                  </div>
+                )}
+                {selectedStore && (
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-editorial text-neutral-500">Delivery speed</p>
+                    <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                      <button
+                        type="button"
+                        onClick={() => setPepTier("standard")}
+                        className={cn(
+                          "flex items-start gap-3 border p-4 text-left transition-colors",
+                          pepTier === "standard" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
+                        )}
+                      >
+                        <Truck className="mt-0.5 h-5 w-5 text-neutral-500" />
+                        <div>
+                          <p className="font-medium text-neutral-900">Standard · 7–9 days</p>
+                          <p className="text-xs text-neutral-500">{formatZAR(PEP_STANDARD_FEE)}</p>
+                        </div>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPepTier("express")}
+                        className={cn(
+                          "flex items-start gap-3 border p-4 text-left transition-colors",
+                          pepTier === "express" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
+                        )}
+                      >
+                        <Truck className="mt-0.5 h-5 w-5 text-brand-600" />
+                        <div>
+                          <p className="font-medium text-neutral-900">Express · 3–5 days</p>
+                          <p className="text-xs text-neutral-500">{formatZAR(PEP_EXPRESS_FEE)}</p>
+                        </div>
+                      </button>
                     </div>
                   </div>
                 )}
@@ -478,9 +526,11 @@ export function CheckoutPage() {
                   </div>
                 )}
                 {isCollect ? (
-                  <div className="flex justify-between text-green-600">
-                    <dt>Collection</dt>
-                    <dd>Free</dd>
+                  <div className="flex justify-between">
+                    <dt className="text-neutral-500">
+                      Collection ({pepTier === "express" ? "3–5 days" : "7–9 days"})
+                    </dt>
+                    <dd className="text-neutral-900">{formatZAR(shipping)}</dd>
                   </div>
                 ) : (
                   <div className="flex justify-between">
@@ -535,8 +585,10 @@ export function CheckoutPage() {
               </div>
             )}
             <div className="mt-1 flex justify-between text-sm">
-              <span className="text-neutral-300">{isCollect ? "Collection" : "Shipping"}</span>
-              <span>{isCollect ? "Free" : formatZAR(grandShipping)}</span>
+              <span className="text-neutral-300">
+                {isCollect ? `Collection (${pepTier === "express" ? "3–5 days" : "7–9 days"})` : "Shipping"}
+              </span>
+              <span>{formatZAR(grandShipping)}</span>
             </div>
             <div className="mt-3 flex justify-between border-t border-white/10 pt-3">
               <span className="font-semibold">Total</span>

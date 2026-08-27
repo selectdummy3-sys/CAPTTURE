@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import type { Json } from "@/types/database";
-import type { Address, OrderWithRelations } from "@/types";
+import type { Address, OrderWithRelations, PepDeliveryTier } from "@/types";
 
 const orderSelect = "*, items:order_items(*), seller:sellers(id, business_name, store_username, logo_url), user:profiles(id, full_name, avatar_url, email, phone), coupon:coupons(code, discount_type, discount_value), pep_store:pep_stores(*)";
 
@@ -17,6 +17,7 @@ export interface PlaceOrderInput {
   couponCode?: string;
   deliveryMethod?: "shipping" | "pep_collect";
   pepStoreId?: string | null;
+  pepDeliveryTier?: PepDeliveryTier;
 }
 
 export function useMyOrders() {
@@ -93,6 +94,7 @@ export function usePlaceOrder() {
         ...(input.couponCode ? { p_coupon_code: input.couponCode } : {}),
         ...(input.deliveryMethod ? { p_delivery_method: input.deliveryMethod } : {}),
         ...(input.pepStoreId ? { p_pep_store_id: input.pepStoreId } : {}),
+        ...(input.pepDeliveryTier ? { p_pep_delivery_tier: input.pepDeliveryTier } : {}),
       });
       if (error) throw new Error(error.message);
       return data;

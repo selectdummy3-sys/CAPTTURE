@@ -85,7 +85,7 @@ export function OrderDetailPage() {
             <span>{formatZAR(order.subtotal)}</span>
           </div>
           <div className="flex justify-between text-neutral-500">
-            <span>Shipping</span>
+            <span>{order.delivery_method === "pep_collect" ? "Collection" : "Shipping"}</span>
             <span>{formatZAR(order.shipping)}</span>
           </div>
           {order.discount > 0 && (
@@ -118,6 +118,11 @@ export function OrderDetailPage() {
                 {order.pep_store.city}, {order.pep_store.province}
               </p>
               <p className="text-neutral-500">{order.pep_store.address_line}</p>
+              <p className="mt-1.5 text-xs font-medium uppercase tracking-editorial text-brand-700">
+                {order.pep_delivery_tier === "express"
+                  ? `Express delivery · 3–5 days · ${formatZAR(order.shipping)}`
+                  : `Standard delivery · 7–9 days · ${formatZAR(order.shipping)}`}
+              </p>
             </div>
           </div>
         ) : (

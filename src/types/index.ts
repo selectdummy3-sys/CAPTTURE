@@ -24,6 +24,8 @@ export type SupplyOrder = Tables<"supply_orders">;
 export type SupplyOrderItem = Tables<"supply_order_items">;
 export type PepStore = Tables<"pep_stores">;
 
+export type PepDeliveryTier = "standard" | "express";
+
 /** Seller info embedded on products / orders via a join. */
 export type SellerSummary = Pick<
   Seller,
