@@ -466,12 +466,14 @@ export type Database = {
           coupon_id: string | null
           created_at: string
           delivered_at: string | null
+          delivery_method: string
           discount: number
           id: string
           notes: string | null
           order_number: string
           payment_method: string | null
           payment_status: string
+          pep_store_id: string | null
           seller_id: string
           shipping: number
           shipping_address: Json
@@ -487,12 +489,14 @@ export type Database = {
           coupon_id?: string | null
           created_at?: string
           delivered_at?: string | null
+          delivery_method?: string
           discount?: number
           id?: string
           notes?: string | null
           order_number?: string
           payment_method?: string | null
           payment_status?: string
+          pep_store_id?: string | null
           seller_id: string
           shipping?: number
           shipping_address?: Json
@@ -508,12 +512,14 @@ export type Database = {
           coupon_id?: string | null
           created_at?: string
           delivered_at?: string | null
+          delivery_method?: string
           discount?: number
           id?: string
           notes?: string | null
           order_number?: string
           payment_method?: string | null
           payment_status?: string
+          pep_store_id?: string | null
           seller_id?: string
           shipping?: number
           shipping_address?: Json
@@ -992,6 +998,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      pep_stores: {
+        Row: {
+          address_line: string
+          city: string
+          created_at: string
+          id: string
+          province: string
+          raw_address: string
+          store_code: string
+          store_name: string
+          updated_at: string
+        }
+        Insert: {
+          address_line?: string
+          city: string
+          created_at?: string
+          id?: string
+          province: string
+          raw_address: string
+          store_code: string
+          store_name: string
+          updated_at?: string
+        }
+        Update: {
+          address_line?: string
+          city?: string
+          created_at?: string
+          id?: string
+          province?: string
+          raw_address?: string
+          store_code?: string
+          store_name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       wallet_transactions: {
         Row: {
@@ -1525,6 +1567,8 @@ export type Database = {
         Args: {
           p_billing_address?: Json
           p_coupon_code?: string
+          p_delivery_method?: string
+          p_pep_store_id?: string | null
           p_items: Json
           p_notes?: string
           p_payment_method: string
@@ -1536,12 +1580,14 @@ export type Database = {
           coupon_id: string | null
           created_at: string
           delivered_at: string | null
+          delivery_method: string
           discount: number
           id: string
           notes: string | null
           order_number: string
           payment_method: string | null
           payment_status: string
+          pep_store_id: string | null
           seller_id: string
           shipping: number
           shipping_address: Json

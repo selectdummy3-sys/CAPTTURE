@@ -22,6 +22,7 @@ export type SupplyCourier = Tables<"supply_couriers">;
 export type SupplyProduct = Tables<"supply_products">;
 export type SupplyOrder = Tables<"supply_orders">;
 export type SupplyOrderItem = Tables<"supply_order_items">;
+export type PepStore = Tables<"pep_stores">;
 
 /** Seller info embedded on products / orders via a join. */
 export type SellerSummary = Pick<
@@ -41,6 +42,7 @@ export type OrderWithRelations = Order & {
   items?: OrderItem[];
   coupon?: Pick<Coupon, "code" | "discount_type" | "discount_value"> | null;
   user?: Pick<Profile, "id" | "full_name" | "avatar_url" | "email" | "phone"> | null;
+  pep_store?: PepStore | null;
 };
 
 export type CartLine = {

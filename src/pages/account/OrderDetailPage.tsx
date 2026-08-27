@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { MapPin, PackageOpen } from "lucide-react";
+import { MapPin, PackageOpen, Store } from "lucide-react";
 
 import { useOrder } from "@/hooks/useOrders";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -102,20 +102,40 @@ export function OrderDetailPage() {
       </section>
 
       <section className="mt-6 border border-neutral-200 p-5">
-        <div className="flex items-start gap-3">
-          <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-neutral-400" />
-          <div className="text-sm">
-            <p className="font-semibold text-neutral-900">Delivery to</p>
-            <p className="mt-1 text-neutral-600">
-              {shipping?.full_name ?? "—"}
-              {shipping?.phone ? ` · ${shipping.phone}` : ""}
-            </p>
-            <p className="text-neutral-600">
-              {shipping?.address_line ?? "—"}, {shipping?.city ?? ""} {shipping?.province ?? ""}{" "}
-              {shipping?.postal_code ?? ""}
-            </p>
+        {order.delivery_method === "pep_collect" && order.pep_store ? (
+          <div className="flex items-start gap-3">
+            <Store className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+            <div className="text-sm">
+              <p className="font-semibold text-neutral-900">Collect at PEP store</p>
+              <p className="mt-1 text-neutral-600">
+                {shipping?.full_name ?? "—"}
+                {shipping?.phone ? ` · ${shipping.phone}` : ""}
+              </p>
+              <p className="mt-1 font-medium text-neutral-800">
+                {order.pep_store.store_name} ({order.pep_store.store_code})
+              </p>
+              <p className="text-neutral-600">
+                {order.pep_store.city}, {order.pep_store.province}
+              </p>
+              <p className="text-neutral-500">{order.pep_store.address_line}</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-start gap-3">
+            <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-neutral-400" />
+            <div className="text-sm">
+              <p className="font-semibold text-neutral-900">Delivery to</p>
+              <p className="mt-1 text-neutral-600">
+                {shipping?.full_name ?? "—"}
+                {shipping?.phone ? ` · ${shipping.phone}` : ""}
+              </p>
+              <p className="text-neutral-600">
+                {shipping?.address_line ?? "—"}, {shipping?.city ?? ""} {shipping?.province ?? ""}{" "}
+                {shipping?.postal_code ?? ""}
+              </p>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );

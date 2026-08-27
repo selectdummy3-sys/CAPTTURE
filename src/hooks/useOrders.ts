@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import type { Json } from "@/types/database";
 import type { Address, OrderWithRelations } from "@/types";
 
-const orderSelect = "*, items:order_items(*), seller:sellers(id, business_name, store_username, logo_url), user:profiles(id, full_name, avatar_url, email, phone), coupon:coupons(code, discount_type, discount_value)";
+const orderSelect = "*, items:order_items(*), seller:sellers(id, business_name, store_username, logo_url), user:profiles(id, full_name, avatar_url, email, phone), coupon:coupons(code, discount_type, discount_value), pep_store:pep_stores(*)";
 
 export interface PlaceOrderInput {
   sellerId: string;
@@ -15,6 +15,8 @@ export interface PlaceOrderInput {
   billingAddress?: Address;
   notes?: string;
   couponCode?: string;
+  deliveryMethod?: "shipping" | "pep_collect";
+  pepStoreId?: string | null;
 }
 
 export function useMyOrders() {
@@ -89,6 +91,8 @@ export function usePlaceOrder() {
         p_billing_address: (input.billingAddress ?? input.shippingAddress) as unknown as Json,
         ...(input.notes ? { p_notes: input.notes } : {}),
         ...(input.couponCode ? { p_coupon_code: input.couponCode } : {}),
+        ...(input.deliveryMethod ? { p_delivery_method: input.deliveryMethod } : {}),
+        ...(input.pepStoreId ? { p_pep_store_id: input.pepStoreId } : {}),
       });
       if (error) throw new Error(error.message);
       return data;

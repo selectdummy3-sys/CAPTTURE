@@ -4,11 +4,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { CreditCard, Loader2, PackageCheck } from "lucide-react";
+import { CreditCard, Home, Loader2, MapPin, PackageCheck, Store } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useLiveSellerNames } from "@/hooks/useStores";
+import { usePepStores } from "@/hooks/usePepStores";
 import { supabase } from "@/lib/supabase";
 import { useCartStore, type CartItem } from "@/store/useCartStore";
 import { productImageUrl } from "@/components/storefront/ProductCard";
@@ -18,20 +19,22 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { PROVINCES } from "@/lib/constants";
-import { formatZAR } from "@/lib/utils";
+import { cn, formatZAR } from "@/lib/utils";
 import type { Json } from "@/types/database";
 
 const FREE_SHIPPING_ABOVE = 1000;
 const SHIPPING_FEE = 60;
 
+type DeliveryMethod = "shipping" | "pep_collect";
+
 const addressSchema = z.object({
   recipient: z.string().min(2, "Enter the recipient's full name"),
   phone: z.string().min(7, "Enter a valid phone number"),
-  line1: z.string().min(3, "Enter your street address"),
+  line1: z.string(),
   line2: z.string().optional(),
-  city: z.string().min(2, "Enter your city"),
-  province: z.string().min(1, "Select a province"),
-  postal_code: z.string().min(4, "Enter your postal code"),
+  city: z.string(),
+  province: z.string(),
+  postal_code: z.string(),
 });
 
 type AddressValues = z.infer<typeof addressSchema>;
@@ -54,6 +57,10 @@ export function CheckoutPage() {
   const [appliedCode, setAppliedCode] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [delivery, setDelivery] = useState<DeliveryMethod>("shipping");
+  const [pepProvince, setPepProvince] = useState("");
+  const [pepCity, setPepCity] = useState("");
+  const [pepStoreId, setPepStoreId] = useState("");
 
   const {
     register,
@@ -102,6 +109,27 @@ export function CheckoutPage() {
     [groups, sellerMap]
   );
 
+  const { data: pepStores, isLoading: pepLoading } = usePepStores();
+
+  const pepCities = useMemo(() => {
+    if (!pepProvince) return [];
+    const set = new Set<string>();
+    for (const s of pepStores ?? []) {
+      if (s.province !== pepProvince) continue;
+      if (s.city) set.add(s.city);
+    }
+    return Array.from(set).sort();
+  }, [pepStores, pepProvince]);
+
+  const availablePepStores = useMemo(() => {
+    if (!pepProvince) return pepStores ?? [];
+    return (pepStores ?? []).filter(
+      (s) => s.province === pepProvince && (!pepCity || s.city === pepCity)
+    );
+  }, [pepStores, pepProvince, pepCity]);
+
+  const isCollect = delivery === "pep_collect";
+
   const { data: coupon, error: couponError, isFetching: couponFetching } = useQuery({
     queryKey: ["coupon", appliedCode],
     queryFn: async () => {
@@ -135,28 +163,46 @@ export function CheckoutPage() {
 
   const totals = groups.map((group) => {
     const discount = discountFor(group);
-    const shipping = group.subtotal - discount >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING_FEE;
+    const shipping =
+      isCollect || group.subtotal - discount >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING_FEE;
     return { group, discount, shipping, total: group.subtotal - discount + shipping };
   });
 
   const grandTotal = totals.reduce((a, t) => a + t.total, 0);
   const grandDiscount = totals.reduce((a, t) => a + t.discount, 0);
+  const grandShipping = totals.reduce((a, t) => a + t.shipping, 0);
 
   const placeOrder = async (values: AddressValues) => {
     if (items.length === 0) {
       toast.error("Your bag is empty");
       return;
     }
+
+    if (isCollect) {
+      if (!pepStoreId) {
+        toast.error("Select your preferred PEP store");
+        return;
+      }
+    } else if (!values.line1 || !values.city || !values.province || !values.postal_code) {
+      toast.error("Complete your delivery address");
+      return;
+    }
+
     setSubmitting(true);
-    const address = {
-      recipient: values.recipient,
-      phone: values.phone,
-      line1: values.line1,
-      line2: values.line2 || "",
-      city: values.city,
-      province: values.province,
-      postal_code: values.postal_code,
-    } as unknown as Json;
+    const address = isCollect
+      ? ({
+          recipient: values.recipient,
+          phone: values.phone,
+        } as unknown as Json)
+      : ({
+          recipient: values.recipient,
+          phone: values.phone,
+          line1: values.line1,
+          line2: values.line2 || "",
+          city: values.city,
+          province: values.province,
+          postal_code: values.postal_code,
+        } as unknown as Json);
 
     const placed: string[] = [];
     try {
@@ -173,6 +219,8 @@ export function CheckoutPage() {
           p_shipping_address: address,
           ...(notes.trim() ? { p_notes: notes.trim() } : {}),
           ...(appliedCode ? { p_coupon_code: appliedCode } : {}),
+          p_delivery_method: delivery,
+          ...(isCollect && pepStoreId ? { p_pep_store_id: pepStoreId } : {}),
         });
         if (error) throw new Error(error.message);
         if (data?.order_number) placed.push(data.order_number);
@@ -210,6 +258,8 @@ export function CheckoutPage() {
     );
   }
 
+  const selectedStore = (pepStores ?? []).find((s) => s.id === pepStoreId);
+
   return (
     <div className="mx-auto max-w-1440 px-4 py-12 sm:px-6 lg:py-16">
       <p className="flex items-center gap-3 text-[11px] uppercase tracking-editorial text-neutral-500">
@@ -222,37 +272,143 @@ export function CheckoutPage() {
 
       <form onSubmit={handleSubmit(placeOrder)} className="mt-10 grid gap-8 lg:grid-cols-[1fr_400px]">
         <div className="space-y-8">
-          {/* Address */}
+          {/* Delivery method */}
           <section className="border border-neutral-200 bg-white p-5 shadow-sm sm:p-6">
-            <h2 className="font-display text-2xl font-medium uppercase tracking-tight text-neutral-900">Delivery address</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <Field label="Recipient full name" error={errors.recipient?.message}>
-                <Input placeholder="Nomsa Dlamini" {...register("recipient")} />
-              </Field>
-              <Field label="Phone number" error={errors.phone?.message}>
-                <Input type="tel" placeholder="082 123 4567" {...register("phone")} />
-              </Field>
-              <Field label="Street address" error={errors.line1?.message} className="sm:col-span-2">
-                <Input placeholder="14 Kerk Street" {...register("line1")} />
-              </Field>
-              <Field label="Address line 2 (optional)">
-                <Input placeholder="Unit 5, Sandton" {...register("line2")} />
-              </Field>
-              <Field label="Postal code" error={errors.postal_code?.message}>
-                <Input placeholder="2196" {...register("postal_code")} />
-              </Field>
-              <Field label="City" error={errors.city?.message}>
-                <Input placeholder="Johannesburg" {...register("city")} />
-              </Field>
-              <Field label="Province" error={errors.province?.message}>
-                <Select {...register("province")}>
-                  <option value="">Select province</option>
-                  {PROVINCES.map((p) => (
-                    <option key={p} value={p}>{p}</option>
-                  ))}
-                </Select>
-              </Field>
+            <h2 className="font-display text-2xl font-medium uppercase tracking-tight text-neutral-900">Delivery method</h2>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setDelivery("shipping")}
+                className={cn(
+                  "flex items-start gap-3 border p-4 text-left transition-colors",
+                  delivery === "shipping" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
+                )}
+              >
+                <Home className="mt-0.5 h-5 w-5 text-neutral-500" />
+                <div>
+                  <p className="font-medium text-neutral-900">Home delivery</p>
+                  <p className="text-xs text-neutral-500">Courier to your door · {formatZAR(SHIPPING_FEE)}</p>
+                </div>
+              </button>
+              <button
+                type="button"
+                onClick={() => setDelivery("pep_collect")}
+                className={cn(
+                  "flex items-start gap-3 border p-4 text-left transition-colors",
+                  delivery === "pep_collect" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
+                )}
+              >
+                <Store className="mt-0.5 h-5 w-5 text-brand-600" />
+                <div>
+                  <p className="font-medium text-neutral-900">PEP Click &amp; Collect</p>
+                  <p className="text-xs text-neutral-500">Collect free at your nearest PEP store</p>
+                </div>
+              </button>
             </div>
+
+            {isCollect ? (
+              <div className="mt-5 space-y-4">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Recipient full name" error={errors.recipient?.message}>
+                    <Input placeholder="Nomsa Dlamini" {...register("recipient")} />
+                  </Field>
+                  <Field label="Phone number" error={errors.phone?.message}>
+                    <Input type="tel" placeholder="082 123 4567" {...register("phone")} />
+                  </Field>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <Field label="Province" error={errors.province?.message}>
+                    <Select
+                      value={pepProvince}
+                      onChange={(e) => {
+                        setPepProvince(e.target.value);
+                        setPepCity("");
+                        setPepStoreId("");
+                      }}
+                    >
+                      <option value="">Select province</option>
+                      {PROVINCES.map((p) => (
+                        <option key={p} value={p}>{p}</option>
+                      ))}
+                    </Select>
+                  </Field>
+                  <Field label="City / town">
+                    <Select
+                      value={pepCity}
+                      disabled={!pepProvince || pepCities.length === 0}
+                      onChange={(e) => {
+                        setPepCity(e.target.value);
+                        setPepStoreId("");
+                      }}
+                    >
+                      <option value="">
+                        {!pepProvince ? "Select province first" : "Any city"}
+                      </option>
+                      {pepCities.map((c) => (
+                        <option key={c} value={c}>{c}</option>
+                      ))}
+                    </Select>
+                  </Field>
+                  <Field label="PEP store" error={!pepStoreId && delivery === "pep_collect" ? "Select a store" : undefined}>
+                    <Select
+                      value={pepStoreId}
+                      disabled={!pepProvince || pepLoading}
+                      onChange={(e) => setPepStoreId(e.target.value)}
+                    >
+                      <option value="">
+                        {pepLoading ? "Loading stores…" : "Select a PEP store"}
+                      </option>
+                      {availablePepStores.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.store_name} — {s.city} {s.store_code}
+                        </option>
+                      ))}
+                    </Select>
+                  </Field>
+                </div>
+                {selectedStore && (
+                  <div className="flex items-start gap-3 border border-neutral-200 bg-neutral-50 p-4">
+                    <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+                    <div className="text-sm">
+                      <p className="font-semibold text-neutral-900">{selectedStore.store_name} · {selectedStore.store_code}</p>
+                      <p className="mt-0.5 text-neutral-600">{selectedStore.raw_address}</p>
+                      <p className="mt-1 text-xs text-neutral-500">
+                        Collect your order at this PEP store once it's ready.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                <Field label="Recipient full name" error={errors.recipient?.message}>
+                  <Input placeholder="Nomsa Dlamini" {...register("recipient")} />
+                </Field>
+                <Field label="Phone number" error={errors.phone?.message}>
+                  <Input type="tel" placeholder="082 123 4567" {...register("phone")} />
+                </Field>
+                <Field label="Street address" error={errors.line1?.message} className="sm:col-span-2">
+                  <Input placeholder="14 Kerk Street" {...register("line1")} />
+                </Field>
+                <Field label="Address line 2 (optional)">
+                  <Input placeholder="Unit 5, Sandton" {...register("line2")} />
+                </Field>
+                <Field label="Postal code" error={errors.postal_code?.message}>
+                  <Input placeholder="2196" {...register("postal_code")} />
+                </Field>
+                <Field label="City" error={errors.city?.message}>
+                  <Input placeholder="Johannesburg" {...register("city")} />
+                </Field>
+                <Field label="Province" error={errors.province?.message}>
+                  <Select {...register("province")}>
+                    <option value="">Select province</option>
+                    {PROVINCES.map((p) => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </Select>
+                </Field>
+              </div>
+            )}
           </section>
 
           {/* Payment */}
@@ -321,10 +477,17 @@ export function CheckoutPage() {
                     <dd>-{formatZAR(discount)}</dd>
                   </div>
                 )}
-                <div className="flex justify-between">
-                  <dt className="text-neutral-500">Shipping</dt>
-                  <dd className="text-neutral-900">{shipping === 0 ? "Free" : formatZAR(shipping)}</dd>
-                </div>
+                {isCollect ? (
+                  <div className="flex justify-between text-green-600">
+                    <dt>Collection</dt>
+                    <dd>Free</dd>
+                  </div>
+                ) : (
+                  <div className="flex justify-between">
+                    <dt className="text-neutral-500">Shipping</dt>
+                    <dd className="text-neutral-900">{shipping === 0 ? "Free" : formatZAR(shipping)}</dd>
+                  </div>
+                )}
                 <div className="flex justify-between border-t border-neutral-100 pt-2 font-semibold">
                   <dt className="text-neutral-900">Total</dt>
                   <dd className="text-neutral-900">{formatZAR(total)}</dd>
@@ -372,8 +535,8 @@ export function CheckoutPage() {
               </div>
             )}
             <div className="mt-1 flex justify-between text-sm">
-              <span className="text-neutral-300">Shipping</span>
-              <span>{formatZAR(totals.reduce((a, t) => a + t.shipping, 0))}</span>
+              <span className="text-neutral-300">{isCollect ? "Collection" : "Shipping"}</span>
+              <span>{isCollect ? "Free" : formatZAR(grandShipping)}</span>
             </div>
             <div className="mt-3 flex justify-between border-t border-white/10 pt-3">
               <span className="font-semibold">Total</span>
