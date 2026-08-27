@@ -119,7 +119,7 @@ export function CheckoutPage() {
     if (!pepProvince) return [];
     const set = new Set<string>();
     for (const s of pepStores ?? []) {
-      if (s.province !== pepProvince) continue;
+      if (s.province.toUpperCase() !== pepProvince.toUpperCase()) continue;
       if (s.city) set.add(s.city);
     }
     return Array.from(set).sort();
@@ -127,8 +127,12 @@ export function CheckoutPage() {
 
   const availablePepStores = useMemo(() => {
     if (!pepProvince) return pepStores ?? [];
+    const targetProvince = pepProvince.toUpperCase();
+    const targetCity = pepCity ? pepCity.toUpperCase() : "";
     return (pepStores ?? []).filter(
-      (s) => s.province === pepProvince && (!pepCity || s.city === pepCity)
+      (s) =>
+        s.province.toUpperCase() === targetProvince &&
+        (!targetCity || s.city.toUpperCase() === targetCity)
     );
   }, [pepStores, pepProvince, pepCity]);
 
@@ -391,7 +395,7 @@ export function CheckoutPage() {
                     </div>
                   </div>
                 )}
-                {selectedStore && (
+                {isCollect && (
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-editorial text-neutral-500">Delivery speed</p>
                     <div className="mt-2 grid gap-3 sm:grid-cols-2">
