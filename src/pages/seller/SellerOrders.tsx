@@ -14,6 +14,7 @@ import {
 
 import { useSellerOrders, useUpdateOrderStatus, useUpdateOrderTracking } from "@/hooks/useOrders";
 import { EmptyState } from "@/components/ui/empty-state";
+import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { OrderStatusBadge, PaymentMethodBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -346,7 +347,14 @@ export function SellerOrders() {
   const [status, setStatus] = useState<string>("all");
   const { data: orders, isLoading } = useSellerOrders(status);
 
-  if (isLoading) return <p className="py-10 text-center text-sm text-neutral-400">Loading orders…</p>;
+  if (isLoading) {
+    return (
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Orders</h1>
+        <SkeletonTable rows={6} className="mt-6" />
+      </div>
+    );
+  }
 
   return (
     <div>

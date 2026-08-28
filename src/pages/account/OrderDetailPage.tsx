@@ -3,6 +3,7 @@ import { MapPin, PackageOpen, Store } from "lucide-react";
 
 import { useOrder } from "@/hooks/useOrders";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { OrderStatusBadge, PaymentMethodBadge } from "@/components/ui/status-badge";
 import { buttonClass } from "@/components/ui/button";
 import { productImageUrl } from "@/components/storefront/ProductCard";
@@ -12,7 +13,40 @@ export function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: order, isLoading } = useOrder(id);
 
-  if (isLoading) return <p className="py-10 text-center text-sm text-neutral-400">Loading order…</p>;
+  if (isLoading) {
+    return (
+      <div className="mx-auto max-w-3xl">
+        <Skeleton className="h-4 w-32" />
+        <div className="mt-4">
+          <Skeleton className="h-7 w-72 max-w-full" />
+          <Skeleton className="mt-2 h-4 w-56 max-w-full" />
+        </div>
+        <div className="mt-8 border border-neutral-200">
+          <div className="border-b border-neutral-100 bg-neutral-50 px-5 py-3">
+            <Skeleton className="h-4 w-24" />
+          </div>
+          <div className="divide-y divide-neutral-100">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-5 py-4">
+                <div className="skeleton h-16 w-16 shrink-0" />
+                <div className="min-w-0 flex-1 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
+                </div>
+                <Skeleton className="h-4 w-16" />
+              </div>
+            ))}
+          </div>
+          <div className="space-y-2 border-t border-neutral-100 px-5 py-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-3.5 w-full" />
+            ))}
+          </div>
+        </div>
+        <Skeleton className="mt-6 h-24 w-full" />
+      </div>
+    );
+  }
 
   if (!order) {
     return (

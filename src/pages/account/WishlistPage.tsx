@@ -3,6 +3,7 @@ import { Heart, X } from "lucide-react";
 
 import { useWishlist, useRemoveFromWishlist } from "@/hooks/useWishlist";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Skeleton } from "@/components/ui/skeleton";
 import { buttonClass } from "@/components/ui/button";
 import { productImageUrl } from "@/components/storefront/ProductCard";
 import { formatZAR } from "@/lib/utils";
@@ -11,7 +12,24 @@ export function WishlistPage() {
   const { data: items, isLoading } = useWishlist();
   const remove = useRemoveFromWishlist();
 
-  if (isLoading) return <p className="py-10 text-center text-sm text-neutral-400">Loading wishlist…</p>;
+  if (isLoading) {
+    return (
+      <div>
+        <Skeleton className="h-7 w-32" />
+        <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i}>
+              <Skeleton className="aspect-[4/5] w-full" />
+              <div className="mt-2 space-y-1.5">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-16" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   if ((items ?? []).length === 0) {
     return (

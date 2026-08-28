@@ -6,6 +6,7 @@ import { useAdminSellerFinance, useAllSellers, useDeleteSeller, useSetSellerStat
 import { Button, type ButtonVariant } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { Dialog } from "@/components/ui/dialog";
 import { APPLICATION_STATUS_LABELS } from "@/lib/constants";
 import { formatDate, formatZAR } from "@/lib/utils";
@@ -712,7 +713,14 @@ export function AdminSellers() {
     await act(seller, next, trimmed);
   };
 
-  if (isLoading) return <p className="py-10 text-center text-sm text-neutral-400">Loading sellers…</p>;
+  if (isLoading) {
+    return (
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Sellers</h1>
+        <SkeletonTable rows={6} className="mt-6" />
+      </div>
+    );
+  }
 
   return (
     <div>

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Dialog } from "@/components/ui/dialog";
 import { ProductStatusBadge } from "@/components/ui/status-badge";
+import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { productImageUrl } from "@/components/storefront/ProductCard";
 import { formatZAR } from "@/lib/utils";
 import { cn } from "@/lib/utils";
@@ -71,7 +72,14 @@ export function AdminProducts() {
     await run(id, "rejected", trimmed);
   };
 
-  if (isLoading) return <p className="py-10 text-center text-sm text-neutral-400">Loading products…</p>;
+  if (isLoading) {
+    return (
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-neutral-900">All Products</h1>
+        <SkeletonTable rows={6} className="mt-6" />
+      </div>
+    );
+  }
 
   return (
     <div>
