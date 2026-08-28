@@ -119,9 +119,12 @@ export function useUpdateOrderStatus() {
         .eq("id", id);
       if (error) throw new Error(error.message);
     },
-    onSuccess: () => {
+    onSuccess: (_data, { id, status }) => {
       void queryClient.invalidateQueries({ queryKey: ["orders"] });
       void queryClient.invalidateQueries({ queryKey: ["seller-stats"] });
+      void supabase.functions
+        .invoke("order-notify", { body: { orderId: id, status } })
+        .catch((err) => console.error("order notify email failed:", err));
     },
   });
 }

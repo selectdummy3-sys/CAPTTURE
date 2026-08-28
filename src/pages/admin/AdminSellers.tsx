@@ -14,54 +14,13 @@ import { supabase } from "@/lib/supabase";
 
 type AdminSellerRow = NonNullable<ReturnType<typeof useAllSellers>["data"]>[number];
 
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-
 function notifySellerEmail(seller: AdminSellerRow, status: string, reason?: string) {
-  const email = seller.user?.email;
-  if (!email) return;
-  const reasonBox = reason
-    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f5f5;border:1px solid #e5e5e5;border-radius:6px;margin:18px 0;"><tr><td style="padding:14px 16px;font-size:13px;color:#171717;"><span style="font-size:11px;color:#a3a3a3;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Reason</span>${escapeHtml(reason)}</td></tr></table>`
-    : "";
-  const subject =
-    status === "approved"
-      ? "Your CAPTTURE seller account has been approved"
-      : status === "reinstate"
-        ? "Your CAPTTURE store has been reinstated"
-        : status === "rejected"
-          ? "Update on your CAPTTURE seller application"
-          : "Your CAPTTURE seller account has been suspended";
-  const html =
-    status === "approved"
-      ? '<p style="margin:0 0 18px;">Hi there,</p>' +
-        "<p style=\"margin:0 0 4px;\"><strong>Great news — your seller application on CAPTTURE has been approved.</strong></p>" +
-        "<p style=\"margin:0;\">Start adding products so shoppers can discover your store. Add a store banner, products and set up your stock to get going.</p>"
-      : status === "reinstate"
-        ? '<p style="margin:0 0 18px;">Hi there,</p>' +
-          "<p style=\"margin:0 0 4px;\"><strong>Your CAPTTURE store is back online.</strong></p>" +
-          "<p style=\"margin:0;\">Your products are once again visible to shoppers — welcome back.</p>"
-        : status === "rejected"
-          ? '<p style="margin:0 0 18px;">Hi there,</p>' +
-            "<p style=\"margin:0 0 4px;\"><strong>We're sorry, but your seller application was not approved at this time.</strong></p>" +
-            reasonBox +
-            '<p style="margin:0;">You can contact seller.support@captture.co.za if you\u2019d like to know more or appeal the decision.</p>'
-          : '<p style="margin:0 0 18px;">Hi there,</p>' +
-            "<p style=\"margin:0 0 4px;\"><strong>Your CAPTTURE store has been temporarily suspended.</strong></p>" +
-            reasonBox +
-            "<p style=\"margin:0;\">Your products are hidden from shoppers until the suspension is lifted. If you believe this is a mistake, contact seller.support@captture.co.za.</p>";
   void supabase.functions
-    .invoke("email-send", {
+    .invoke("seller-status", {
       body: {
-        from: "seller.support@captture.co.za",
-        to: email,
-        subject,
-        html,
+        sellerId: seller.id,
+        status,
+        ...(reason ? { reason } : {}),
       },
     })
     .catch((err) => console.error("seller status email failed:", err));
