@@ -115,6 +115,9 @@ const AdminWithdrawals = lazy(() =>
 const AdminSettings = lazy(() =>
   import("@/pages/admin/AdminSettings").then((m) => ({ default: m.default }))
 );
+const AdminTeam = lazy(() =>
+  import("@/pages/admin/AdminTeam").then((m) => ({ default: m.AdminTeam }))
+);
 
 const SupplyLayout = lazy(() =>
   import("@/components/supply/SupplyLayout").then((m) => ({ default: m.SupplyLayout }))
@@ -222,6 +225,7 @@ export function App() {
           <Route path="orders" element={<AdminOrders />} />
           <Route path="withdrawals" element={<AdminWithdrawals />} />
           <Route path="settings" element={<AdminSettings />} />
+          <Route path="team" element={<AdminTeam />} />
           <Route path="coupons" element={<AdminCoupons />} />
           <Route path="messages" element={<AdminMessages />} />
           <Route path="hero" element={<AdminHero />} />

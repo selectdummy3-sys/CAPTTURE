@@ -280,3 +280,42 @@ export function usePendingProductsCount() {
     },
   });
 }
+
+export const TEAM_ROLES = ["customer", "seller", "admin"] as const;
+export type TeamRole = (typeof TEAM_ROLES)[number];
+
+export interface TeamMember {
+  id: string;
+  email: string;
+  full_name: string;
+  role: TeamRole;
+  created_at: string;
+}
+
+/** Admin: list all profiles for role management (last-admin guarded by RPC). */
+export function useAdminTeam() {
+  return useQuery({
+    queryKey: ["admin", "team"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("list_admin_team");
+      if (error) throw error;
+      return (data ?? []) as unknown as TeamMember[];
+    },
+  });
+}
+
+export function useSetUserRole() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: TeamRole }) => {
+      const { error } = await supabase.rpc("set_user_role", {
+        p_user_id: userId,
+        p_role: role,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "team"] });
+    },
+  });
+}

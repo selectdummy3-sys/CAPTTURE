@@ -1741,6 +1741,7 @@ export type Database = {
       increment_view: { Args: { p_product_id: string }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       is_seller_user: { Args: never; Returns: boolean }
+      list_admin_team: { Args: never; Returns: Json }
       mark_message_read: { Args: { p_message_id: string }; Returns: undefined }
       notify_user: {
         Args: {
@@ -2080,6 +2081,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      set_user_role: { Args: { p_role: string; p_user_id: string }; Returns: Json }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       track_product_view: { Args: { p_product_id: string }; Returns: undefined }
