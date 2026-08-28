@@ -251,7 +251,7 @@ export function useSellerEarnings() {
         p_seller_id: seller.id,
       });
       if (error) throw error;
-      return (data ?? { availableBalance: 0, pendingBalance: 0, totalEarnings: 0, marketplaceCommission: 0, nextPayoutDate: null }) as EarningsData;
+      return (data ?? { availableBalance: 0, pendingBalance: 0, totalEarnings: 0, marketplaceCommission: 0, nextPayoutDate: null }) as unknown as EarningsData;
     },
     enabled: Boolean(seller),
   });

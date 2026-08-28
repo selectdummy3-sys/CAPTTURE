@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -471,6 +471,7 @@ export type Database = {
           id: string
           notes: string | null
           order_number: string
+          payfast_ref: string | null
           payment_method: string | null
           payment_status: string
           pep_delivery_tier: string
@@ -495,6 +496,7 @@ export type Database = {
           id?: string
           notes?: string | null
           order_number?: string
+          payfast_ref?: string | null
           payment_method?: string | null
           payment_status?: string
           pep_delivery_tier?: string
@@ -519,6 +521,7 @@ export type Database = {
           id?: string
           notes?: string | null
           order_number?: string
+          payfast_ref?: string | null
           payment_method?: string | null
           payment_status?: string
           pep_delivery_tier?: string
@@ -539,6 +542,13 @@ export type Database = {
             columns: ["coupon_id"]
             isOneToOne: false
             referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_pep_store_id_fkey"
+            columns: ["pep_store_id"]
+            isOneToOne: false
+            referencedRelation: "pep_stores"
             referencedColumns: ["id"]
           },
           {
@@ -563,6 +573,168 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      payfast_config: {
+        Row: {
+          cancel_url: string
+          id: number
+          merchant_id: string
+          merchant_key: string
+          merchant_name: string
+          notify_url: string
+          passphrase: string
+          return_url: string
+          sandbox: boolean
+          updated_at: string
+        }
+        Insert: {
+          cancel_url?: string
+          id: number
+          merchant_id?: string
+          merchant_key?: string
+          merchant_name?: string
+          notify_url?: string
+          passphrase?: string
+          return_url?: string
+          sandbox?: boolean
+          updated_at?: string
+        }
+        Update: {
+          cancel_url?: string
+          id?: number
+          merchant_id?: string
+          merchant_key?: string
+          merchant_name?: string
+          notify_url?: string
+          passphrase?: string
+          return_url?: string
+          sandbox?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      payfast_order_links: {
+        Row: {
+          order_id: string
+          payment_id: number
+        }
+        Insert: {
+          order_id: string
+          payment_id: number
+        }
+        Update: {
+          order_id?: string
+          payment_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payfast_order_links_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payfast_order_links_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payfast_payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payfast_payments: {
+        Row: {
+          amount: number
+          buyer_user_id: string
+          created_at: string
+          id: number
+          item_count: number
+          itn_payload: Json | null
+          payfast_status: string | null
+          payment_ref: string
+          pf_payment_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          buyer_user_id: string
+          created_at?: string
+          id?: never
+          item_count?: number
+          itn_payload?: Json | null
+          payfast_status?: string | null
+          payment_ref: string
+          pf_payment_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          buyer_user_id?: string
+          created_at?: string
+          id?: never
+          item_count?: number
+          itn_payload?: Json | null
+          payfast_status?: string | null
+          payment_ref?: string
+          pf_payment_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payfast_payments_buyer_user_id_fkey"
+            columns: ["buyer_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payfast_payments_buyer_user_id_fkey"
+            columns: ["buyer_user_id"]
+            isOneToOne: false
+            referencedRelation: "user_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pep_stores: {
+        Row: {
+          address_line: string
+          city: string
+          created_at: string
+          id: string
+          province: string
+          raw_address: string
+          store_code: string
+          store_name: string
+          updated_at: string
+        }
+        Insert: {
+          address_line?: string
+          city: string
+          created_at?: string
+          id?: string
+          province: string
+          raw_address: string
+          store_code: string
+          store_name: string
+          updated_at?: string
+        }
+        Update: {
+          address_line?: string
+          city?: string
+          created_at?: string
+          id?: string
+          province?: string
+          raw_address?: string
+          store_code?: string
+          store_name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       platform_settings: {
         Row: {
@@ -687,6 +859,35 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "user_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_view_events: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_view_events_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]
@@ -1002,167 +1203,28 @@ export type Database = {
           },
         ]
       }
-      pep_stores: {
+      store_visits: {
         Row: {
-          address_line: string
-          city: string
           created_at: string
           id: string
-          province: string
-          raw_address: string
-          store_code: string
-          store_name: string
-          updated_at: string
+          seller_id: string
+          user_id: string | null
         }
         Insert: {
-          address_line?: string
-          city: string
           created_at?: string
           id?: string
-          province: string
-          raw_address: string
-          store_code: string
-          store_name: string
-          updated_at?: string
+          seller_id: string
+          user_id?: string | null
         }
         Update: {
-          address_line?: string
-          city?: string
           created_at?: string
           id?: string
-          province?: string
-          raw_address?: string
-          store_code?: string
-          store_name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      wallet_transactions: {
-        Row: {
-          amount: number
-          created_at: string
-          description: string | null
-          id: string
-          order_id: string | null
-          reference: string | null
-          seller_id: string
-          type: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string
-          description?: string | null
-          id?: string
-          order_id?: string | null
-          reference?: string | null
-          seller_id: string
-          type: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          description?: string | null
-          id?: string
-          order_id?: string | null
-          reference?: string | null
           seller_id?: string
-          type?: string
+          user_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "wallet_transactions_order_id_fkey"
-            columns: ["order_id"]
-            isOneToOne: false
-            referencedRelation: "orders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "wallet_transactions_seller_id_fkey"
-            columns: ["seller_id"]
-            isOneToOne: false
-            referencedRelation: "sellers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      wishlist_items: {
-        Row: {
-          created_at: string
-          id: string
-          product_id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          product_id: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          product_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "wishlist_items_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "wishlist_items_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "wishlist_items_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_public"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      withdrawal_requests: {
-        Row: {
-          admin_notes: string | null
-          amount: number
-          bank_snapshot: Json
-          created_at: string
-          id: string
-          processed_at: string | null
-          seller_id: string
-          status: string
-        }
-        Insert: {
-          admin_notes?: string | null
-          amount: number
-          bank_snapshot?: Json
-          created_at?: string
-          id?: string
-          processed_at?: string | null
-          seller_id: string
-          status?: string
-        }
-        Update: {
-          admin_notes?: string | null
-          amount?: number
-          bank_snapshot?: Json
-          created_at?: string
-          id?: string
-          processed_at?: string | null
-          seller_id?: string
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "withdrawal_requests_seller_id_fkey"
+            foreignKeyName: "store_visits_seller_id_fkey"
             columns: ["seller_id"]
             isOneToOne: false
             referencedRelation: "sellers"
@@ -1420,6 +1482,138 @@ export type Database = {
           },
         ]
       }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          order_id: string | null
+          reference: string | null
+          seller_id: string
+          type: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id?: string | null
+          reference?: string | null
+          seller_id: string
+          type: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          order_id?: string | null
+          reference?: string | null
+          seller_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wallet_transactions_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wallet_transactions_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wishlist_items: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlist_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wishlist_items_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wishlist_items_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      withdrawal_requests: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          bank_snapshot: Json
+          created_at: string
+          id: string
+          processed_at: string | null
+          seller_id: string
+          status: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          bank_snapshot?: Json
+          created_at?: string
+          id?: string
+          processed_at?: string | null
+          seller_id: string
+          status?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          bank_snapshot?: Json
+          created_at?: string
+          id?: string
+          processed_at?: string | null
+          seller_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "withdrawal_requests_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: false
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       user_public: {
@@ -1444,63 +1638,106 @@ export type Database = {
     Functions: {
       admin_commission_stats: { Args: never; Returns: Json }
       admin_seller_finance: { Args: { p_seller_id: string }; Returns: Json }
+      apply_payfast_itn: {
+        Args: {
+          p_amount_gross: number
+          p_merchant_id: string
+          p_payload?: Json
+          p_payment_ref: string
+          p_pf_payment_id: string
+          p_pf_status: string
+        }
+        Returns: string
+      }
+      begin_payfast_payment: {
+        Args: { p_order_numbers: string[] }
+        Returns: string
+      }
       current_seller: { Args: never; Returns: string }
       current_seller_id: { Args: never; Returns: string }
+      delete_seller: { Args: { p_seller_id: string }; Returns: undefined }
       generate_order_number: { Args: never; Returns: string }
       generate_supply_order_number: { Args: never; Returns: string }
-      get_supply_stats: { Args: never; Returns: Json }
       get_also_bought: {
         Args: { p_limit?: number; p_product_id: string }
-        Returns: Array<{ product_id: string; bought_together: number }>
+        Returns: {
+          bought_together: number
+          product_id: string
+        }[]
       }
+      get_payfast_config_admin: { Args: never; Returns: Json }
       get_seller_best_selling_products: {
         Args: { p_limit?: number; p_seller_id: string }
-        Returns: Array<{ id: string; name: string; sales: number; revenue: number }>
+        Returns: {
+          id: string
+          name: string
+          revenue: number
+          sales: number
+        }[]
       }
-      get_seller_conversion_rate: { Args: { p_days?: number; p_seller_id: string }; Returns: number }
+      get_seller_conversion_rate: {
+        Args: { p_days?: number; p_seller_id: string }
+        Returns: number
+      }
       get_seller_daily_sales: {
         Args: { p_days?: number; p_seller_id: string }
-        Returns: Array<{ date: string; value: number }>
-      }
-      get_seller_earnings: {
-        Args: { p_seller_id: string }
         Returns: {
-          availableBalance: number
-          marketplaceCommission: number
-          nextPayoutDate: string | null
-          pendingBalance: number
-          totalEarnings: number
-        }
+          date: string
+          value: number
+        }[]
       }
+      get_seller_earnings: { Args: { p_seller_id: string }; Returns: Json }
       get_seller_follower_growth: {
         Args: { p_days?: number; p_seller_id: string }
-        Returns: Array<{ date: string; value: number }>
+        Returns: {
+          date: string
+          value: number
+        }[]
       }
       get_seller_monthly_sales: {
         Args: { p_months?: number; p_seller_id: string }
-        Returns: Array<{ date: string; value: number }>
+        Returns: {
+          date: string
+          value: number
+        }[]
       }
       get_seller_orders_over_time: {
         Args: { p_days?: number; p_seller_id: string }
-        Returns: Array<{ date: string; value: number }>
+        Returns: {
+          date: string
+          value: number
+        }[]
       }
       get_seller_product_views: {
         Args: { p_days?: number; p_seller_id: string }
-        Returns: Array<{ date: string; value: number }>
+        Returns: {
+          date: string
+          value: number
+        }[]
       }
       get_seller_revenue_over_time: {
         Args: { p_days?: number; p_seller_id: string }
-        Returns: Array<{ date: string; value: number }>
+        Returns: {
+          date: string
+          value: number
+        }[]
       }
       get_seller_store_visits: {
         Args: { p_days?: number; p_seller_id: string }
-        Returns: Array<{ date: string; value: number }>
+        Returns: {
+          date: string
+          value: number
+        }[]
       }
       get_seller_user_id: { Args: { p_seller_id: string }; Returns: string }
       get_seller_weekly_sales: {
         Args: { p_seller_id: string; p_weeks?: number }
-        Returns: Array<{ date: string; value: number }>
+        Returns: {
+          date: string
+          value: number
+        }[]
       }
+      get_supply_stats: { Args: never; Returns: Json }
       increment_view: { Args: { p_product_id: string }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       is_seller_user: { Args: never; Returns: boolean }
@@ -1544,51 +1781,12 @@ export type Database = {
           coupon_id: string | null
           created_at: string
           delivered_at: string | null
-          discount: number
-          id: string
-          notes: string | null
-          order_number: string
-          payment_method: string | null
-          payment_status: string
-          seller_id: string
-          shipping: number
-          shipping_address: Json
-          status: string
-          subtotal: number
-          total: number
-          updated_at: string
-          user_id: string | null
-        }
-        SetofOptions: {
-          from: "*"
-          to: "orders"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
-      place_order: {
-        Args: {
-          p_billing_address?: Json
-          p_coupon_code?: string
-          p_delivery_method?: string
-          p_pep_delivery_tier?: string
-          p_pep_store_id?: string | null
-          p_items: Json
-          p_notes?: string
-          p_payment_method: string
-          p_seller_id: string
-          p_shipping_address: Json
-        }
-        Returns: {
-          billing_address: Json | null
-          coupon_id: string | null
-          created_at: string
-          delivered_at: string | null
           delivery_method: string
           discount: number
           id: string
           notes: string | null
           order_number: string
+          payfast_ref: string | null
           payment_method: string | null
           payment_status: string
           pep_delivery_tier: string
@@ -1599,6 +1797,7 @@ export type Database = {
           status: string
           subtotal: number
           total: number
+          tracking_number: string | null
           updated_at: string
           user_id: string | null
         }
@@ -1609,9 +1808,142 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      payfast_redirect_data: { Args: { p_payment_ref: string }; Returns: Json }
+      place_order:
+        | {
+            Args: {
+              p_billing_address?: Json
+              p_coupon_code?: string
+              p_items: Json
+              p_notes?: string
+              p_payment_method: string
+              p_seller_id: string
+              p_shipping_address: Json
+            }
+            Returns: {
+              billing_address: Json | null
+              coupon_id: string | null
+              created_at: string
+              delivered_at: string | null
+              delivery_method: string
+              discount: number
+              id: string
+              notes: string | null
+              order_number: string
+              payfast_ref: string | null
+              payment_method: string | null
+              payment_status: string
+              pep_delivery_tier: string
+              pep_store_id: string | null
+              seller_id: string
+              shipping: number
+              shipping_address: Json
+              status: string
+              subtotal: number
+              total: number
+              tracking_number: string | null
+              updated_at: string
+              user_id: string | null
+            }
+            SetofOptions: {
+              from: "*"
+              to: "orders"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
+        | {
+            Args: {
+              p_billing_address?: Json
+              p_coupon_code?: string
+              p_delivery_method?: string
+              p_items: Json
+              p_notes?: string
+              p_payment_method: string
+              p_pep_store_id?: string
+              p_seller_id: string
+              p_shipping_address: Json
+            }
+            Returns: {
+              billing_address: Json | null
+              coupon_id: string | null
+              created_at: string
+              delivered_at: string | null
+              delivery_method: string
+              discount: number
+              id: string
+              notes: string | null
+              order_number: string
+              payfast_ref: string | null
+              payment_method: string | null
+              payment_status: string
+              pep_delivery_tier: string
+              pep_store_id: string | null
+              seller_id: string
+              shipping: number
+              shipping_address: Json
+              status: string
+              subtotal: number
+              total: number
+              tracking_number: string | null
+              updated_at: string
+              user_id: string | null
+            }
+            SetofOptions: {
+              from: "*"
+              to: "orders"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
+        | {
+            Args: {
+              p_billing_address?: Json
+              p_coupon_code?: string
+              p_delivery_method?: string
+              p_items: Json
+              p_notes?: string
+              p_payment_method: string
+              p_pep_delivery_tier?: string
+              p_pep_store_id?: string
+              p_seller_id: string
+              p_shipping_address: Json
+            }
+            Returns: {
+              billing_address: Json | null
+              coupon_id: string | null
+              created_at: string
+              delivered_at: string | null
+              delivery_method: string
+              discount: number
+              id: string
+              notes: string | null
+              order_number: string
+              payfast_ref: string | null
+              payment_method: string | null
+              payment_status: string
+              pep_delivery_tier: string
+              pep_store_id: string | null
+              seller_id: string
+              shipping: number
+              shipping_address: Json
+              status: string
+              subtotal: number
+              total: number
+              tracking_number: string | null
+              updated_at: string
+              user_id: string | null
+            }
+            SetofOptions: {
+              from: "*"
+              to: "orders"
+              isOneToOne: true
+              isSetofReturn: false
+            }
+          }
       place_supply_order: {
         Args: {
-          p_courier_id: string | null
+          p_courier_id: string
           p_items: Json
           p_notes?: string
           p_payment_method?: string
@@ -1648,8 +1980,71 @@ export type Database = {
       }
       request_withdrawal: { Args: { p_amount: number }; Returns: string }
       seller_balance: { Args: never; Returns: number }
-      set_announcement: { Args: { p_enabled: boolean; p_text: string }; Returns: undefined }
-      set_commission_settings: { Args: { p_enabled: boolean; p_rate: number }; Returns: undefined }
+      send_message: {
+        Args: {
+          p_body: string
+          p_is_bulk?: boolean
+          p_seller_id: string
+          p_subject: string
+        }
+        Returns: string
+      }
+      set_announcement: {
+        Args: { p_enabled: boolean; p_text: string }
+        Returns: undefined
+      }
+      set_commission_settings: {
+        Args: { p_enabled: boolean; p_rate: number }
+        Returns: undefined
+      }
+      set_payfast_config: {
+        Args: {
+          p_cancel_url?: string
+          p_merchant_id?: string
+          p_merchant_key?: string
+          p_merchant_name?: string
+          p_notify_url?: string
+          p_passphrase?: string
+          p_return_url?: string
+          p_sandbox?: boolean
+        }
+        Returns: undefined
+      }
+      set_product_status: {
+        Args: { p_product_id: string; p_reason?: string; p_status: string }
+        Returns: {
+          category_id: string | null
+          colours: string[]
+          created_at: string
+          description: string | null
+          featured_image: string | null
+          flash_sale_ends_at: string | null
+          gender: string
+          id: string
+          is_flash_sale: boolean
+          material: string | null
+          moderation_reason: string | null
+          name: string
+          price: number
+          sale_price: number | null
+          seller_id: string
+          sizes: string[]
+          sku: string | null
+          slug: string
+          status: string
+          stock: number
+          tags: string[]
+          updated_at: string
+          view_count: number
+          weight: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "products"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       set_seller_status: {
         Args: { p_reason?: string; p_seller_id: string; p_status: string }
         Returns: {
@@ -1685,19 +2080,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      set_product_status: {
-        Args: { p_product_id: string; p_reason?: string; p_status: string }
-        Returns: undefined
-      }
-      send_message: {
-        Args: { p_body: string; p_is_bulk?: boolean; p_seller_id?: string | null; p_subject: string }
-        Returns: string | null
-      }
-      track_product_view: { Args: { p_product_id: string }; Returns: undefined }
-      track_store_visit: { Args: { p_seller_id: string }; Returns: undefined }
-      delete_seller: { Args: { p_seller_id: string }; Returns: undefined }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      track_product_view: { Args: { p_product_id: string }; Returns: undefined }
+      track_store_visit: { Args: { p_seller_id: string }; Returns: undefined }
       unread_message_count: { Args: never; Returns: number }
       update_my_seller_profile: {
         Args: {
@@ -1712,6 +2098,10 @@ export type Database = {
           p_social_links?: Json
         }
         Returns: undefined
+      }
+      verify_payfast_itn: {
+        Args: { p_payload: Json; p_signature: string }
+        Returns: boolean
       }
     }
     Enums: {

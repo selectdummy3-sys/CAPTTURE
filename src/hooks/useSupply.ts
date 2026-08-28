@@ -148,7 +148,7 @@ export function usePlaceSupplyOrder() {
           quantity: i.quantity,
         })) as unknown as Json,
         p_shipping_address: input.shippingAddress as unknown as Json,
-        p_courier_id: input.courierId ?? null,
+        p_courier_id: (input.courierId ?? null) as unknown as string,
         p_payment_method: input.paymentMethod,
         ...(input.notes ? { p_notes: input.notes } : {}),
       });

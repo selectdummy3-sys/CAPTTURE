@@ -35,6 +35,7 @@ const paymentTones: Record<string, BadgeTone> = {
   unpaid: "amber",
   pending_confirmation: "amber",
   paid: "green",
+  failed: "red",
 };
 
 export function OrderStatusBadge({ status }: { status: string }) {

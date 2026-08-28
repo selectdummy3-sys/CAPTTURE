@@ -36,7 +36,7 @@ export function useSendMessage() {
       isBulk: boolean;
     }): Promise<string | null> => {
       const { data, error } = await supabase.rpc("send_message", {
-        p_seller_id: sellerId,
+        p_seller_id: sellerId as unknown as string,
         p_subject: subject,
         p_body: body,
         p_is_bulk: isBulk,

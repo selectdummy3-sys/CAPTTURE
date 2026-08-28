@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Megaphone, Percent, Wallet } from "lucide-react";
+import { Megaphone, Percent, Wallet, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -9,6 +9,7 @@ import {
   useSetAnnouncement,
   useSetCommissionSettings,
 } from "@/hooks/useAdminSettings";
+import { useAdminPayFastConfig, useSetPayFastConfig } from "@/hooks/usePayFast";
 import { StatCard } from "@/components/ui/stat-card";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -34,6 +35,79 @@ export default function AdminSettings() {
   const [announcementText, setAnnouncementText] = useState("");
   const [announcementEnabled, setAnnouncementEnabled] = useState(false);
   const [savingAnnouncement, setSavingAnnouncement] = useState(false);
+
+  const { data: payfast, isLoading: payfastLoading } = useAdminPayFastConfig();
+  const savePayFast = useSetPayFastConfig();
+
+  const [pfMerchantId, setPfMerchantId] = useState("");
+  const [pfMerchantKey, setPfMerchantKey] = useState("");
+  const [pfPassphrase, setPfPassphrase] = useState("");
+  const [pfSandbox, setPfSandbox] = useState(true);
+  const [pfMerchantName, setPfMerchantName] = useState("CAPPTURE");
+  const [pfReturnUrl, setPfReturnUrl] = useState("");
+  const [pfCancelUrl, setPfCancelUrl] = useState("");
+  const [pfNotifyUrl, setPfNotifyUrl] = useState("");
+  const [savingPayFast, setSavingPayFast] = useState(false);
+
+  useEffect(() => {
+    if (payfast) {
+      setPfMerchantId(payfast.merchant_id);
+      setPfSandbox(payfast.sandbox);
+      setPfMerchantName(payfast.merchant_name);
+      setPfReturnUrl(payfast.return_url);
+      setPfCancelUrl(payfast.cancel_url);
+      setPfNotifyUrl(payfast.notify_url);
+    }
+  }, [payfast]);
+
+  const payFastDirty = payfast
+    ? pfMerchantId !== payfast.merchant_id ||
+      pfSandbox !== payfast.sandbox ||
+      pfMerchantName !== payfast.merchant_name ||
+      pfReturnUrl !== payfast.return_url ||
+      pfCancelUrl !== payfast.cancel_url ||
+      pfNotifyUrl !== payfast.notify_url ||
+      pfMerchantKey.trim() !== "" ||
+      pfPassphrase.trim() !== ""
+    : false;
+
+  const handleSavePayFast = async () => {
+    const urlFields: Array<[string, string]> = [
+      ["Return URL", pfReturnUrl],
+      ["Cancel URL", pfCancelUrl],
+      ["Notify URL", pfNotifyUrl],
+    ];
+    for (const [label, value] of urlFields) {
+      if (value && !/^https?:\/\//i.test(value)) {
+        toast.error(`${label} must start with http:// or https://`);
+        return;
+      }
+    }
+    if (pfReturnUrl && !pfCancelUrl) {
+      toast.error("Cancel URL is required when a Return URL is set (PayFast redirects to both).");
+      return;
+    }
+    setSavingPayFast(true);
+    try {
+      await savePayFast.mutateAsync({
+        merchant_id: pfMerchantId.trim(),
+        merchant_key: pfMerchantKey.trim(),
+        passphrase: pfPassphrase.trim(),
+        sandbox: pfSandbox,
+        merchant_name: pfMerchantName.trim(),
+        return_url: pfReturnUrl.trim(),
+        cancel_url: pfCancelUrl.trim(),
+        notify_url: pfNotifyUrl.trim(),
+      });
+      setPfMerchantKey("");
+      setPfPassphrase("");
+      toast.success("PayFast settings saved");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to save PayFast settings");
+    } finally {
+      setSavingPayFast(false);
+    }
+  };
 
   useEffect(() => {
     if (settings) {
@@ -207,6 +281,72 @@ export default function AdminSettings() {
         <div className="mt-5 flex justify-end">
           <Button onClick={handleSaveAnnouncement} disabled={savingAnnouncement} loading={savingAnnouncement}>
             Save announcement
+          </Button>
+        </div>
+      </section>
+
+      {/* PayFast payments */}
+      <section className="mt-8 max-w-xl border border-neutral-200 bg-white p-5">
+        <div className="flex items-center gap-2">
+          <Zap className="h-5 w-5 text-brand-600" />
+          <h2 className="font-semibold text-neutral-900">PayFast payments</h2>
+        </div>
+        <p className="mt-1 text-sm text-neutral-500">
+          PayFast is the online payment gateway used at checkout. Payments are made to this single merchant account.
+          Add your own sandbox credentials (or live credentials later) from your{" "}
+          <a
+            href="https://sandbox.payfast.co.za"
+            target="_blank"
+            rel="noreferrer"
+            className="text-brand-700 underline underline-offset-2"
+          >
+            PayFast portal
+          </a>
+          .
+        </p>
+
+        <div className="mt-5 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-neutral-900">Sandbox mode</p>
+            <p className="text-xs text-neutral-500">
+              {pfSandbox ? "Test mode — no real money moves" : "Live mode — real payments"}
+            </p>
+          </div>
+          <Switch checked={pfSandbox} onCheckedChange={setPfSandbox} disabled={payfastLoading || savingPayFast} />
+        </div>
+
+        <div className="mt-5 space-y-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Merchant ID">
+              <Input value={pfMerchantId} placeholder="10000100" onChange={(e) => setPfMerchantId(e.target.value)} disabled={payfastLoading || savingPayFast} />
+            </Field>
+            <Field label="Merchant name (shown to buyers)">
+              <Input value={pfMerchantName} placeholder="CAPPTURE" onChange={(e) => setPfMerchantName(e.target.value)} disabled={payfastLoading || savingPayFast} />
+            </Field>
+            <Field label="Merchant key" hint={payfast?.merchant_key_set ? "A key is already saved — leave blank to keep it" : undefined}>
+              <Input type="password" value={pfMerchantKey} placeholder={payfast?.merchant_key_set ? "••••••••" : "Enter merchant key"} onChange={(e) => setPfMerchantKey(e.target.value)} disabled={payfastLoading || savingPayFast} />
+            </Field>
+            <Field label="Passphrase" hint={payfast?.passphrase_set ? "A passphrase is already saved — leave blank to keep it" : undefined}>
+              <Input type="password" value={pfPassphrase} placeholder={payfast?.passphrase_set ? "••••••••" : "Optional"} onChange={(e) => setPfPassphrase(e.target.value)} disabled={payfastLoading || savingPayFast} />
+            </Field>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Return URL" hint="Where buyers land after paying">
+              <Input value={pfReturnUrl} placeholder="https://…/order/payment/return" onChange={(e) => setPfReturnUrl(e.target.value)} disabled={payfastLoading || savingPayFast} />
+            </Field>
+            <Field label="Cancel URL" hint="Where buyers land if they leave">
+              <Input value={pfCancelUrl} placeholder="https://…/order/payment/return" onChange={(e) => setPfCancelUrl(e.target.value)} disabled={payfastLoading || savingPayFast} />
+            </Field>
+            <Field label="Notify URL" hint="PayFast posts payment updates here" className="sm:col-span-2">
+              <Input value={pfNotifyUrl} placeholder="https://<ref>.functions.supabase.co/payfast-itn" onChange={(e) => setPfNotifyUrl(e.target.value)} disabled={payfastLoading || savingPayFast} />
+            </Field>
+          </div>
+        </div>
+
+        <div className="mt-5 flex justify-end">
+          <Button onClick={handleSavePayFast} disabled={!payFastDirty || savingPayFast || payfastLoading} loading={savingPayFast}>
+            Save PayFast settings
           </Button>
         </div>
       </section>
