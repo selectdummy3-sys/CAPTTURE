@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { CreditCard, Home, Loader2, MapPin, PackageCheck, Store, Truck, Zap } from "lucide-react";
+import { Home, Loader2, MapPin, PackageCheck, Store, Truck, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -56,7 +56,7 @@ export function CheckoutPage() {
   const clearCart = useCartStore((s) => s.clear);
   const navigate = useNavigate();
 
-  const [paymentMethod, setPaymentMethod] = useState<"eft" | "payfast">("eft");
+  const paymentMethod = "payfast" as const;
   const [couponCode, setCouponCode] = useState("");
   const [appliedCode, setAppliedCode] = useState("");
   const [notes, setNotes] = useState("");
@@ -483,45 +483,16 @@ export function CheckoutPage() {
           {/* Payment */}
           <section className="border border-neutral-200 bg-white p-5 shadow-sm sm:p-6">
             <h2 className="font-display text-2xl font-medium uppercase tracking-tight text-neutral-900">Payment method</h2>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={() => setPaymentMethod("eft")}
-                className={cn(
-                  "flex items-start gap-3 border p-4 text-left transition-colors",
-                  paymentMethod === "eft" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
-                )}
-              >
-                <CreditCard className="mt-0.5 h-5 w-5 text-neutral-500" />
-                <div>
-                  <p className="font-medium text-neutral-900">EFT / bank transfer</p>
-                  <p className="text-xs text-neutral-500">We'll confirm once your payment reflects</p>
-                </div>
-              </button>
-              <button
-                type="button"
-                onClick={() => setPaymentMethod("payfast")}
-                className={cn(
-                  "flex items-start gap-3 border p-4 text-left transition-colors",
-                  paymentMethod === "payfast" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
-                )}
-              >
-                <Zap className="mt-0.5 h-5 w-5 text-brand-600" />
-                <div>
-                  <p className="font-medium text-neutral-900">PayFast</p>
-                  <p className="text-xs text-neutral-500">Card or Instant EFT, paid securely</p>
-                </div>
-              </button>
+            <div className="mt-4 flex w-full items-start gap-3 border border-brand-500 bg-brand-50 p-4 text-left">
+              <Zap className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+              <div>
+                <p className="font-medium text-neutral-900">PayFast</p>
+                <p className="text-xs text-neutral-500">Card, Instant EFT &amp; mobile — paid securely through PayFast</p>
+              </div>
             </div>
-            {paymentMethod === "eft" ? (
-              <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
-                Bank details will be shown on your order confirmation. Please use your order number as the payment reference.
-              </p>
-            ) : (
-              <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
-                You'll be redirected to PayFast to pay securely. Your orders are confirmed once payment is received.
-              </p>
-            )}
+            <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
+              You'll be redirected to PayFast to pay securely. Your orders are confirmed once payment is received.
+            </p>
           </section>
 
           {/* Notes */}
