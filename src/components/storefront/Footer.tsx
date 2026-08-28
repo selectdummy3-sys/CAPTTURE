@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { MapPin, Mail } from "lucide-react";
 
 import { Logo } from "@/components/ui/logo";
+import { CONTACT_EMAILS, mailtoHref } from "@/lib/emails";
 
 const columns = [
   {
@@ -54,27 +55,27 @@ export function Footer() {
             </p>
 
             <div className="mt-6 space-y-3 text-sm">
-              <a
-                href="mailto:hello@cappture.co.za"
-                className="group flex items-center gap-3 text-neutral-400 transition-colors hover:text-white"
-              >
-                <span className="grid h-9 w-9 shrink-0 place-items-center bg-neutral-800 transition-colors group-hover:bg-brand-600">
-                  <Mail className="h-4 w-4" />
-                </span>
-                hello@cappture.co.za
-              </a>
-              <a
-                href="mailto:support@cappture.co.za"
-                className="group flex items-center gap-3 text-neutral-400 transition-colors hover:text-white"
-              >
-                <span className="grid h-9 w-9 shrink-0 place-items-center bg-neutral-800 transition-colors group-hover:bg-brand-600">
-                  <Mail className="h-4 w-4" />
-                </span>
-                support@cappture.co.za
-              </a>
+              {CONTACT_EMAILS.map(({ label, address }) => (
+                <a
+                  key={address}
+                  href={mailtoHref(address)}
+                  aria-label={`${label}: ${address}`}
+                  className="group flex items-center gap-3 text-neutral-400 transition-colors hover:text-white"
+                >
+                  <span className="grid h-9 w-9 shrink-0 place-items-center bg-neutral-800 transition-colors group-hover:bg-brand-600">
+                    <Mail className="h-4 w-4" aria-hidden />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-[10px] font-medium uppercase tracking-wider text-neutral-500">
+                      {label}
+                    </span>
+                    <span className="break-all">{address}</span>
+                  </span>
+                </a>
+              ))}
               <p className="flex items-center gap-3 text-neutral-400">
                 <span className="grid h-9 w-9 shrink-0 place-items-center bg-neutral-800">
-                  <MapPin className="h-4 w-4" />
+                  <MapPin className="h-4 w-4" aria-hidden />
                 </span>
                 Durban, South Africa
               </p>

@@ -10,13 +10,13 @@ export function useAllSellers() {
       const { data, error } = await supabase
         .from("sellers")
         .select(
-          "*, user:profiles(id, full_name, avatar_url, role), products:products(count), followers:store_followers(count)"
+          "*, user:profiles(id, full_name, avatar_url, role, email), products:products(count), followers:store_followers(count)"
         )
         .order("created_at", { ascending: false });
       if (error) throw error;
       const rows = (data ?? []) as unknown as Array<
         Seller & {
-          user?: { id: string; full_name: string | null; avatar_url: string | null; role: string } | null;
+          user?: { id: string; full_name: string | null; avatar_url: string | null; role: string; email: string | null } | null;
           products?: { count: number } | Array<{ count: number }> | null;
           followers?: { count: number } | Array<{ count: number }> | null;
         }

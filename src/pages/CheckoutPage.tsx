@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Home, Loader2, MapPin, PackageCheck, Store, Truck, Zap } from "lucide-react";
+import { Home, Loader2, Lock, MapPin, PackageCheck, Store, Truck, Zap } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -61,6 +61,7 @@ export function CheckoutPage() {
   const [appliedCode, setAppliedCode] = useState("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const [delivery, setDelivery] = useState<DeliveryMethod>("shipping");
   const [pepProvince, setPepProvince] = useState("");
   const [pepCity, setPepCity] = useState("");
@@ -246,12 +247,15 @@ export function CheckoutPage() {
       clearCart();
 
       if (paymentMethod === "payfast" && placed.length > 0) {
+        setRedirecting(true);
         try {
           const ref = await beginPayFastPayment(placed);
           const redirect = await getPayFastRedirectData(ref);
+          await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
           submitPayFastForm(redirect);
           return;
         } catch (pfErr) {
+          setRedirecting(false);
           toast.error(
             pfErr instanceof Error ? pfErr.message : "There was a problem starting the PayFast payment."
           );
@@ -622,6 +626,19 @@ export function CheckoutPage() {
           </div>
         </aside>
       </form>
+
+      {redirecting && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-3 bg-neutral-950/70 px-6 text-center backdrop-blur-sm">
+          <Loader2 className="h-14 w-14 animate-spin text-brand-400" strokeWidth={1.5} />
+          <p className="text-lg font-semibold text-white">Redirecting you to a secure payment gateway</p>
+          <p className="flex items-center gap-1.5 text-sm text-neutral-300">
+            <Lock className="h-3.5 w-3.5" /> Card · Instant EFT · Mobile — powered by PayFast
+          </p>
+          <p className="text-xs text-neutral-400">
+            Please don't close or refresh this page while your payment is authorised.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

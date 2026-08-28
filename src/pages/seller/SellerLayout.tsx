@@ -22,6 +22,7 @@ import { useUnreadMessageCount } from "@/hooks/useMessages";
 import { useUnreadNotificationCount } from "@/hooks/useSellerDashboard";
 import { buttonClass } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
+import { mailtoHref, SELLER_SUPPORT_EMAIL } from "@/lib/emails";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -105,8 +106,8 @@ export function SellerLayout() {
         )}
         <p className="mt-6 text-sm text-neutral-400">
           Contact{" "}
-          <a href="mailto:support@cappture.co.za" className="text-brand-700 underline hover:text-brand-800">
-            support@cappture.co.za
+          <a href={mailtoHref(SELLER_SUPPORT_EMAIL)} className="text-brand-700 underline hover:text-brand-800">
+            {SELLER_SUPPORT_EMAIL}
           </a>{" "}
           if you believe this is a mistake.
         </p>

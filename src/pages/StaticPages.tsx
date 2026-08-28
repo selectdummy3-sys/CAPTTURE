@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
 
+import { Mail } from "lucide-react";
+import { CONTACT_EMAILS, SUPPORT_EMAIL, mailtoHref } from "@/lib/emails";
+
 const CONTENT: Record<string, { title: string; body: string[] }> = {
   about: {
     title: "About CAPTTURE",
@@ -32,15 +35,13 @@ const CONTENT: Record<string, { title: string; body: string[] }> = {
       "Delivery: orders ship from each seller, with a flat R60 shipping fee per order and free shipping on orders over R1,000.",
       "Returns: if an item arrives damaged or not as described, raise it via your order within 7 days and we'll help you resolve it.",
       "Payments: choose EFT at checkout. Orders are confirmed once payment reflects.",
-      "Still stuck? Email hello@cappture.co.za and a human will get back to you.",
+      `Still stuck? Email ${SUPPORT_EMAIL} and a human will get back to you.`,
     ],
   },
   contact: {
     title: "Contact us",
     body: [
-      "We'd love to hear from you. For order help, seller questions or press enquiries:",
-      "Email: hello@cappture.co.za",
-      "Business hours: Monday–Friday, 8:00–17:00 SAST.",
+      "We'd love to hear from you. Choose the right channel below and we'll get back to you during business hours:",
     ],
   },
 };
@@ -61,6 +62,34 @@ export function StaticPage({ page }: { page: string }) {
           <p key={i} className="leading-relaxed text-neutral-600">{para}</p>
         ))}
       </div>
+      {page === "contact" && (
+        <div className="mt-8 border border-neutral-200 bg-white p-5 shadow-sm sm:p-6">
+          <h2 className="font-display text-xl font-medium uppercase tracking-tight text-neutral-900">
+            Contact channels
+          </h2>
+          <ul className="mt-4 divide-y divide-neutral-100">
+            {CONTACT_EMAILS.map(({ label, address, description }) => (
+              <li key={address} className="flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="font-medium text-neutral-900">{label}</p>
+                  <p className="text-sm text-neutral-500">{description}</p>
+                </div>
+                <a
+                  href={mailtoHref(address)}
+                  aria-label={`Email ${label} at ${address}`}
+                  className="inline-flex shrink-0 items-center gap-2 self-start rounded-full border border-neutral-300 px-4 py-2 text-sm font-medium text-brand-700 transition-colors hover:border-brand-500 hover:bg-brand-50 sm:self-auto"
+                >
+                  <Mail className="h-4 w-4" aria-hidden />
+                  {address}
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-4 text-xs text-neutral-400">
+            Business hours: Monday–Friday, 8:00–17:00 SAST.
+          </p>
+        </div>
+      )}
       <div className="mt-10">
         <Link to="/shop" className="text-sm font-semibold uppercase tracking-editorial text-brand-700 hover:underline">
           ← Back to shopping

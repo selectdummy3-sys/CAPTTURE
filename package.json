@@ -1,9 +1,9 @@
 {
-  "name": "cappture-marketplace",
+  "name": "CAPTTURE-marketplace",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "CAPPTURE — South African multi-vendor fashion marketplace",
+  "description": "CAPTTURE — South African multi-vendor fashion store",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

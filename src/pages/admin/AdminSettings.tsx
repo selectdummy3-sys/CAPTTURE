@@ -43,7 +43,7 @@ export default function AdminSettings() {
   const [pfMerchantKey, setPfMerchantKey] = useState("");
   const [pfPassphrase, setPfPassphrase] = useState("");
   const [pfSandbox, setPfSandbox] = useState(true);
-  const [pfMerchantName, setPfMerchantName] = useState("CAPPTURE");
+  const [pfMerchantName, setPfMerchantName] = useState("CAPTTURE");
   const [pfReturnUrl, setPfReturnUrl] = useState("");
   const [pfCancelUrl, setPfCancelUrl] = useState("");
   const [pfNotifyUrl, setPfNotifyUrl] = useState("");
@@ -321,7 +321,7 @@ export default function AdminSettings() {
               <Input value={pfMerchantId} placeholder="10000100" onChange={(e) => setPfMerchantId(e.target.value)} disabled={payfastLoading || savingPayFast} />
             </Field>
             <Field label="Merchant name (shown to buyers)">
-              <Input value={pfMerchantName} placeholder="CAPPTURE" onChange={(e) => setPfMerchantName(e.target.value)} disabled={payfastLoading || savingPayFast} />
+              <Input value={pfMerchantName} placeholder="CAPTTURE" onChange={(e) => setPfMerchantName(e.target.value)} disabled={payfastLoading || savingPayFast} />
             </Field>
             <Field label="Merchant key" hint={payfast?.merchant_key_set ? "A key is already saved — leave blank to keep it" : undefined}>
               <Input type="password" value={pfMerchantKey} placeholder={payfast?.merchant_key_set ? "••••••••" : "Enter merchant key"} onChange={(e) => setPfMerchantKey(e.target.value)} disabled={payfastLoading || savingPayFast} />

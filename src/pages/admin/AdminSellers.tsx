@@ -13,6 +13,59 @@ import { supabase } from "@/lib/supabase";
 
 type AdminSellerRow = NonNullable<ReturnType<typeof useAllSellers>["data"]>[number];
 
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function notifySellerEmail(seller: AdminSellerRow, status: string, reason?: string) {
+  const email = seller.user?.email;
+  if (!email) return;
+  const reasonBox = reason
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f5f5;border:1px solid #e5e5e5;border-radius:6px;margin:18px 0;"><tr><td style="padding:14px 16px;font-size:13px;color:#171717;"><span style="font-size:11px;color:#a3a3a3;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Reason</span>${escapeHtml(reason)}</td></tr></table>`
+    : "";
+  const subject =
+    status === "approved"
+      ? "Your CAPTTURE seller account has been approved"
+      : status === "reinstate"
+        ? "Your CAPTTURE store has been reinstated"
+        : status === "rejected"
+          ? "Update on your CAPTTURE seller application"
+          : "Your CAPTTURE seller account has been suspended";
+  const html =
+    status === "approved"
+      ? '<p style="margin:0 0 18px;">Hi there,</p>' +
+        "<p style=\"margin:0 0 4px;\"><strong>Great news — your seller application on CAPTTURE has been approved.</strong></p>" +
+        "<p style=\"margin:0;\">Start adding products so shoppers can discover your store. Add a store banner, products and set up your stock to get going.</p>"
+      : status === "reinstate"
+        ? '<p style="margin:0 0 18px;">Hi there,</p>' +
+          "<p style=\"margin:0 0 4px;\"><strong>Your CAPTTURE store is back online.</strong></p>" +
+          "<p style=\"margin:0;\">Your products are once again visible to shoppers — welcome back.</p>"
+        : status === "rejected"
+          ? '<p style="margin:0 0 18px;">Hi there,</p>' +
+            "<p style=\"margin:0 0 4px;\"><strong>We're sorry, but your seller application was not approved at this time.</strong></p>" +
+            reasonBox +
+            '<p style="margin:0;">You can contact seller.support@captture.co.za if you\u2019d like to know more or appeal the decision.</p>'
+          : '<p style="margin:0 0 18px;">Hi there,</p>' +
+            "<p style=\"margin:0 0 4px;\"><strong>Your CAPTTURE store has been temporarily suspended.</strong></p>" +
+            reasonBox +
+            "<p style=\"margin:0;\">Your products are hidden from shoppers until the suspension is lifted. If you believe this is a mistake, contact seller.support@captture.co.za.</p>";
+  void supabase.functions
+    .invoke("email-send", {
+      body: {
+        from: "seller.support@captture.co.za",
+        to: email,
+        subject,
+        html,
+      },
+    })
+    .catch((err) => console.error("seller status email failed:", err));
+}
+
 type StatusAction =
   | { kind: "approve"; label: string; variant: ButtonVariant }
   | { kind: "reinstate"; label: string; variant: ButtonVariant }
@@ -92,7 +145,7 @@ function SellerPrintView({ seller }: { seller: AdminSellerRow }) {
     <div className="print-seller bg-white p-8 text-neutral-900">
       <div className="flex items-end justify-between gap-4 border-b-2 border-neutral-900 pb-3">
         <div>
-          <p className="text-xs font-medium uppercase tracking-widest text-neutral-500">CAPPTURE · Seller record</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-neutral-500">CAPTTURE · Seller record</p>
           <h1 className="mt-1 text-2xl font-bold">{seller.business_name}</h1>
           <p className="mt-0.5 text-sm text-neutral-600">
             @{seller.store_username} ·{" "}
@@ -620,10 +673,15 @@ export function AdminSellers() {
 
   const selected = (sellers ?? []).find((s) => s.id === selectedId) ?? null;
 
-  const act = async (id: string, status: string, reason?: string) => {
-    setBusyId(id);
+  const act = async (seller: AdminSellerRow, status: string, reason?: string, notifyKind?: string) => {
+    setBusyId(seller.id);
     try {
-      await setStatus.mutateAsync({ sellerId: id, status, ...(reason ? { reason } : {}) });
+      await setStatus.mutateAsync({
+        sellerId: seller.id,
+        status,
+        ...(reason ? { reason } : {}),
+      });
+      notifySellerEmail(seller, notifyKind ?? status, reason);
     } finally {
       setBusyId(null);
     }
@@ -636,7 +694,7 @@ export function AdminSellers() {
       setStatusDialog({ seller, action });
       return;
     }
-    void act(seller.id, "approved");
+    void act(seller, "approved", undefined, action.kind);
   };
 
   const confirmStatusDialog = async () => {
@@ -646,12 +704,12 @@ export function AdminSellers() {
       setShowReasonError(true);
       return;
     }
-    const id = statusDialog.seller.id;
+    const seller = statusDialog.seller;
     const trimmed = reason.trim();
     setStatusDialog(null);
     setReason("");
     setShowReasonError(false);
-    await act(id, next, trimmed);
+    await act(seller, next, trimmed);
   };
 
   if (isLoading) return <p className="py-10 text-center text-sm text-neutral-400">Loading sellers…</p>;

@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { buttonClass } from "@/components/ui/button";
 import { formatZAR } from "@/lib/utils";
 import { OrderStatusBadge, PaymentStatusBadge } from "@/components/ui/status-badge";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ReturnedOrder {
   id: string;
@@ -81,9 +82,29 @@ function OrdersPanel({ orders }: { orders: ReturnedOrder[] }) {
 }
 
 export function PaymentReturnPage() {
+  const { user } = useAuth();
   const [params] = useSearchParams();
-  const paymentRef = params.get("m_payment_id");
+  const paramRef = params.get("m_payment_id");
   const paramStatus = statusFromParam(params.get("pstatus"));
+
+  const { data: latestRef, isLoading: latestLoading } = useQuery({
+    queryKey: ["payfast-latest", user?.id, paramRef],
+    queryFn: async () => {
+      if (paramRef || !user) return null;
+      const { data } = await supabase
+        .from("payfast_payments")
+        .select("payment_ref")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data?.payment_ref ?? null;
+    },
+    enabled: !paramRef,
+    retry: false,
+  });
+
+  const paymentRef = paramRef ?? latestRef ?? null;
+  const fromLatest = !paramRef && paymentRef !== null;
 
   const { data, isFetching, isPending } = useQuery({
     queryKey: ["payfast-payment", paymentRef],
@@ -119,6 +140,14 @@ export function PaymentReturnPage() {
   });
 
   if (!paymentRef) {
+    if (latestLoading) {
+      return (
+        <div className="mx-auto flex max-w-2xl flex-col items-center px-4 py-24 text-center">
+          <Loader2 className="h-10 w-10 animate-spin text-neutral-400" />
+          <p className="mt-4 text-neutral-500">Checking your payment…</p>
+        </div>
+      );
+    }
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
         <div className="border border-neutral-200 bg-white p-8 text-center shadow-card">
@@ -130,7 +159,11 @@ export function PaymentReturnPage() {
             This link is missing the payment reference. If you've just paid, your order will appear in your
             account — tracking codes appear there once a seller dispatches your parcel.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">{ACTIONS}</div>
+{fromLatest && (
+          <p className="mt-3 text-xs text-neutral-400">Showing your most recent payment.</p>
+        )}
+
+        <div className="mt-8 flex flex-wrap justify-center gap-3">{ACTIONS}</div>
         </div>
       </div>
     );

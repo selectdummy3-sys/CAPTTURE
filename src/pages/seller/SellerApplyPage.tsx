@@ -13,6 +13,12 @@ import { Field } from "@/components/form/Field";
 import { PROVINCES } from "@/lib/constants";
 import { ImageUploadButton } from "@/components/ui/image-upload";
 
+function notifyApplicationSubmitted(type: "registered" | "reapplied", businessName: string) {
+  void supabase.functions
+    .invoke("seller-applied", { body: { type, businessName } })
+    .catch((err) => console.error("application email failed:", err));
+}
+
 export function SellerApplyPage() {
   const { user, seller, refresh } = useAuth();
   const navigate = useNavigate();
@@ -102,6 +108,7 @@ export function SellerApplyPage() {
           }
           throw updateError;
         }
+        void notifyApplicationSubmitted("reapplied", businessName);
       } else {
         const { error: insertError } = await supabase.from("sellers").insert({
           user_id: user!.id,
@@ -130,6 +137,7 @@ export function SellerApplyPage() {
           }
           throw insertError;
         }
+        void notifyApplicationSubmitted("registered", businessName);
       }
       await refresh();
       navigate("/seller", { replace: true });
@@ -156,7 +164,7 @@ export function SellerApplyPage() {
           <Field label="Business name" hint="Shown on your store page.">
             <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} required />
           </Field>
-          <Field label="Store handle" hint="Your URL: cappture.co.za/store/…">
+          <Field label="Store handle" hint="Your URL: captture.co.za/store/…">
             <Input
               value={storeUsername}
               onChange={(e) => setStoreUsername(e.target.value)}
