@@ -31,11 +31,11 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
 
   const validateSelection = (): boolean => {
     if (product.sizes.length > 0 && !size) {
-      toast.error("Please select a size");
+      toast.error("Select a size");
       return false;
     }
     if (product.colours.length > 0 && !colour) {
-      toast.error("Please select a colour");
+      toast.error("Select a colour");
       return false;
     }
     return true;
@@ -58,7 +58,7 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
       colour,
       quantity: qty,
     });
-    toast.success("Added to bag");
+    toast.success("Added to your bag");
   };
 
   const buyNow = () => {
