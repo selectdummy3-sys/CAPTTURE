@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { toast } from "sonner";
 import { BadgeCheck, Check, Eye, FileText, Mail, Phone, Printer, RotateCcw, Trash2, X } from "lucide-react";
 
 import { useAdminSellerFinance, useAllSellers, useDeleteSeller, useSetSellerStatus } from "@/hooks/useAdmin";
@@ -831,8 +832,13 @@ export function AdminSellers() {
               variant="danger"
               disabled={deleteSeller.isPending}
               onClick={async () => {
-                await deleteSeller.mutateAsync(deleteConfirmId);
-                setDeleteConfirmId(null);
+                try {
+                  await deleteSeller.mutateAsync(deleteConfirmId);
+                  toast.success("Seller deleted");
+                  setDeleteConfirmId(null);
+                } catch (err) {
+                  toast.error(err instanceof Error ? err.message : "Failed to delete seller");
+                }
               }}
             >
               {deleteSeller.isPending ? "Deleting…" : "Delete permanently"}
