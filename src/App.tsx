@@ -2,7 +2,6 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import { StorefrontLayout } from "@/components/storefront/StorefrontLayout";
-import { AuthLayout } from "@/components/auth/AuthLayout";
 import { RequireAdmin, RequireAuth, RequireSeller, LoadingScreen } from "@/components/guards";
 
 const HomePage = lazy(() => import("@/pages/HomePage").then((m) => ({ default: m.HomePage })));
@@ -239,47 +238,12 @@ export function App() {
           <Route path="supplies/orders" element={<AdminSupplyOrders />} />
         </Route>
 
-        <Route
-          path="/login"
-          element={
-            <AuthLayout title="Welcome back" subtitle="Sign in to continue shopping.">
-              <LoginPage />
-            </AuthLayout>
-          }
-        />
-        <Route
-          path="/signup"
-          element={
-            <AuthLayout title="Create your account" subtitle="Join CAPTTURE and start shopping local.">
-              <SignupPage />
-            </AuthLayout>
-          }
-        />
-        <Route
-          path="/forgot-password"
-          element={
-            <AuthLayout title="Reset your password" subtitle="We'll email you a reset link.">
-              <ForgotPasswordPage />
-            </AuthLayout>
-          }
-        />
-        <Route
-          path="/reset-password"
-          element={
-            <AuthLayout title="Set a new password" subtitle="Choose a strong new password.">
-              <ResetPasswordPage />
-            </AuthLayout>
-          }
-        />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
-        <Route
-          path="/email-confirmed"
-          element={
-            <AuthLayout title="Email confirmed" subtitle="Thanks for verifying your email address.">
-              <EmailConfirmedPage />
-            </AuthLayout>
-          }
-        />
+        <Route path="/email-confirmed" element={<EmailConfirmedPage />} />
 
         <Route path="*" element={<NotFoundPage />} />
         <Route path="/404" element={<NotFoundPage />} />
