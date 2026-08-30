@@ -206,16 +206,15 @@ export function HomePage() {
 
   const hero = heroSlides?.[0];
   const heroImage = assetUrl(hero?.image_url, "store-assets");
-  const heroVideo = hero?.video_url && !hero?.video_url.startsWith("blob:") ? hero.video_url : "/videos/campaign.mp4";
-  const heroVideoType = heroVideo
-    ? /\.(mp4)(\?|#|$)/i.test(heroVideo)
+  const adminVideo = hero?.video_url && !hero?.video_url.startsWith("blob:");
+  const heroVideoType = (videoUrl: string) =>
+    /\.(mp4)(\?|#|$)/i.test(videoUrl)
       ? "video/mp4"
-      : /\.(webm)(\?|#|$)/i.test(heroVideo)
+      : /\.(webm)(\?|#|$)/i.test(videoUrl)
         ? "video/webm"
-        : /\.(ogg)(\?|#|$)/i.test(heroVideo)
+        : /\.(ogg)(\?|#|$)/i.test(videoUrl)
           ? "video/ogg"
-          : undefined
-    : undefined;
+          : undefined;
 
   const vibeImages = useMemo(() => {
     const pool = [...(featured.data ?? []), ...(latest.data ?? [])]
@@ -367,7 +366,8 @@ export function HomePage() {
           poster={heroImage ?? undefined}
           className="absolute inset-0 h-full w-full object-cover"
         >
-          {heroVideo ? <source src={heroVideo} type={heroVideoType} /> : null}
+          {adminVideo ? <source src={hero?.video_url ?? undefined} type={heroVideoType(hero?.video_url ?? "")} /> : null}
+          <source src="/videos/campaign.mp4" type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/35 to-ink/10" />
 

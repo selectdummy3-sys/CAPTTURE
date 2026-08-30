@@ -145,7 +145,7 @@ export function AdminHero() {
   const videoPublicUrl = editing.video_url
     ? editing.video_url.startsWith("http") || editing.video_url.startsWith("blob:")
       ? editing.video_url
-      : supabase.storage.from("store-assets").getPublicUrl(editing.video_url).data.publicUrl
+      : null
     : null;
 
   const moveSlide = async (slide: HeroSlide, direction: "up" | "down") => {
