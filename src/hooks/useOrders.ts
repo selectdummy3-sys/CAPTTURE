@@ -10,7 +10,7 @@ const orderSelect = "*, items:order_items(*), seller:sellers(id, business_name, 
 export interface PlaceOrderInput {
   sellerId: string;
   items: Array<{ product_id: string; quantity: number; size?: string | null; colour?: string | null }>;
-  paymentMethod: "cod" | "eft";
+  paymentMethod: "cod" | "payfast";
   shippingAddress: Address;
   billingAddress?: Address;
   notes?: string;

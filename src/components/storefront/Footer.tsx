@@ -31,7 +31,7 @@ const columns = [
   },
 ];
 
-const paymentMethods = ["EFT"];
+const paymentMethods = ["Card", "Mobile", "PayFast"];
 
 export function Footer() {
   return (
@@ -117,7 +117,7 @@ export function Footer() {
               ))}
             </ul>
             <p className="mt-5 text-xs leading-relaxed text-neutral-500">
-              No card? No problem. Pay the maker securely by EFT before dispatch.
+              Pay securely online with card or mobile — powered by PayFast.
             </p>
           </div>
         </div>

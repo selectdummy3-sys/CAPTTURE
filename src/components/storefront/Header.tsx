@@ -140,7 +140,7 @@ export function Header() {
         ) : (
           <p className="mx-auto max-w-1440 px-4 py-2 uppercase tracking-editorial">
             <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-300 align-middle" />
-            Free shipping over <span className="text-neutral-100">R1,000</span> · EFT available ·{" "}
+            Free shipping over <span className="text-neutral-100">R1,000</span> · Secure checkout ·{" "}
             <span className="text-brand-300">100% South African</span>
           </p>
         )}

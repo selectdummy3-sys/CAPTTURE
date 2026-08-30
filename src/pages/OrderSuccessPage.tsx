@@ -6,7 +6,7 @@ import { formatZAR } from "@/lib/utils";
 
 interface SuccessState {
   orderNumbers?: string[];
-  paymentMethod?: "cod" | "eft";
+  paymentMethod?: "payfast";
   grandTotal?: number;
 }
 
@@ -37,7 +37,7 @@ export function OrderSuccessPage() {
             </div>
             <p className="mt-2 text-neutral-500">Total: <span className="font-semibold text-neutral-900">{formatZAR(total)}</span></p>
             <div className="mt-3 flex items-center justify-center gap-2 text-neutral-600">
-              <CreditCard className="h-4 w-4" /> Awaiting EFT confirmation
+              <CreditCard className="h-4 w-4" /> Payment confirmed
             </div>
           </div>
         )}

@@ -139,7 +139,7 @@ export function usePlaceSupplyOrder() {
       items: Array<{ product_id: string; quantity: number }>;
       shippingAddress: Address;
       courierId: string | null;
-      paymentMethod: "online" | "eft" | "wallet";
+      paymentMethod: "online" | "wallet";
       notes?: string;
     }) => {
       const { data, error } = await supabase.rpc("place_supply_order", {

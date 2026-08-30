@@ -491,7 +491,7 @@ export function CheckoutPage() {
               <Zap className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
               <div>
                 <p className="font-medium text-neutral-900">PayFast</p>
-                <p className="text-xs text-neutral-500">Card, Instant EFT &amp; mobile — paid securely through PayFast</p>
+                <p className="text-xs text-neutral-500">Card &amp; mobile — paid securely through PayFast</p>
               </div>
             </div>
             <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
@@ -632,7 +632,7 @@ export function CheckoutPage() {
           <Loader2 className="h-14 w-14 animate-spin text-brand-400" strokeWidth={1.5} />
           <p className="text-lg font-semibold text-white">Redirecting you to a secure payment gateway</p>
           <p className="flex items-center gap-1.5 text-sm text-neutral-300">
-            <Lock className="h-3.5 w-3.5" /> Card · Instant EFT · Mobile — powered by PayFast
+            <Lock className="h-3.5 w-3.5" /> Card · Mobile — powered by PayFast
           </p>
           <p className="text-xs text-neutral-400">
             Please don't close or refresh this page while your payment is authorised.

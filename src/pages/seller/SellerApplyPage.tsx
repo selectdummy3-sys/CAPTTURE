@@ -69,6 +69,10 @@ export function SellerApplyPage() {
         setError("Please upload your proof of residence.");
         return;
       }
+      if (!/^0\d{9}$/.test(phone.trim())) {
+        setError("Phone number must be 10 digits starting with 0 (e.g. 0821234567).");
+        return;
+      }
       setStep("terms");
       return;
     }
@@ -83,6 +87,9 @@ export function SellerApplyPage() {
       }
       if (!proofOfResidenceUrl) {
         throw new Error("Please upload your proof of residence.");
+      }
+      if (!/^0\d{9}$/.test(phone.trim())) {
+        throw new Error("Phone number must be 10 digits starting with 0 (e.g. 0821234567).");
       }
       if (!acceptedTerms) {
         throw new Error("Please read and accept the Seller Terms & Conditions to continue.");
@@ -216,12 +223,19 @@ export function SellerApplyPage() {
           </Field>
         </div>
 
-        <Field label="Business email">
+        <Field label="Business email" hint="All seller updates and notifications will be sent to this address.">
           <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
         </Field>
 
-        <Field label="Contact phone">
-          <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+27 …" inputMode="tel" required />
+        <Field label="Contact phone" hint="10 digits starting with 0, e.g. 0821234567.">
+          <Input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="0XXXXXXXXX"
+            inputMode="tel"
+            maxLength={10}
+            required
+          />
         </Field>
 
         <Field label="Description" hint="A short pitch for your brand.">

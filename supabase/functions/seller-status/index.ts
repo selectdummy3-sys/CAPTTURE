@@ -92,7 +92,7 @@ Deno.serve(async (req: Request) => {
   try {
     const { data: seller } = await admin
       .from("sellers")
-      .select("id, business_name, user_id")
+      .select("id, business_name, user_id, email")
       .eq("id", sellerId)
       .maybeSingle();
     if (!seller?.user_id) {
@@ -106,7 +106,9 @@ Deno.serve(async (req: Request) => {
       .select("email")
       .eq("id", seller.user_id)
       .maybeSingle();
-    if (!profile?.email) {
+
+    const toEmail = (seller.email ?? "").trim() || (profile?.email ?? "");
+    if (!toEmail) {
       return new Response(JSON.stringify({ ok: true, skipped: true }), {
         headers: { "Content-Type": "application/json" },
       });
@@ -153,7 +155,7 @@ Deno.serve(async (req: Request) => {
 
     await sendEmail(supabaseUrl, serviceKey, {
       from: SELLER_SUPPORT_EMAIL,
-      to: profile.email,
+      to: toEmail,
       subject: copy.subject,
       html: copy.html,
     });

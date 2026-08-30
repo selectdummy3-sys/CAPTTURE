@@ -212,7 +212,7 @@ export function CartPage() {
             Checkout · {formatZAR(total)}
           </Button>
           <p className="mt-3 text-center text-xs text-neutral-400">
-            EFT accepted
+            Secure checkout via PayFast
           </p>
         </aside>
       </div>

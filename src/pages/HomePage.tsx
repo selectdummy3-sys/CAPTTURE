@@ -151,7 +151,7 @@ export function HomePage() {
           <div className="mt-8 flex flex-wrap items-end justify-between gap-6 border-t border-white/15 pt-6 sm:mt-10 sm:gap-8 sm:pt-8">
             <p className="max-w-md font-light leading-relaxed text-neutral-300">
               {hero?.subtitle ||
-                "Shop South African designers and tailors. Direct from the maker to your door — paid by EFT."}
+                "Shop South African designers and tailors. Direct from the maker to your door — paid securely online."}
             </p>
             <div className="flex flex-wrap gap-3">
               <Link to={hero?.cta_link || "/shop"} className={btnBrass}>
@@ -168,7 +168,7 @@ export function HomePage() {
       <Marquee
         items={[
           "Direct from the maker",
-          "Pay by EFT",
+          "Secure checkout",
           "Free shipping over R1,000",
           "Independent designers & tailors",
           "100% South African",

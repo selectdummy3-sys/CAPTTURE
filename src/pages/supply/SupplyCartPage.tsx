@@ -153,7 +153,7 @@ export function SupplyCartPage() {
           >
             Checkout
           </Link>
-          <p className="mt-3 text-center text-xs text-neutral-400">Pay online or via bank transfer</p>
+          <p className="mt-3 text-center text-xs text-neutral-400">Pay online or with your wallet balance</p>
         </aside>
       </div>
     </div>

@@ -40,16 +40,6 @@ export function SupplySuccessPage() {
         </div>
       </div>
 
-      {state.paymentMethod === "eft" && (
-        <div className="mt-4 rounded border border-amber-200 bg-amber-50 p-4 text-left text-sm text-amber-800">
-          <p className="font-semibold">Bank transfer details</p>
-          <p className="mt-1">
-            Please send payment using your order number <strong>{state.orderNumber}</strong> as the
-            reference. Your order will be confirmed once payment is received.
-          </p>
-        </div>
-      )}
-
       {state.paymentMethod === "wallet" && (
         <div className="mt-4 rounded border border-green-100 bg-green-50 p-4 text-left text-sm text-green-800">
           <p className="font-semibold">Paid from your wallet balance</p>

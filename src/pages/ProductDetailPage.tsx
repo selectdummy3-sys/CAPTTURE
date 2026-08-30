@@ -279,7 +279,7 @@ export function ProductDetailPage() {
             <p className="font-semibold uppercase tracking-editorial text-[11px] text-neutral-900">
               Shipping &amp; trust
             </p>
-            <p className="mt-2">Flat R60 delivery · free over R1,000. Pay by EFT with buyer protection.</p>
+            <p className="mt-2">Flat R60 delivery · free over R1,000. Secure checkout with buyer protection.</p>
           </div>
         </div>
       </div>

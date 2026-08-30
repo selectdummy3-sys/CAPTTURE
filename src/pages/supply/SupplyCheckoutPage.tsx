@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Link, useNavigate } from "react-router-dom";
-import { Banknote, CreditCard, PackageCheck, Truck, Wallet } from "lucide-react";
+import { CreditCard, PackageCheck, Truck, Wallet } from "lucide-react";
 import { toast } from "sonner";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -42,7 +42,7 @@ export function SupplyCheckoutPage() {
   const subtotal = useSupplyCartSubtotal();
   const navigate = useNavigate();
 
-  const [paymentMethod, setPaymentMethod] = useState<"online" | "eft" | "wallet">("online");
+  const [paymentMethod, setPaymentMethod] = useState<"online" | "wallet">("online");
   const [courierId, setCourierId] = useState<string>("");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -234,22 +234,6 @@ export function SupplyCheckoutPage() {
                   <p className="text-xs text-neutral-500">Instant confirmation, paid now</p>
                 </div>
               </button>
-              <button
-                type="button"
-                onClick={() => setPaymentMethod("eft")}
-                className={cn(
-                  "flex items-start gap-3 border p-4 text-left transition-colors",
-                  paymentMethod === "eft"
-                    ? "border-brand-500 bg-brand-50"
-                    : "border-neutral-200 hover:border-neutral-300"
-                )}
-              >
-                <Banknote className="mt-0.5 h-5 w-5 text-neutral-500" />
-                <div>
-                  <p className="font-medium text-neutral-900">Bank transfer (EFT)</p>
-                  <p className="text-xs text-neutral-500">We'll confirm once your payment reflects</p>
-                </div>
-              </button>
               {isApprovedSeller ? (
                 <button
                   type="button"
@@ -271,12 +255,6 @@ export function SupplyCheckoutPage() {
                 </button>
               ) : null}
             </div>
-            {paymentMethod === "eft" && (
-              <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
-                Bank details will be shown on your order confirmation. Please use your order number as
-                the payment reference.
-              </p>
-            )}
             {paymentMethod === "wallet" && (
               <p className="mt-3 bg-neutral-50 px-3 py-2 text-xs text-neutral-500">
                 Your wallet balance will be debited immediately when the order is placed.

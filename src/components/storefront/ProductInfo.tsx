@@ -227,7 +227,7 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
         </div>
         <div className="flex items-start gap-3">
           <ShieldCheck className="mt-0.5 h-4 w-4 text-neutral-400" />
-          <p className="text-neutral-600">Pay by EFT. Your order is backed by our buyer protection.</p>
+          <p className="text-neutral-600">Secure online checkout. Your order is backed by our buyer protection.</p>
         </div>
       </div>
     </div>

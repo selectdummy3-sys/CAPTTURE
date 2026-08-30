@@ -100,7 +100,7 @@ export type SupplyOrderStatus =
   | "delivered"
   | "cancelled"
   | "refunded";
-export type SupplyPaymentMethod = "online" | "eft";
+export type SupplyPaymentMethod = "online" | "wallet";
 export type SupplyPaymentStatus = "unpaid" | "pending_confirmation" | "paid";
 
 export type SupplyAddress = {

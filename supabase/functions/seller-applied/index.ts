@@ -75,6 +75,14 @@ Deno.serve(async (req: Request) => {
     return new Response("forbidden", { status: 403 });
   }
 
+  const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } });
+  const { data: seller } = await admin
+    .from("sellers")
+    .select("email")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const toEmail = (seller?.email ?? "").trim() || user.email;
+
   let body: SellerAppliedInput = {};
   try {
     body = (await req.json()) as SellerAppliedInput;
@@ -92,7 +100,7 @@ Deno.serve(async (req: Request) => {
     },
     body: JSON.stringify({
       from: "seller.support@captture.co.za",
-      to: user.email,
+      to: toEmail,
       subject: isReapplied
         ? "Your updated seller application is under review"
         : "Your CAPTTURE seller application is under review",
