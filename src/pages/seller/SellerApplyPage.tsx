@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -13,6 +13,7 @@ import { Field } from "@/components/form/Field";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PROVINCES } from "@/lib/constants";
 import { ImageUploadButton } from "@/components/ui/image-upload";
+import { getSellerTermsBlocks, RenderBlock } from "@/pages/StaticPages";
 
 function notifyApplicationSubmitted(type: "registered" | "reapplied", businessName: string) {
   void supabase.functions
@@ -49,9 +50,28 @@ export function SellerApplyPage() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [step, setStep] = useState<"form" | "terms">("form");
+  const termBlocks = getSellerTermsBlocks();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (step === "form") {
+      setError(null);
+      if (!/^[a-z0-9_]{3,24}$/.test(storeUsername)) {
+        setError("Store handle must be 3–24 characters: lowercase letters, numbers or underscores.");
+        return;
+      }
+      if (!idDocumentUrl) {
+        setError("Please upload your ID document (front).");
+        return;
+      }
+      if (!proofOfResidenceUrl) {
+        setError("Please upload your proof of residence.");
+        return;
+      }
+      setStep("terms");
+      return;
+    }
     setSubmitting(true);
     setError(null);
     try {
@@ -157,16 +177,31 @@ export function SellerApplyPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-      <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
-        {isReapply ? "Re-apply to sell" : "Become a seller"}
-      </h1>
-      <p className="mt-2 text-neutral-500">
-        {isReapply
-          ? "Your previous application was declined. Update your details and submit again for review."
-          : "Tell us about your business. We'll review your application within 24–48 hours."}
-      </p>
+      {step === "form" ? (
+        <>
+          <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+            {isReapply ? "Re-apply to sell" : "Become a seller"}
+          </h1>
+          <p className="mt-2 text-neutral-500">
+            {isReapply
+              ? "Your previous application was declined. Update your details and submit again for review."
+              : "Tell us about your business. We'll review your application within 24–48 hours."}
+          </p>
+        </>
+      ) : (
+        <>
+          <h1 className="text-3xl font-bold tracking-tight text-neutral-900">
+            Review &amp; accept the Seller Terms &amp; Conditions
+          </h1>
+          <p className="mt-2 text-neutral-500">
+            Read the terms below, tick the agreement box, then submit your application for review.
+          </p>
+        </>
+      )}
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+      <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-5">
+        {step === "form" && (
+          <>
         <div className="grid gap-5 sm:grid-cols-2">
           <Field label="Business name" hint="Shown on your store page.">
             <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} required />
@@ -301,30 +336,48 @@ export function SellerApplyPage() {
 
         {error && <p className="text-sm text-red-600">{error}</p>}
 
-        <fieldset className="border border-neutral-200 p-5">
-          <legend className="px-2 text-sm font-semibold text-neutral-900">Agreement</legend>
-          <div className="pt-2">
-            <Checkbox
-              id="terms"
-              checked={acceptedTerms}
-              onChange={(e) => setAcceptedTerms(e.target.checked)}
-              label={
-                <>
-                  I confirm that I have read and agree to the{" "}
-                  <Link to="/seller-terms" className="font-medium text-brand-700 underline hover:text-brand-800">
-                    Seller Terms &amp; Conditions
-                  </Link>
-                  , and that all information provided is accurate.
-                </>
-              }
-            />
-          </div>
-        </fieldset>
+        <div className="flex justify-end">
+          <Button type="submit">Next</Button>
+        </div>
+          </>
+        )}
 
-        <Button type="submit" disabled={submitting}>
-          {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
-          {isReapply ? "Re-submit application" : "Submit application"}
-        </Button>
+        {step === "terms" && (
+          <div className="space-y-5">
+            {error && <p className="text-sm text-red-600">{error}</p>}
+            <div className="space-y-4">
+              {termBlocks.map((block, i) => (
+                <RenderBlock key={i} block={block} />
+              ))}
+            </div>
+            <fieldset className="border border-neutral-200 p-5">
+              <legend className="px-2 text-sm font-semibold text-neutral-900">Agreement</legend>
+              <div className="pt-2">
+                <Checkbox
+                  id="terms"
+                  checked={acceptedTerms}
+                  onChange={(e) => setAcceptedTerms(e.target.checked)}
+                  label={
+                    <>
+                      I confirm that I have read and agree to the{" "}
+                      <span className="font-medium text-neutral-900">Seller Terms &amp; Conditions</span>, and that all
+                      information provided is accurate.
+                    </>
+                  }
+                />
+              </div>
+            </fieldset>
+            <div className="flex items-center gap-3">
+              <Button variant="outline" type="button" onClick={() => setStep("form")} disabled={submitting}>
+                ← Back
+              </Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isReapply ? "Re-submit application" : "Submit application"}
+              </Button>
+            </div>
+          </div>
+        )}
       </form>
     </div>
   );

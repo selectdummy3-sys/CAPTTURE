@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Mail } from "lucide-react";
 import { CONTACT_EMAILS, SUPPORT_EMAIL, mailtoHref } from "@/lib/emails";
 
-type Block =
+export type Block =
   | { type: "meta"; text: string }
   | { type: "p"; text: string }
   | { type: "h2"; text: string }
@@ -454,7 +454,7 @@ const CONTENT: Record<string, PageContent> = {
   },
 };
 
-function RenderBlock({ block }: { block: Block }) {
+export function RenderBlock({ block }: { block: Block }) {
   switch (block.type) {
     case "meta":
       return <p className="text-xs uppercase tracking-editorial text-neutral-400">{block.text}</p>;
@@ -473,6 +473,10 @@ function RenderBlock({ block }: { block: Block }) {
     default:
       return <p className="leading-relaxed text-neutral-600">{block.text}</p>;
   }
+}
+
+export function getSellerTermsBlocks(): Block[] {
+  return CONTENT["seller-terms"]?.blocks ?? [];
 }
 
 export function StaticPage({ page }: { page: string }) {
