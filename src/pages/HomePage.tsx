@@ -206,6 +206,7 @@ export function HomePage() {
 
   const hero = heroSlides?.[0];
   const heroImage = assetUrl(hero?.image_url, "store-assets");
+  const heroVideo = hero?.video_url && !hero?.video_url.startsWith("blob:") ? hero.video_url : null;
 
   const vibeImages = useMemo(() => {
     const pool = [...(featured.data ?? []), ...(latest.data ?? [])]
@@ -357,7 +358,7 @@ export function HomePage() {
           poster={heroImage ?? undefined}
           className="absolute inset-0 h-full w-full object-cover"
         >
-          <source src="/videos/campaign.mp4" type="video/mp4" />
+          {heroVideo ? <source src={heroVideo} type="video/mp4" /> : null}
         </video>
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/35 to-ink/10" />
 

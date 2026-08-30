@@ -1,5 +1,7 @@
 import { useState } from "react";
-import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, Eye, EyeOff } from "lucide-react";
+import { useCallback } from "react";
+import { useDropzone, type FileRejection } from "react-dropzone";
+import { Plus, Pencil, Trash2, ArrowUp, ArrowDown, Eye, EyeOff, Loader2, Video, X } from "lucide-react";
 import { toast } from "sonner";
 import {
   useAdminHeroContent,
@@ -8,6 +10,8 @@ import {
 } from "@/hooks/useHeroContent";
 import { ImageCropper } from "@/components/ui/image-cropper";
 import { supabase } from "@/lib/supabase";
+import { storagePath } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +27,7 @@ const EMPTY_SLIDE: HeroSlideInsert = {
   cta_link: "/shop",
   sort_order: 0,
   is_active: true,
+  video_url: null,
 };
 
 const POSITION_OPTIONS = [
@@ -58,6 +63,7 @@ export function AdminHero() {
       cta_link: slide.cta_link,
       sort_order: slide.sort_order,
       is_active: slide.is_active,
+      video_url: slide.video_url,
     });
     setDialogOpen(true);
   };
@@ -90,6 +96,49 @@ export function AdminHero() {
     const url = supabase.storage.from("store-assets").getPublicUrl(path).data.publicUrl;
     setEditing({ ...editing, image_url: url });
   };
+
+  const { user } = useAuth();
+  const [videoUploading, setVideoUploading] = useState(false);
+
+  const onVideoDrop = useCallback(
+    async (accepted: File[], rejected: FileRejection[]) => {
+      if (rejected.length > 0) {
+        toast.error("That file was rejected. Upload an MP4 video.");
+        return;
+      }
+      const file = accepted[0];
+      if (!user || !file) return;
+      setVideoUploading(true);
+      try {
+        const path = await storagePath("store-assets", `videos/${user.id}`, file);
+        const { error } = await supabase.storage
+          .from("store-assets")
+          .upload(path, file, { upsert: true, cacheControl: "31536000" });
+        if (error) throw error;
+        const url = supabase.storage.from("store-assets").getPublicUrl(path).data.publicUrl;
+        setEditing({ ...editing, video_url: url });
+        toast.success("Video uploaded");
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Video upload failed");
+      } finally {
+        setVideoUploading(false);
+      }
+    },
+    [user, editing]
+  );
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop: onVideoDrop,
+    accept: { "video/*": [] },
+    maxFiles: 1,
+    disabled: videoUploading,
+  });
+
+  const videoPublicUrl = editing.video_url
+    ? editing.video_url.startsWith("http") || editing.video_url.startsWith("blob:")
+      ? editing.video_url
+      : supabase.storage.from("store-assets").getPublicUrl(editing.video_url).data.publicUrl
+    : null;
 
   const moveSlide = async (slide: HeroSlide, direction: "up" | "down") => {
     const idx = slides.findIndex((s) => s.id === slide.id);
@@ -154,6 +203,7 @@ export function AdminHero() {
                   <p className="text-sm text-neutral-500 truncate">{slide.subtitle || "(no subtitle)"}</p>
                   <p className="mt-1 text-xs text-neutral-400">
                     Button: {slide.cta_text} → {slide.cta_link} · Order: {slide.sort_order}
+                    {slide.video_url ? " · Video attached" : ""}
                   </p>
                 </div>
                 <div className="flex items-center gap-1">
@@ -247,6 +297,51 @@ export function AdminHero() {
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
+            </div>
+            <div>
+              <label className="mb-1 block text-sm font-medium text-neutral-700">Campaign video (optional)</label>
+              {videoPublicUrl && (
+                <div className="relative mb-2">
+                  <video
+                    src={videoPublicUrl}
+                    controls
+                    muted
+                    playsInline
+                    className="aspect-video w-full bg-black object-cover"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setEditing({ ...editing, video_url: null })}
+                    title="Remove video"
+                    className="absolute right-2 top-2 bg-neutral-900/70 p-1.5 text-white hover:bg-neutral-900"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+              <label
+                {...getRootProps()}
+                className="flex cursor-pointer flex-col items-center justify-center gap-1.5 border-2 border-dashed border-neutral-300 py-6 text-neutral-400 transition-colors hover:border-brand-500 hover:bg-brand-50 hover:text-brand-600"
+              >
+                <input {...getInputProps()} />
+                {videoUploading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Video className="h-5 w-5" />
+                )}
+                <span className="text-xs font-medium">
+                  {videoUploading ? "Uploading…" : "Upload video (MP4)"}
+                </span>
+              </label>
+              <Input
+                value={editing.video_url ?? ""}
+                onChange={(e) => setEditing({ ...editing, video_url: e.target.value || null })}
+                placeholder="…or paste a video URL (.mp4 / .webm)"
+                className="mt-2"
+              />
+              <p className="mt-1 text-xs text-neutral-400">
+                Plays muted, on loop behind the slide on the homepage. Keep the file small for fast loads.
+              </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
