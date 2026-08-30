@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -65,6 +65,12 @@ export function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [placedOrderNumbers, setPlacedOrderNumbers] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (placedOrderNumbers.length > 0) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [placedOrderNumbers]);
   const [delivery, setDelivery] = useState<DeliveryMethod>("shipping");
   const [pepProvince, setPepProvince] = useState("");
   const [pepCity, setPepCity] = useState("");
