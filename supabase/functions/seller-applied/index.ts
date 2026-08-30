@@ -47,7 +47,7 @@ function buildHtml(businessName: string, isReapplied: boolean): string {
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
-    return new Response("ok", { status: 204 });
+    return new Response(null, { status: 204 });
   }
   if (req.method !== "POST") {
     return new Response("method not allowed", { status: 405 });
