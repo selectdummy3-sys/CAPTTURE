@@ -24,7 +24,7 @@ import { buttonClass } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 function AccountMenu() {
-  const { user, profile, isAdmin, isApprovedSeller, hasSellerApplication, signOut } = useAuth();
+  const { user, profile, isAdmin, isApprovedSeller, signOut } = useAuth();
   const { data: unread = 0 } = useUnreadCount();
   const navigate = useNavigate();
 
@@ -77,7 +77,7 @@ function AccountMenu() {
               Notifications
             </DropdownItem>
           )}
-          {(isApprovedSeller || hasSellerApplication) && (
+          {isApprovedSeller && (
             <DropdownItem onClick={() => { close(); navigate("/seller"); }}>
               <Store className="h-4 w-4" /> Seller dashboard
             </DropdownItem>

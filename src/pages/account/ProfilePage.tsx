@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/form/Field";
 import { ImageUploadButton } from "@/components/ui/image-upload";
+import { AddressBook } from "@/components/account/AddressBook";
 
 export function ProfilePage() {
   const { profile, refresh } = useAuth();
@@ -90,6 +91,8 @@ export function ProfilePage() {
           Save changes
         </Button>
       </form>
+
+      <AddressBook />
     </div>
   );
 }

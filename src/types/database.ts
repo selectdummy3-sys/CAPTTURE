@@ -10,10 +10,55 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.17"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
+      addresses: {
+        Row: {
+          city: string
+          created_at: string
+          id: string
+          is_default: boolean
+          line1: string
+          line2: string | null
+          phone: string
+          postal_code: string
+          province: string
+          recipient: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          line1: string
+          line2?: string | null
+          phone: string
+          postal_code: string
+          province: string
+          recipient: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string
+          created_at?: string
+          id?: string
+          is_default?: boolean
+          line1?: string
+          line2?: string | null
+          phone?: string
+          postal_code?: string
+          province?: string
+          recipient?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       cart_items: {
         Row: {
           cart_id: string
@@ -1744,7 +1789,16 @@ export type Database = {
       increment_view: { Args: { p_product_id: string }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       is_seller_user: { Args: never; Returns: boolean }
-      list_admin_team: { Args: never; Returns: Json }
+      list_admin_team: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          role: string
+        }[]
+      }
       mark_message_read: { Args: { p_message_id: string }; Returns: undefined }
       notify_user: {
         Args: {
@@ -1813,138 +1867,51 @@ export type Database = {
         }
       }
       payfast_redirect_data: { Args: { p_payment_ref: string }; Returns: Json }
-      place_order:
-        | {
-            Args: {
-              p_billing_address?: Json
-              p_coupon_code?: string
-              p_items: Json
-              p_notes?: string
-              p_payment_method: string
-              p_seller_id: string
-              p_shipping_address: Json
-            }
-            Returns: {
-              billing_address: Json | null
-              coupon_id: string | null
-              created_at: string
-              delivered_at: string | null
-              delivery_method: string
-              discount: number
-              id: string
-              notes: string | null
-              order_number: string
-              payfast_ref: string | null
-              payment_method: string | null
-              payment_status: string
-              pep_delivery_tier: string
-              pep_store_id: string | null
-              seller_id: string
-              shipping: number
-              shipping_address: Json
-              status: string
-              subtotal: number
-              total: number
-              tracking_number: string | null
-              updated_at: string
-              user_id: string | null
-            }
-            SetofOptions: {
-              from: "*"
-              to: "orders"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
-        | {
-            Args: {
-              p_billing_address?: Json
-              p_coupon_code?: string
-              p_delivery_method?: string
-              p_items: Json
-              p_notes?: string
-              p_payment_method: string
-              p_pep_store_id?: string
-              p_seller_id: string
-              p_shipping_address: Json
-            }
-            Returns: {
-              billing_address: Json | null
-              coupon_id: string | null
-              created_at: string
-              delivered_at: string | null
-              delivery_method: string
-              discount: number
-              id: string
-              notes: string | null
-              order_number: string
-              payfast_ref: string | null
-              payment_method: string | null
-              payment_status: string
-              pep_delivery_tier: string
-              pep_store_id: string | null
-              seller_id: string
-              shipping: number
-              shipping_address: Json
-              status: string
-              subtotal: number
-              total: number
-              tracking_number: string | null
-              updated_at: string
-              user_id: string | null
-            }
-            SetofOptions: {
-              from: "*"
-              to: "orders"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
-        | {
-            Args: {
-              p_billing_address?: Json
-              p_coupon_code?: string
-              p_delivery_method?: string
-              p_items: Json
-              p_notes?: string
-              p_payment_method: string
-              p_pep_delivery_tier?: string
-              p_pep_store_id?: string
-              p_seller_id: string
-              p_shipping_address: Json
-            }
-            Returns: {
-              billing_address: Json | null
-              coupon_id: string | null
-              created_at: string
-              delivered_at: string | null
-              delivery_method: string
-              discount: number
-              id: string
-              notes: string | null
-              order_number: string
-              payfast_ref: string | null
-              payment_method: string | null
-              payment_status: string
-              pep_delivery_tier: string
-              pep_store_id: string | null
-              seller_id: string
-              shipping: number
-              shipping_address: Json
-              status: string
-              subtotal: number
-              total: number
-              tracking_number: string | null
-              updated_at: string
-              user_id: string | null
-            }
-            SetofOptions: {
-              from: "*"
-              to: "orders"
-              isOneToOne: true
-              isSetofReturn: false
-            }
-          }
+      place_order: {
+        Args: {
+          p_billing_address?: Json
+          p_coupon_code?: string
+          p_delivery_method?: string
+          p_items: Json
+          p_notes?: string
+          p_payment_method: string
+          p_pep_delivery_tier?: string
+          p_pep_store_id?: string
+          p_seller_id: string
+          p_shipping_address: Json
+        }
+        Returns: {
+          billing_address: Json | null
+          coupon_id: string | null
+          created_at: string
+          delivered_at: string | null
+          delivery_method: string
+          discount: number
+          id: string
+          notes: string | null
+          order_number: string
+          payfast_ref: string | null
+          payment_method: string | null
+          payment_status: string
+          pep_delivery_tier: string
+          pep_store_id: string | null
+          seller_id: string
+          shipping: number
+          shipping_address: Json
+          status: string
+          subtotal: number
+          total: number
+          tracking_number: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "orders"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       place_supply_order: {
         Args: {
           p_courier_id: string
@@ -1999,6 +1966,10 @@ export type Database = {
       }
       set_commission_settings: {
         Args: { p_enabled: boolean; p_rate: number }
+        Returns: undefined
+      }
+      set_default_address: {
+        Args: { p_address_id: string }
         Returns: undefined
       }
       set_payfast_config: {
@@ -2085,7 +2056,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      set_user_role: { Args: { p_role: string; p_user_id: string }; Returns: Json }
+      set_user_role: {
+        Args: { p_role: string; p_user_id: string }
+        Returns: Json
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       track_product_view: { Args: { p_product_id: string }; Returns: undefined }
@@ -2105,8 +2079,9 @@ export type Database = {
         }
         Returns: undefined
       }
+      urlencode: { Args: { p_input: string }; Returns: string }
       verify_payfast_itn: {
-        Args: { p_payload: Json; p_signature: string }
+        Args: { p_data: string; p_signature: string }
         Returns: boolean
       }
     }

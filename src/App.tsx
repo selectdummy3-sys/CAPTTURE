@@ -2,7 +2,7 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import { StorefrontLayout } from "@/components/storefront/StorefrontLayout";
-import { RequireAdmin, RequireAuth, RequireSeller, LoadingScreen } from "@/components/guards";
+import { RequireAdmin, RequireApprovedSeller, RequireAuth, RequireSeller, LoadingScreen } from "@/components/guards";
 
 const HomePage = lazy(() => import("@/pages/HomePage").then((m) => ({ default: m.HomePage })));
 const ShopPage = lazy(() => import("@/pages/ShopPage").then((m) => ({ default: m.ShopPage })));
@@ -211,7 +211,7 @@ export function App() {
           <Route path="settings" element={<SellerSettings />} />
         </Route>
 
-        <Route path="/supplies" element={<RequireAuth><RequireSeller><SupplyLayout /></RequireSeller></RequireAuth>}>
+        <Route path="/supplies" element={<RequireAuth><RequireApprovedSeller><SupplyLayout /></RequireApprovedSeller></RequireAuth>}>
           <Route index element={<SuppliesHomePage />} />
           <Route path="shop" element={<SuppliesShopPage />} />
           <Route path="product/:slug" element={<SupplyProductPage />} />

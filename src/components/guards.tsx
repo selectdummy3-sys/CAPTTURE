@@ -33,6 +33,18 @@ export function RequireSeller({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+// Active seller tools are only for APPROVED sellers. Pending / rejected /
+// suspended sellers are sent to their application screen / seller status page.
+export function RequireApprovedSeller({ children }: { children: ReactNode }) {
+  const { user, isApprovedSeller, seller, isLoading } = useAuth();
+
+  if (isLoading) return <LoadingScreen />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!seller) return <Navigate to="/sell/apply" replace />;
+  if (!isApprovedSeller) return <Navigate to="/seller" replace />;
+  return <>{children}</>;
+}
+
 export function RequireAdmin({ children }: { children: ReactNode }) {
   const { user, isAdmin, isLoading } = useAuth();
 

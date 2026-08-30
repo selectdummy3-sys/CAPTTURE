@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { Bell, Heart, LayoutDashboard, Package, Settings, User } from "lucide-react";
 
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -12,6 +13,8 @@ const links = [
 ];
 
 export function AccountLayout() {
+  const { isApprovedSeller } = useAuth();
+
   return (
     <div className="mx-auto flex max-w-1440 flex-col gap-8 px-4 py-10 sm:px-6 lg:flex-row">
       <aside className="lg:w-56 lg:shrink-0">
@@ -32,18 +35,20 @@ export function AccountLayout() {
               {label}
             </NavLink>
           ))}
-          <NavLink
-            to="/seller"
-            className={({ isActive }) =>
-              cn(
-                "flex shrink-0 items-center gap-2.5 px-3 py-2 text-sm font-medium transition-colors lg:mt-4 lg:border-t lg:border-neutral-200 lg:pt-4",
-                isActive ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
-              )
-            }
-          >
-            <Settings className="h-4 w-4" />
-            Seller tools
-          </NavLink>
+          {isApprovedSeller && (
+            <NavLink
+              to="/seller"
+              className={({ isActive }) =>
+                cn(
+                  "flex shrink-0 items-center gap-2.5 px-3 py-2 text-sm font-medium transition-colors lg:mt-4 lg:border-t lg:border-neutral-200 lg:pt-4",
+                  isActive ? "bg-neutral-900 text-white" : "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
+                )
+              }
+            >
+              <Settings className="h-4 w-4" />
+              Seller tools
+            </NavLink>
+          )}
         </nav>
       </aside>
       <div className="min-w-0 flex-1">

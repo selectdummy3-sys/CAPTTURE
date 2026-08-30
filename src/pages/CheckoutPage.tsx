@@ -23,6 +23,8 @@ import { PROVINCES } from "@/lib/constants";
 import { cn, formatZAR } from "@/lib/utils";
 import type { PepDeliveryTier } from "@/types";
 import type { Json } from "@/types/database";
+import { ensureAddressSaved, useSavedAddresses } from "@/hooks/useAddresses";
+import { toAddressPayload, type SavedAddress } from "@/lib/address";
 
 const FREE_SHIPPING_ABOVE = 1000;
 const SHIPPING_FEE = 60;
@@ -71,6 +73,7 @@ export function CheckoutPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<AddressValues>({
     resolver: zodResolver(addressSchema),
@@ -116,6 +119,17 @@ export function CheckoutPage() {
   );
 
   const { data: pepStores, isLoading: pepLoading } = usePepStores();
+  const { data: savedAddresses } = useSavedAddresses();
+
+  const applySavedAddress = (a: SavedAddress) => {
+    setValue("recipient", a.recipient);
+    setValue("phone", a.phone);
+    setValue("line1", a.line1);
+    setValue("line2", a.line2 ?? "");
+    setValue("city", a.city);
+    setValue("province", a.province);
+    setValue("postal_code", a.postal_code);
+  };
 
   const pepCities = useMemo(() => {
     if (!pepProvince) return [];
@@ -212,15 +226,7 @@ export function CheckoutPage() {
           recipient: values.recipient,
           phone: values.phone,
         } as unknown as Json)
-      : ({
-          recipient: values.recipient,
-          phone: values.phone,
-          line1: values.line1,
-          line2: values.line2 || "",
-          city: values.city,
-          province: values.province,
-          postal_code: values.postal_code,
-        } as unknown as Json);
+      : (toAddressPayload(values) as unknown as Json);
 
     const placed: string[] = [];
     try {
@@ -245,6 +251,10 @@ export function CheckoutPage() {
         if (data?.order_number) placed.push(data.order_number);
       }
       clearCart();
+
+      if (!isCollect) {
+        await ensureAddressSaved(toAddressPayload(values));
+      }
 
       if (paymentMethod === "payfast" && placed.length > 0) {
         setRedirecting(true);
@@ -453,33 +463,53 @@ export function CheckoutPage() {
                 )}
               </div>
             ) : (
-              <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                <Field label="Recipient full name" error={errors.recipient?.message}>
-                  <Input placeholder="Nomsa Dlamini" {...register("recipient")} />
-                </Field>
-                <Field label="Phone number" error={errors.phone?.message}>
-                  <Input type="tel" placeholder="082 123 4567" {...register("phone")} />
-                </Field>
-                <Field label="Street address" error={errors.line1?.message} className="sm:col-span-2">
-                  <Input placeholder="14 Kerk Street" {...register("line1")} />
-                </Field>
-                <Field label="Address line 2 (optional)">
-                  <Input placeholder="Unit 5, Sandton" {...register("line2")} />
-                </Field>
-                <Field label="Postal code" error={errors.postal_code?.message}>
-                  <Input placeholder="2196" {...register("postal_code")} />
-                </Field>
-                <Field label="City" error={errors.city?.message}>
-                  <Input placeholder="Johannesburg" {...register("city")} />
-                </Field>
-                <Field label="Province" error={errors.province?.message}>
-                  <Select {...register("province")}>
+              <div className="mt-4">
+                {savedAddresses && savedAddresses.length > 0 && (
+                  <div className="mb-4">
+                    <p className="text-xs font-semibold uppercase tracking-editorial text-neutral-500">From your saved addresses</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {savedAddresses.map((a) => (
+                        <button
+                          key={a.id}
+                          type="button"
+                          onClick={() => applySavedAddress(a)}
+                          className="flex items-center gap-2 border border-neutral-200 bg-white px-3 py-2 text-left text-xs text-neutral-600 transition-colors hover:border-brand-500 hover:bg-brand-50"
+                        >
+                          <MapPin className="h-3.5 w-3.5 shrink-0 text-brand-600" />
+                          <span>{a.recipient} · {a.line1}, {a.city}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Field label="Recipient full name" error={errors.recipient?.message}>
+                    <Input placeholder="Nomsa Dlamini" {...register("recipient")} />
+                  </Field>
+                  <Field label="Phone number" error={errors.phone?.message}>
+                    <Input type="tel" placeholder="082 123 4567" {...register("phone")} />
+                  </Field>
+                  <Field label="Street address" error={errors.line1?.message} className="sm:col-span-2">
+                    <Input placeholder="14 Kerk Street" {...register("line1")} />
+                  </Field>
+                  <Field label="Address line 2 (optional)">
+                    <Input placeholder="Unit 5, Sandton" {...register("line2")} />
+                  </Field>
+                  <Field label="Postal code" error={errors.postal_code?.message}>
+                    <Input placeholder="2196" {...register("postal_code")} />
+                  </Field>
+                  <Field label="City" error={errors.city?.message}>
+                    <Input placeholder="Johannesburg" {...register("city")} />
+                  </Field>
+                  <Field label="Province" error={errors.province?.message}>
+                    <Select {...register("province")}>
                     <option value="">Select province</option>
                     {PROVINCES.map((p) => (
                       <option key={p} value={p}>{p}</option>
                     ))}
                   </Select>
                 </Field>
+                </div>
               </div>
             )}
           </section>
