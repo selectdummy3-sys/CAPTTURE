@@ -206,7 +206,7 @@ export function HomePage() {
 
   const hero = heroSlides?.[0];
   const heroImage = assetUrl(hero?.image_url, "store-assets");
-  const heroVideo = hero?.video_url && !hero?.video_url.startsWith("blob:") ? hero.video_url : null;
+  const heroVideo = hero?.video_url && !hero?.video_url.startsWith("blob:") ? hero.video_url : "/videos/campaign.mp4";
   const heroVideoType = heroVideo
     ? /\.(mp4)(\?|#|$)/i.test(heroVideo)
       ? "video/mp4"
