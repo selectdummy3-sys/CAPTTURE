@@ -64,6 +64,7 @@ export function CheckoutPage() {
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  const [placedOrderNumbers, setPlacedOrderNumbers] = useState<string[]>([]);
   const [delivery, setDelivery] = useState<DeliveryMethod>("shipping");
   const [pepProvince, setPepProvince] = useState("");
   const [pepCity, setPepCity] = useState("");
@@ -250,6 +251,7 @@ export function CheckoutPage() {
         if (error) throw new Error(error.message);
         if (data?.order_number) placed.push(data.order_number);
       }
+      setPlacedOrderNumbers(placed);
       clearCart();
 
       if (!isCollect) {
@@ -290,6 +292,42 @@ export function CheckoutPage() {
   };
 
   if (items.length === 0) {
+    if (placedOrderNumbers.length > 0) {
+      return (
+        <div className="mx-auto max-w-1440 px-4 py-16 sm:px-6">
+          <p className="flex items-center gap-3 text-[11px] uppercase tracking-editorial text-neutral-500">
+            <span className="h-px w-8 bg-brand-500" />
+            Order placed
+          </p>
+          <h1 className="mt-4 font-display text-5xl font-medium uppercase leading-[1.02] tracking-tight text-neutral-900 sm:text-6xl">
+            {redirecting ? "Taking you to PayFast…" : "Order received"}
+          </h1>
+          <div className="mt-6 border border-neutral-200 bg-white p-12 text-center shadow-sm">
+            {redirecting ? (
+              <>
+                <Loader2 className="mx-auto h-10 w-10 animate-spin text-brand-600" />
+                <p className="mt-3 font-medium text-neutral-700">Confirming your order…</p>
+                <p className="mt-1 text-sm text-neutral-500">
+                  Order{placedOrderNumbers.length > 1 ? "s" : ""} {" "}
+                  <span className="font-semibold text-neutral-900">{placedOrderNumbers.join(", ")}</span>{" "}
+                  placed. You'll be redirected to PayFast to pay securely — don't close this window.
+                </p>
+              </>
+            ) : (
+              <>
+                <PackageCheck className="mx-auto h-10 w-10 text-brand-600" />
+                <p className="mt-3 font-medium text-neutral-700">Your order is confirmed</p>
+                <p className="mt-1 text-sm text-neutral-500">
+                  Order number{placedOrderNumbers.length > 1 ? "s" : ""}{" "}
+                  {placedOrderNumbers.join(", ")}. Check your orders page for details.
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="mx-auto max-w-1440 px-4 py-16 sm:px-6">
         <h1 className="font-display text-5xl font-medium uppercase leading-[1.02] tracking-tight text-neutral-900 sm:text-6xl">
