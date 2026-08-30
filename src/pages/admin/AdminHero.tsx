@@ -99,6 +99,7 @@ export function AdminHero() {
 
   const { user } = useAuth();
   const [videoUploading, setVideoUploading] = useState(false);
+  const [videoError, setVideoError] = useState<string | null>(null);
 
   const onVideoDrop = useCallback(
     async (accepted: File[], rejected: FileRejection[]) => {
@@ -109,6 +110,7 @@ export function AdminHero() {
       const file = accepted[0];
       if (!user || !file) return;
       setVideoUploading(true);
+      setVideoError(null);
       try {
         const path = await storagePath("store-assets", user.id, file);
         const { error } = await supabase.storage
@@ -123,7 +125,9 @@ export function AdminHero() {
         setEditing({ ...editing, video_url: url });
         toast.success("Video uploaded");
       } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Video upload failed");
+        const message = err instanceof Error ? err.message : "Video upload failed";
+        setVideoError(message);
+        toast.error(message);
       } finally {
         setVideoUploading(false);
       }
@@ -323,8 +327,10 @@ export function AdminHero() {
                   </button>
                 </div>
               )}
-              <label
+              <div
                 {...getRootProps()}
+                role="button"
+                aria-label="Upload a campaign video"
                 className="flex cursor-pointer flex-col items-center justify-center gap-1.5 border-2 border-dashed border-neutral-300 py-6 text-neutral-400 transition-colors hover:border-brand-500 hover:bg-brand-50 hover:text-brand-600"
               >
                 <input {...getInputProps()} />
@@ -336,7 +342,10 @@ export function AdminHero() {
                 <span className="text-xs font-medium">
                   {videoUploading ? "Uploading…" : "Upload video (MP4)"}
                 </span>
-              </label>
+              </div>
+              {videoError && (
+                <p className="mt-2 text-xs font-medium text-red-600">{videoError}</p>
+              )}
               <Input
                 value={editing.video_url ?? ""}
                 onChange={(e) => setEditing({ ...editing, video_url: e.target.value || null })}
