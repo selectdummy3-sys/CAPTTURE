@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Field } from "@/components/form/Field";
+import { Checkbox } from "@/components/ui/checkbox";
 import { PROVINCES } from "@/lib/constants";
 import { ImageUploadButton } from "@/components/ui/image-upload";
 
@@ -45,6 +46,7 @@ export function SellerApplyPage() {
   const [bankName, setBankName] = useState(bank.bank_name ?? "");
   const [bankAccountName, setBankAccountName] = useState(bank.account_name ?? "");
   const [bankAccountNumber, setBankAccountNumber] = useState(bank.account_number ?? "");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,6 +63,9 @@ export function SellerApplyPage() {
       }
       if (!proofOfResidenceUrl) {
         throw new Error("Please upload your proof of residence.");
+      }
+      if (!acceptedTerms) {
+        throw new Error("Please read and accept the Seller Terms & Conditions to continue.");
       }
 
       const social_links: Record<string, string> = {};
@@ -293,6 +298,26 @@ export function SellerApplyPage() {
         </fieldset>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
+
+        <fieldset className="border border-neutral-200 p-5">
+          <legend className="px-2 text-sm font-semibold text-neutral-900">Agreement</legend>
+          <div className="pt-2">
+            <Checkbox
+              id="terms"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+              label={
+                <>
+                  I confirm that I have read and agree to the{" "}
+                  <Link to="/terms" className="font-medium text-brand-700 underline hover:text-brand-800">
+                    Seller Terms &amp; Conditions
+                  </Link>
+                  , and that all information provided is accurate.
+                </>
+              }
+            />
+          </div>
+        </fieldset>
 
         <Button type="submit" disabled={submitting}>
           {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
