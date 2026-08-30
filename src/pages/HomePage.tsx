@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight, Store } from "lucide-react";
 
@@ -7,6 +7,7 @@ import { useFeaturedProducts, useLatestProducts } from "@/hooks/useProducts";
 import { useApprovedSellers } from "@/hooks/useStores";
 import { useHeroContent } from "@/hooks/useHeroContent";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
+import { productImageUrl } from "@/components/storefront/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { assetUrl } from "@/lib/assets";
 import { cn } from "@/lib/utils";
@@ -114,6 +115,88 @@ function viewAllLink(to: string, label: string, dark?: boolean) {
   );
 }
 
+function numbered(count: number) {
+  return String(count).padStart(2, "0");
+}
+
+function TileCard({
+  image,
+  number,
+  title,
+  subtitle,
+  to,
+  dark,
+  eyebrow,
+}: {
+  image?: string | null;
+  number: string;
+  title: string;
+  subtitle?: string;
+  to: string;
+  dark?: boolean;
+  eyebrow?: string;
+}) {
+  return (
+    <Link to={to} className="group">
+      <div className="relative aspect-[3/4] overflow-hidden bg-neutral-900">
+        {image ? (
+          <img
+            src={image}
+            alt=""
+            className="h-full w-full object-cover opacity-90 transition-all duration-500 group-hover:scale-105 group-hover:opacity-100"
+          />
+        ) : (
+          <div className="grid h-full w-full place-items-center">
+            <Store className="h-8 w-8 text-neutral-600" />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/20 to-transparent" />
+        {eyebrow && (
+          <span className="absolute left-4 top-4 text-[10px] font-semibold uppercase tracking-editorial text-accent-300">
+            {eyebrow}
+          </span>
+        )}
+        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 sm:p-5">
+          <div>
+            <span className={cn("text-[11px]", dark ? "text-neutral-300" : "text-accent-300")}>
+              {number}
+            </span>
+            <p className="mt-1 font-display text-2xl font-medium uppercase leading-[0.95] tracking-tight text-white">
+              {title}
+            </p>
+            {subtitle && (
+              <p className="mt-2 text-xs leading-relaxed text-neutral-300">{subtitle}</p>
+            )}
+          </div>
+          <span
+            className={cn(
+              "mb-1 inline-flex h-9 w-9 shrink-0 items-center justify-center border text-white transition-colors",
+              dark
+                ? "border-white/30 group-hover:bg-white group-hover:text-ink"
+                : "border-white/40 group-hover:bg-accent-500 group-hover:border-accent-500"
+            )}
+          >
+            <ArrowUpRight className="h-4 w-4" />
+          </span>
+        </div>
+      </div>
+      <div className="mt-3 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-editorial">
+        <span
+          className={cn(
+            "border-b pb-0.5 transition-colors",
+            dark
+              ? "border-neutral-600 text-neutral-300 group-hover:border-white group-hover:text-white"
+              : "border-ink text-ink group-hover:border-accent-600 group-hover:text-accent-600"
+          )}
+        >
+          Shop now
+        </span>
+        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+      </div>
+    </Link>
+  );
+}
+
 export function HomePage() {
   const { data: categories } = useCategories();
   const featured = useFeaturedProducts(8);
@@ -123,6 +206,44 @@ export function HomePage() {
 
   const hero = heroSlides?.[0];
   const heroImage = assetUrl(hero?.image_url, "store-assets");
+
+  const vibeImages = useMemo(() => {
+    const pool = [...(featured.data ?? []), ...(latest.data ?? [])]
+      .map((p) => productImageUrl(p.featured_image))
+      .filter((url): url is string => Boolean(url));
+    return pool;
+  }, [featured.data, latest.data]);
+
+  const vibes = [
+    {
+      number: numbered(1),
+      title: "Everyday wear",
+      subtitle: "Polished pieces for the daily",
+      to: "/shop",
+      image: vibeImages[0],
+    },
+    {
+      number: numbered(2),
+      title: "Fresh drops",
+      subtitle: "New arrivals, on the racks first",
+      to: "/shop",
+      image: vibeImages[1],
+    },
+    {
+      number: numbered(3),
+      title: "The makers",
+      subtitle: "Independent South African stores",
+      to: "/stores",
+      image: heroImage,
+    },
+    {
+      number: numbered(4),
+      title: "Start selling",
+      subtitle: "Turn your craft into a brand",
+      to: "/sell",
+      image: vibeImages[2],
+    },
+  ];
 
   return (
     <div className="bg-paper">
@@ -141,7 +262,7 @@ export function HomePage() {
 
         <div className="relative z-10 mx-auto w-full max-w-1440 animate-fade-up px-4 pb-16 sm:px-6 sm:pb-28">
           <p className="mb-4 text-[11px] uppercase tracking-editorial text-neutral-200 sm:mb-7">
-            South African Fashion Marketplace · Est. Durban
+            Now live on CAPTTURE · South African fashion marketplace
           </p>
           <h1 className="font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-7xl lg:text-8xl">
             Wear the
@@ -158,7 +279,7 @@ export function HomePage() {
                 {hero?.cta_text || "Shop the drop"} <ArrowRight className="h-4 w-4" />
               </Link>
               <Link to="/stores" className={btnOutlineLight}>
-                Meet the makers
+                View lookbook <ArrowUpRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
@@ -176,63 +297,11 @@ export function HomePage() {
         className="border-y border-ink bg-paper text-ink"
       />
 
-      {/* ── Collections — staggered collage ─────────────────── */}
-      {(categories === undefined || categories.length > 0) && (
-        <section className="overflow-hidden bg-ink py-24 text-white lg:py-32">
-          <div className="mx-auto max-w-1440 px-4 sm:px-6">
-            <SectionHeading
-              dark
-              eyebrow="Browse the racks"
-              title="The collections"
-              action={viewAllLink("/shop", "View all", true)}
-            />
-            <div className="mt-16 grid grid-cols-2 gap-x-5 gap-y-12 sm:grid-cols-3 lg:grid-cols-6 lg:gap-x-6 stagger-in">
-              {categories
-                ? categories.map((cat, i) => {
-                    const img = assetUrl(cat.image_url, "store-assets");
-                    return (
-                      <Link key={cat.id} to={`/shop?category=${cat.slug}`} className="group">
-                        <div className="relative overflow-hidden bg-neutral-900">
-                          {img ? (
-                            <img
-                              src={img}
-                              alt={cat.name}
-                              className="aspect-[3/4] w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                            />
-                          ) : (
-                            <div className="grid aspect-[3/4] w-full place-items-center">
-                              <Store className="h-8 w-8 text-neutral-600" />
-                            </div>
-                          )}
-                          <div className="absolute inset-0 border border-white/10 transition-colors group-hover:border-accent-400" />
-                          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-ink/90 to-transparent p-4">
-                            <span className="font-display text-lg font-medium uppercase tracking-tight">
-                              {cat.name}
-                            </span>
-                            <span className="text-[10px] uppercase tracking-editorial text-accent-300">
-                              0{i + 1}
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    );
-                  })
-                : Array.from({ length: 12 }).map((_, i) => (
-                    <div key={i} className="group">
-                      <Skeleton dark className="aspect-[3/4] w-full" />
-                      <Skeleton dark className="mt-4 h-4 w-24" />
-                    </div>
-                  ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── Featured — The Edit ──────────────────────────────── */}
+      {/* ── Now live — The Edit ──────────────────────────────── */}
       <section className="bg-paper py-24 lg:py-32">
         <div className="mx-auto max-w-1440 px-4 sm:px-6">
           <SectionHeading
-            eyebrow="Hand-picked for you"
+            eyebrow="Now live"
             title="The edit"
             description="Stores we're loving right now. Fresh pieces, straight from the makers."
             action={viewAllLink("/shop", "Shop the edit")}
@@ -243,18 +312,51 @@ export function HomePage() {
         </div>
       </section>
 
+      {/* ── The collections — numbered tiles ─────────────────── */}
+      {(categories === undefined || categories.length > 0) && (
+        <section className="overflow-hidden bg-ink py-24 text-white lg:py-32">
+          <div className="mx-auto max-w-1440 px-4 sm:px-6">
+            <SectionHeading
+              dark
+              eyebrow="Browse the racks"
+              title="The collections"
+              description="Shop the rack by category — everything made here, sold here."
+              action={viewAllLink("/shop", "View all", true)}
+            />
+            <div className="mt-16 grid grid-cols-2 gap-x-5 gap-y-12 lg:grid-cols-4 lg:gap-x-6 stagger-in">
+              {categories
+                ? categories.map((cat, i) => (
+                    <TileCard
+                      key={cat.id}
+                      image={assetUrl(cat.image_url, "store-assets")}
+                      number={numbered(i + 1)}
+                      title={cat.name}
+                      to={`/shop?category=${cat.slug}`}
+                      dark
+                    />
+                  ))
+                : Array.from({ length: 8 }).map((_, i) => (
+                    <div key={i} className="group">
+                      <Skeleton dark className="aspect-[3/4] w-full" />
+                      <Skeleton dark className="mt-4 h-4 w-24" />
+                    </div>
+                  ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── Fresh drops — New In ─────────────────────────────── */}
-      <section className="bg-ink py-24 text-white lg:py-32">
+      <section className="bg-paper py-24 lg:py-32">
         <div className="mx-auto max-w-1440 px-4 sm:px-6">
           <SectionHeading
-            dark
             eyebrow="Just landed"
             title="New in"
             description="The newest pieces to hit the platform before anyone else."
-            action={viewAllLink("/shop", "View all", true)}
+            action={viewAllLink("/shop", "View all")}
           />
           <div className="mt-14">
-            <ProductGrid products={latest.data} loading={latest.isLoading} skeletons={8} dark />
+            <ProductGrid products={latest.data} loading={latest.isLoading} skeletons={8} />
           </div>
         </div>
       </section>
@@ -307,6 +409,31 @@ export function HomePage() {
           </div>
         </section>
       )}
+
+      {/* ── Shop by vibe ─────────────────────────────────────── */}
+      <section className="bg-ink py-24 text-white lg:py-32">
+        <div className="mx-auto max-w-1440 px-4 sm:px-6">
+          <SectionHeading
+            dark
+            eyebrow="Rack 'em up"
+            title="Shop by vibe"
+            description="Whatever the occasion, there's a maker behind it."
+          />
+          <div className="mt-16 grid grid-cols-1 gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-6 stagger-in">
+            {vibes.map((v) => (
+              <TileCard
+                key={v.number}
+                image={v.image}
+                number={v.number}
+                title={v.title}
+                subtitle={v.subtitle}
+                to={v.to}
+                eyebrow="CAPTTURE"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* ── CTA ──────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-ink py-24 text-center text-white lg:py-32">
