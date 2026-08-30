@@ -1066,6 +1066,7 @@ export type Database = {
       }
       sellers: {
         Row: {
+          accepted_terms_at: string | null
           address_line1: string | null
           application_status: string
           approved_at: string | null
@@ -1092,6 +1093,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          accepted_terms_at?: string | null
           address_line1?: string | null
           application_status?: string
           approved_at?: string | null
@@ -1118,6 +1120,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          accepted_terms_at?: string | null
           address_line1?: string | null
           application_status?: string
           approved_at?: string | null
@@ -2049,6 +2052,7 @@ export type Database = {
       set_seller_status: {
         Args: { p_reason?: string; p_seller_id: string; p_status: string }
         Returns: {
+          accepted_terms_at: string | null
           address_line1: string | null
           application_status: string
           approved_at: string | null

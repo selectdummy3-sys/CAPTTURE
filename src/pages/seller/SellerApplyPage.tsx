@@ -105,6 +105,7 @@ export function SellerApplyPage() {
             },
             application_status: "pending",
             rejection_reason: null,
+            accepted_terms_at: new Date().toISOString(),
           })
           .eq("id", existing!.id);
         if (updateError) {
@@ -117,6 +118,7 @@ export function SellerApplyPage() {
       } else {
         const { error: insertError } = await supabase.from("sellers").insert({
           user_id: user!.id,
+          accepted_terms_at: new Date().toISOString(),
           business_name: businessName,
           store_username: slugify(storeUsername).replace(/-/g, "_").slice(0, 24),
           province,
@@ -309,7 +311,7 @@ export function SellerApplyPage() {
               label={
                 <>
                   I confirm that I have read and agree to the{" "}
-                  <Link to="/terms" className="font-medium text-brand-700 underline hover:text-brand-800">
+                  <Link to="/seller-terms" className="font-medium text-brand-700 underline hover:text-brand-800">
                     Seller Terms &amp; Conditions
                   </Link>
                   , and that all information provided is accurate.
