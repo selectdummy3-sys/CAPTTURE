@@ -110,7 +110,7 @@ export function AdminHero() {
       if (!user || !file) return;
       setVideoUploading(true);
       try {
-        const path = await storagePath("store-assets", `videos/${user.id}`, file);
+        const path = await storagePath("store-assets", user.id, file);
         const { error } = await supabase.storage
           .from("store-assets")
           .upload(path, file, {
