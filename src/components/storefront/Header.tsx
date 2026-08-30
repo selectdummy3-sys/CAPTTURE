@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import {
   Heart,
@@ -226,8 +227,9 @@ export function Header() {
         </nav>
       )}
 
-      {open && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+      {open &&
+        createPortal(
+          <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-neutral-900/50" onClick={() => setOpen(false)} aria-hidden />
           <div className="absolute left-0 top-0 flex h-full w-80 max-w-[85vw] flex-col bg-paper shadow-xl">
             <div className="flex items-center justify-between border-b border-neutral-100 p-4">
@@ -237,27 +239,31 @@ export function Header() {
               </button>
             </div>
             <nav className="flex-1 overflow-y-auto px-2 pb-6">
-              <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">Browse</div>
-              <NavLink to="/shop" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
-                Shop all
-              </NavLink>
-              <NavLink to="/stores" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
-                Stores
-              </NavLink>
-              <NavLink to="/sell" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
-                Sell on CAPTTURE
-              </NavLink>
-              <div className="mt-4 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">Categories</div>
-              {categories?.map((c) => (
-                <NavLink
-                  key={c.id}
-                  to={`/shop?category=${c.slug}`}
-                  onClick={() => setOpen(false)}
-                  className="block px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
-                >
-                  {c.name}
+              <div className="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-wide text-neutral-400">Categories</div>
+              <div className="grid grid-cols-2">
+                {categories?.map((c) => (
+                  <NavLink
+                    key={c.id}
+                    to={`/shop?category=${c.slug}`}
+                    onClick={() => setOpen(false)}
+                    className="block truncate px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-100"
+                  >
+                    {c.name}
+                  </NavLink>
+                ))}
+              </div>
+              <div className="mt-4 border-t border-neutral-100 pt-3">
+                <div className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-neutral-400">Browse</div>
+                <NavLink to="/shop" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
+                  Shop all
                 </NavLink>
-              ))}
+                <NavLink to="/stores" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
+                  Stores
+                </NavLink>
+                <NavLink to="/sell" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
+                  Sell on CAPTTURE
+                </NavLink>
+              </div>
             </nav>
             <form onSubmit={submitSearch} className="relative border-t border-neutral-100 p-4">
               <Search className="pointer-events-none absolute left-7 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
@@ -269,8 +275,9 @@ export function Header() {
               />
             </form>
           </div>
-        </div>
-      )}
+        </div>,
+          document.body
+        )}
     </header>
   );
 }
