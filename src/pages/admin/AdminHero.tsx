@@ -113,7 +113,11 @@ export function AdminHero() {
         const path = await storagePath("store-assets", `videos/${user.id}`, file);
         const { error } = await supabase.storage
           .from("store-assets")
-          .upload(path, file, { upsert: true, cacheControl: "31536000" });
+          .upload(path, file, {
+            upsert: true,
+            cacheControl: "31536000",
+            contentType: file.type || "video/mp4",
+          });
         if (error) throw error;
         const url = supabase.storage.from("store-assets").getPublicUrl(path).data.publicUrl;
         setEditing({ ...editing, video_url: url });
