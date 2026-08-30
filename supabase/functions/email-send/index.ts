@@ -130,7 +130,7 @@ Deno.serve(async (req: Request) => {
     return new Response("invalid json", { status: 400 });
   }
 
-  const from = body.from ?? "orders@captture.co.za";
+  const from = body.from ?? "support@captture.co.za";
   const fromName = FROM_PROFILES[from];
   if (!fromName) {
     return new Response("unsupported sender", { status: 400 });

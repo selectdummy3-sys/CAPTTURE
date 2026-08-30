@@ -22,6 +22,7 @@ interface AuthContextValue {
   hasSellerApplication: boolean;
   signUp: (input: { email: string; password: string; fullName: string }) => Promise<{ needsEmailVerification: boolean; error: string | null }>;
   signIn: (input: { email: string; password: string }) => Promise<{ error: string | null }>;
+  signInWithGoogle: () => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: string | null }>;
   updatePassword: (password: string) => Promise<{ error: string | null }>;
@@ -128,6 +129,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       signIn: async ({ email, password }) => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
+        return { error: error?.message ?? null };
+      },
+      signInWithGoogle: async () => {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "google",
+          options: { redirectTo: `${appUrl}/auth/callback` },
+        });
         return { error: error?.message ?? null };
       },
       signOut: async () => {

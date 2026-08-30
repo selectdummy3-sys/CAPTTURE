@@ -8,6 +8,7 @@ import { CheckCircle2 } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
 import { AuthLayout } from "@/components/auth/AuthLayout";
+import { GoogleButton } from "@/components/auth/GoogleButton";
 import { Field } from "@/components/form/Field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -84,6 +85,12 @@ export function SignupPage() {
         </>
       }
     >
+      <GoogleButton label="Sign up with Google" />
+      <div className="my-5 flex items-center gap-3 text-[11px] uppercase tracking-wider text-neutral-400">
+        <span className="h-px flex-1 bg-neutral-200" />
+        or
+        <span className="h-px flex-1 bg-neutral-200" />
+      </div>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <Field label="Full name" htmlFor="fullName" error={errors.fullName?.message}>
           <Input id="fullName" autoComplete="name" placeholder="Nomsa Dlamini" {...register("fullName")} />
