@@ -346,6 +346,44 @@ export function HomePage() {
         </section>
       )}
 
+      {/* ── The campaign film — full-bleed video ──────────────── */}
+      <section className="relative flex aspect-[3/4] items-end overflow-hidden bg-ink text-white sm:aspect-[4/3] lg:aspect-[21/9]">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster={heroImage ?? undefined}
+          className="absolute inset-0 h-full w-full object-cover"
+        >
+          <source src="/videos/campaign.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/35 to-ink/10" />
+
+        <div className="relative z-10 mx-auto w-full max-w-1440 animate-fade-up px-4 pb-14 sm:px-6 sm:pb-24">
+          <p className="mb-4 flex items-center gap-3 text-[11px] uppercase tracking-editorial text-neutral-200 sm:mb-6">
+            <span className="h-px w-8 bg-accent-500" />
+            Watch · The film
+          </p>
+          <div className="flex flex-wrap items-end justify-between gap-6">
+            <h2 className="max-w-3xl font-display text-5xl font-bold uppercase leading-[0.95] tracking-tight sm:text-7xl">
+              Inside the
+              <br />
+              <span className="text-accent-300">making</span>
+            </h2>
+            <div className="flex flex-wrap gap-3">
+              <Link to="/shop" className={btnBrass}>
+                Shop the drop <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link to="/stores" className={btnOutlineLight}>
+                Meet the makers
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Fresh drops — New In ─────────────────────────────── */}
       <section className="bg-paper py-24 lg:py-32">
         <div className="mx-auto max-w-1440 px-4 sm:px-6">
