@@ -21,5 +21,6 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
 });
 
 export const appUrl =
-  (import.meta.env.VITE_APP_URL as string | undefined) ??
-  (typeof window !== "undefined" ? window.location.origin : "");
+  typeof window !== "undefined"
+    ? window.location.origin
+    : (import.meta.env.VITE_APP_URL as string | undefined) ?? "";

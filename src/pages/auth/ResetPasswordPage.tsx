@@ -1,15 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
+import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthLayout } from "@/components/auth/AuthLayout";
 import { Field } from "@/components/form/Field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 
 const schema = z
   .object({
@@ -26,6 +28,7 @@ type FormValues = z.infer<typeof schema>;
 export function ResetPasswordPage() {
   const { updatePassword } = useAuth();
   const navigate = useNavigate();
+  const [ready, setReady] = useState(false);
   const {
     register,
     handleSubmit,
@@ -35,6 +38,32 @@ export function ResetPasswordPage() {
   useEffect(() => {
     document.title = "Set new password | CAPTTURE";
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!active) return;
+      if (!data.session) {
+        navigate("/forgot-password", { replace: true });
+        return;
+      }
+      setReady(true);
+    })();
+    return () => {
+      active = false;
+    };
+  }, [navigate]);
+
+  if (!ready) {
+    return (
+      <AuthLayout title="Set a new password" subtitle="Verifying your reset link…">
+        <div className="grid place-items-center py-4">
+          <Spinner />
+        </div>
+      </AuthLayout>
+    );
+  }
 
   const onSubmit = async (values: FormValues) => {
     const { error } = await updatePassword(values.password);
