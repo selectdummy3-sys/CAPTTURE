@@ -35,6 +35,9 @@ const ResetPasswordPage = lazy(() =>
 const AuthCallbackPage = lazy(() =>
   import("@/pages/auth/AuthCallbackPage").then((m) => ({ default: m.AuthCallbackPage }))
 );
+const EmailConfirmedPage = lazy(() =>
+  import("@/pages/auth/EmailConfirmedPage").then((m) => ({ default: m.EmailConfirmedPage }))
+);
 
 const AccountLayout = lazy(() => import("@/pages/account/AccountLayout").then((m) => ({ default: m.AccountLayout })));
 const AccountOverview = lazy(() =>
@@ -269,6 +272,14 @@ export function App() {
           }
         />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route
+          path="/email-confirmed"
+          element={
+            <AuthLayout title="Email confirmed" subtitle="Thanks for verifying your email address.">
+              <EmailConfirmedPage />
+            </AuthLayout>
+          }
+        />
 
         <Route path="*" element={<NotFoundPage />} />
         <Route path="/404" element={<NotFoundPage />} />

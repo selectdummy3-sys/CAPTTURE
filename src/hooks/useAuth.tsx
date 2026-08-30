@@ -117,7 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           password,
           options: {
             data: { full_name: fullName },
-            emailRedirectTo: `${appUrl}/auth/callback`,
+            emailRedirectTo: `${appUrl}/email-confirmed`,
           },
         });
         if (error) return { needsEmailVerification: false, error: error.message };
