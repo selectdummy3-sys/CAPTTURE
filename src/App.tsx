@@ -179,6 +179,7 @@ export function App() {
           <Route path="/sell" element={<SellPage />} />
           <Route path="/about" element={<StaticPage page="about" />} />
           <Route path="/terms" element={<StaticPage page="terms" />} />
+          <Route path="/seller-terms" element={<StaticPage page="seller-terms" />} />
           <Route path="/privacy" element={<StaticPage page="privacy" />} />
           <Route path="/help" element={<StaticPage page="help" />} />
           <Route path="/contact" element={<StaticPage page="contact" />} />
