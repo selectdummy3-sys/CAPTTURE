@@ -236,15 +236,6 @@ export function Header() {
                 <X className="h-5 w-5" />
               </button>
             </div>
-            <form onSubmit={submitSearch} className="relative p-4">
-              <Search className="pointer-events-none absolute left-7 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search products…"
-                className="h-10 w-full border border-neutral-300 bg-neutral-50 pl-10 pr-4 text-sm outline-none focus:border-brand-500"
-              />
-            </form>
             <nav className="flex-1 overflow-y-auto px-2 pb-6">
               <div className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-neutral-400">Browse</div>
               <NavLink to="/shop" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
@@ -268,6 +259,15 @@ export function Header() {
                 </NavLink>
               ))}
             </nav>
+            <form onSubmit={submitSearch} className="relative border-t border-neutral-100 p-4">
+              <Search className="pointer-events-none absolute left-7 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search products…"
+                className="h-10 w-full border border-neutral-300 bg-neutral-50 pl-10 pr-4 text-sm outline-none focus:border-brand-500"
+              />
+            </form>
           </div>
         </div>
       )}
