@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, PackageX } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2, PackageX } from "lucide-react";
 
 import type { ProductWithDetails } from "@/types";
 import { ProductCard } from "@/components/storefront/ProductCard";
-import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +19,6 @@ interface ProductCarouselProps {
 export function ProductCarousel({
   products,
   loading,
-  skeletons = 8,
   emptyTitle = "No products found",
   emptyDescription = "Try adjusting your filters or search for something else.",
   className,
@@ -61,16 +59,9 @@ export function ProductCarousel({
 
   if (loading) {
     return (
-      <div className={cn("relative", className)}>
-        <div className="flex gap-4 overflow-x-auto">
-          {Array.from({ length: skeletons }).map((_, i) => (
-            <div key={i} className="grow-0 shrink-0 w-[calc(100%/2.09)] md:w-[calc(100%/3.33)] lg:w-[calc(100%/4.44)] xl:w-[calc(100%/5.33)]">
-              <Skeleton dark={dark} className="aspect-[4/5] w-full" />
-              <Skeleton dark={dark} className="mt-3 h-4 w-3/4" />
-              <Skeleton dark={dark} className="mt-2 h-3 w-1/2" />
-            </div>
-          ))}
-        </div>
+      <div className={cn("flex items-center justify-center gap-3 py-20 text-neutral-400", className)}>
+        <Loader2 className="h-6 w-6 animate-spin text-brand-500" />
+        <span className="text-sm">Loading products…</span>
       </div>
     );
   }
@@ -96,7 +87,7 @@ export function ProductCarousel({
           <div
             key={product.id}
             data-carousel-card
-            className="grow-0 shrink-0 w-[calc(100%/2.09)] snap-start md:w-[calc(100%/3.33)] lg:w-[calc(100%/4.44)] xl:w-[calc(100%/5.33)]"
+            className="grow-0 shrink-0 w-[calc(100%/2.09)] snap-start md:w-[calc(100%/3.33)] lg:w-[calc(100%/4)] xl:w-[calc(100%/4.5)]"
           >
             <ProductCard product={product} dark={dark} />
           </div>
@@ -112,7 +103,7 @@ export function ProductCarousel({
             disabled={!canPrev}
             className={cn(
               "absolute -left-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full bg-ink p-2.5 text-white shadow-lg transition-opacity sm:flex",
-              !canPrev && "pointer-events-none opacity-0"
+              !canPrev && "opacity-40"
             )}
           >
             <ChevronLeft className="h-4 w-4" />
@@ -124,7 +115,7 @@ export function ProductCarousel({
             disabled={!canNext}
             className={cn(
               "absolute -right-3 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full bg-ink p-2.5 text-white shadow-lg transition-opacity sm:flex",
-              !canNext && "pointer-events-none opacity-0"
+              !canNext && "opacity-40"
             )}
           >
             <ChevronRight className="h-4 w-4" />
