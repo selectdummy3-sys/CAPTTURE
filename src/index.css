@@ -118,6 +118,18 @@
 }
 
 @layer utilities {
+  /* Cover-crop an iframe so a 16:9 embed fills its full-bleed container */
+  .embed-cover {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: auto;
+    height: auto;
+    min-width: 100%;
+    min-height: 100%;
+    aspect-ratio: 16 / 9;
+    transform: translate(-50%, -50%);
+  }
   /* Signature: a dashed garment seam used under headings & dividers */
   .stitch {
     background-image: linear-gradient(

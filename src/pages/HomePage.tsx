@@ -280,7 +280,7 @@ export function HomePage() {
           <iframe
             src={heroVideoEmbed}
             title="Hero film"
-            className="absolute inset-0 h-full w-full"
+            className="embed-cover h-full w-full"
             allow="autoplay; fullscreen; encrypted-media"
             allowFullScreen
           />
@@ -399,7 +399,7 @@ export function HomePage() {
           <iframe
             src={filmEmbedUrl}
             title="Campaign film"
-            className="absolute inset-0 h-full w-full"
+            className="embed-cover h-full w-full"
             allow="autoplay; fullscreen; encrypted-media"
             allowFullScreen
           />
