@@ -87,7 +87,7 @@ export function ProductCarousel({
           <div
             key={product.id}
             data-carousel-card
-            className="grow-0 shrink-0 w-[calc(100%/2.09)] snap-start md:w-[calc(100%/3.33)] lg:w-[calc(100%/4)] xl:w-[calc(100%/4.5)]"
+            className="grow-0 shrink-0 w-[calc(100%/2.09)] snap-start md:w-[calc(100%/3.33)] lg:w-[calc(100%/3.5)] xl:w-[calc(100%/3.6)]"
           >
             <ProductCard product={product} dark={dark} />
           </div>
