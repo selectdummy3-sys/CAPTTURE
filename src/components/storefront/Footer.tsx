@@ -35,7 +35,7 @@ const paymentMethods = ["Card", "Mobile", "PayFast"];
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-neutral-800 bg-neutral-950 text-neutral-300">
+    <footer className="relative overflow-hidden border-t border-neutral-800 bg-ink text-neutral-300">
       <span
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 select-none whitespace-nowrap font-display text-[18vw] font-bold uppercase leading-none tracking-tight text-white/[0.03]"
