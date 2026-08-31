@@ -7,6 +7,7 @@ import { useFeaturedProducts, useLatestProducts } from "@/hooks/useProducts";
 import { useApprovedSellers } from "@/hooks/useStores";
 import { useHeroContent } from "@/hooks/useHeroContent";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
+import { ProductCarousel } from "@/components/storefront/ProductCarousel";
 import { productImageUrl } from "@/components/storefront/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { assetUrl } from "@/lib/assets";
@@ -354,7 +355,11 @@ export function HomePage() {
             action={viewAllLink("/shop", "Shop the edit")}
           />
           <div className="mt-14">
-            <ProductGrid products={featured.data} loading={featured.isLoading} skeletons={8} />
+            <ProductCarousel
+              products={featured.data}
+              loading={featured.isLoading}
+              skeletons={8}
+            />
           </div>
         </div>
       </section>
