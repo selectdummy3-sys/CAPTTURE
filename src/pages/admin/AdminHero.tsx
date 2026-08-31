@@ -29,6 +29,7 @@ const EMPTY_SLIDE: HeroSlideInsert = {
   sort_order: 0,
   is_active: true,
   video_url: null,
+  campaign_video_url: null,
 };
 
 const POSITION_OPTIONS = [
@@ -65,6 +66,7 @@ export function AdminHero() {
       sort_order: slide.sort_order,
       is_active: slide.is_active,
       video_url: slide.video_url,
+      campaign_video_url: slide.campaign_video_url,
     });
     setDialogOpen(true);
   };
@@ -128,9 +130,20 @@ export function AdminHero() {
 
 type VideoStage = "idle" | "checking" | "uploading";
 
-const { user } = useAuth();
-  const [videoStage, setVideoStage] = useState<VideoStage>("idle");
-  const [videoError, setVideoError] = useState<string | null>(null);
+function VideoField({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string | null;
+  onChange: (value: string | null) => void;
+  placeholder: string;
+}) {
+  const { user } = useAuth();
+  const [stage, setStage] = useState<VideoStage>("idle");
+  const [error, setError] = useState<string | null>(null);
 
   const onVideoDrop = useCallback(
     async (accepted: File[], rejected: FileRejection[]) => {
@@ -140,53 +153,139 @@ const { user } = useAuth();
       }
       const file = accepted[0];
       if (!user || !file) return;
-      setVideoStage("checking");
-      setVideoError(null);
+      setStage("checking");
+      setError(null);
       const playable = await probeVideoPlayable(file);
       if (!playable) {
-        setVideoStage("idle");
-        setVideoError(
+        setStage("idle");
+        setError(
           "This file can't play in browsers (likely HEVC from a phone) — it needs converting first. Send it to the developer to convert."
         );
         toast.error("File is not browser-compatible");
         return;
       }
-      setVideoStage("uploading");
+      setStage("uploading");
       try {
         const path = await storagePath("store-assets", user.id, file);
-        const { error } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from("store-assets")
           .upload(path, file, { upsert: true });
-        if (error) throw error;
+        if (uploadError) throw uploadError;
         const url = supabase.storage.from("store-assets").getPublicUrl(path).data.publicUrl;
-        setEditing({ ...editing, video_url: url });
-        toast.success("Video uploaded");
+        onChange(url);
+        toast.success("Video attached");
       } catch (err) {
         const message = err instanceof Error ? err.message : "Video upload failed";
-        setVideoError(message);
+        setError(message);
         toast.error(message);
       } finally {
-        setVideoStage("idle");
+        setStage("idle");
       }
     },
-    [user, editing]
+    [user, onChange]
   );
 
   const { getRootProps, getInputProps } = useDropzone({
     onDrop: onVideoDrop,
     accept: { "video/*": [] },
     maxFiles: 1,
-    disabled: videoStage !== "idle",
+    disabled: stage !== "idle",
   });
 
-  const videoPublicUrl = editing.video_url
-    ? editing.video_url.startsWith("http") || editing.video_url.startsWith("blob:")
-      ? editing.video_url
-      : null
-    : null;
-  const previewEmbedUrl = videoPublicUrl ? toVideoEmbedUrl(videoPublicUrl) : null;
+  const previewEmbedUrl =
+    value && (value.startsWith("http") || value.startsWith("blob:"))
+      ? toVideoEmbedUrl(value)
+      : null;
+  const previewFileUrl =
+    value && (value.startsWith("http") || value.startsWith("blob:")) && !previewEmbedUrl
+      ? value
+      : null;
 
-  const moveSlide = async (slide: HeroSlide, direction: "up" | "down") => {
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-neutral-700">{label}</label>
+      {(previewEmbedUrl || previewFileUrl) && (
+        <div className="relative mb-2">
+          {previewEmbedUrl ? (
+            <iframe
+              src={previewEmbedUrl}
+              title="Video preview"
+              className="aspect-video w-full bg-black"
+              allow="autoplay; fullscreen; encrypted-media"
+              allowFullScreen
+            />
+          ) : (
+            <video
+              src={previewFileUrl ?? undefined}
+              controls
+              muted
+              playsInline
+              className="aspect-video w-full bg-black object-cover"
+            />
+          )}
+          <button
+            type="button"
+            onClick={() => onChange(null)}
+            title="Remove video"
+            className="absolute right-2 top-2 bg-neutral-900/70 p-1.5 text-white hover:bg-neutral-900"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+      <div
+        {...getRootProps()}
+        role="button"
+        aria-label={`Upload ${label}`}
+        className={cn(
+          "flex cursor-pointer flex-col items-center justify-center gap-1.5 border-2 border-dashed py-6 transition-colors",
+          stage === "checking"
+            ? "border-amber-400 bg-amber-50 text-amber-600"
+            : "border-neutral-300 text-neutral-400 hover:border-brand-500 hover:bg-brand-50 hover:text-brand-600",
+          stage !== "idle" && "pointer-events-none"
+        )}
+      >
+        <input {...getInputProps()} />
+        <Loader2 className={cn("h-5 w-5 animate-spin", stage === "idle" && "hidden")} />
+        <Video className={cn("h-5 w-5", stage !== "idle" && "hidden")} />
+        <span className="text-xs font-medium">
+          {stage === "checking"
+            ? "Checking the file plays in browsers…"
+            : stage === "uploading"
+              ? "Uploading…"
+              : "Upload video"}
+        </span>
+      </div>
+      {error && <p className="mt-2 text-xs font-medium text-red-600">{error}</p>}
+      <Input
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value || null)}
+        placeholder={placeholder}
+        className="mt-2"
+      />
+      {value && (
+        <p
+          className={cn(
+            "mt-1 text-xs",
+            previewEmbedUrl
+              ? "font-medium text-emerald-600"
+              : previewFileUrl
+                ? "text-neutral-400"
+                : "font-medium text-amber-600"
+          )}
+        >
+          {previewEmbedUrl
+            ? "Embed link detected — plays as YouTube/Vimeo."
+            : previewFileUrl
+              ? "File link detected — plays as a video file."
+              : "Enter a full http(s) video, YouTube or Vimeo link."}
+        </p>
+      )}
+    </div>
+  );
+}
+
+const moveSlide = async (slide: HeroSlide, direction: "up" | "down") => {
     const idx = slides.findIndex((s) => s.id === slide.id);
     const target = direction === "up" ? idx - 1 : idx + 1;
     if (target < 0 || target >= slides.length) return;
@@ -345,89 +444,25 @@ const { user } = useAuth();
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-neutral-700">Campaign video (optional)</label>
-              {videoPublicUrl && (
-                <div className="relative mb-2">
-                  {previewEmbedUrl ? (
-                    <iframe
-                      src={previewEmbedUrl}
-                      title="Video preview"
-                      className="aspect-video w-full bg-black"
-                      allow="autoplay; fullscreen; encrypted-media"
-                      allowFullScreen
-                    />
-                  ) : (
-                    <video
-                      src={videoPublicUrl}
-                      controls
-                      muted
-                      playsInline
-                      className="aspect-video w-full bg-black object-cover"
-                    />
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setEditing({ ...editing, video_url: null })}
-                    title="Remove video"
-                    className="absolute right-2 top-2 bg-neutral-900/70 p-1.5 text-white hover:bg-neutral-900"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-              )}
-              <div
-                {...getRootProps()}
-                role="button"
-                aria-label="Upload a campaign video"
-                className={cn(
-                  "flex cursor-pointer flex-col items-center justify-center gap-1.5 border-2 border-dashed py-6 transition-colors",
-                  videoStage === "checking"
-                    ? "border-amber-400 bg-amber-50 text-amber-600"
-                    : "border-neutral-300 text-neutral-400 hover:border-brand-500 hover:bg-brand-50 hover:text-brand-600",
-                  videoStage !== "idle" && "pointer-events-none"
-                )}
-              >
-                <input {...getInputProps()} />
-                {videoStage === "checking" ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : videoStage === "uploading" ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Video className="h-5 w-5" />
-                )}
-                <span className="text-xs font-medium">
-                  {videoStage === "checking"
-                    ? "Checking the file plays in browsers…"
-                    : videoStage === "uploading"
-                      ? "Uploading…"
-                      : "Upload video (MP4)"}
-                </span>
-              </div>
-              {videoError && (
-                <p className="mt-2 text-xs font-medium text-red-600">{videoError}</p>
-              )}
-              <Input
-                value={editing.video_url ?? ""}
-                onChange={(e) => setEditing({ ...editing, video_url: e.target.value || null })}
-                placeholder="…or paste a YouTube / Vimeo / video URL"
-                className="mt-2"
+              <VideoField
+                label="Hero video (optional)"
+                value={editing.video_url ?? null}
+                onChange={(v) => setEditing({ ...editing, video_url: v })}
+                placeholder="…hero background — YouTube / Vimeo / video URL"
               />
-              {editing.video_url && (
-                <p
-                  className={cn(
-                    "mt-1 text-xs",
-                    previewEmbedUrl ? "font-medium text-emerald-600" : videoPublicUrl ? "text-neutral-400" : "font-medium text-amber-600"
-                  )}
-                >
-                  {previewEmbedUrl
-                    ? "Embed link detected — plays on the homepage as YouTube/Vimeo."
-                    : videoPublicUrl
-                      ? "File link detected — plays as a video file."
-                      : "Enter a full http(s) video, YouTube or Vimeo link."}
-                </p>
-              )}
               <p className="mt-1 text-xs text-neutral-400">
-                Plays muted, on loop behind the slide on the homepage. Paste a YouTube, Vimeo or video file URL — or upload an MP4.
+                Plays muted, on loop behind the slide in the hero. Paste a YouTube, Vimeo or video file URL — or upload an MP4.
+              </p>
+            </div>
+            <div>
+              <VideoField
+                label="Campaign film — bottom section (optional)"
+                value={editing.campaign_video_url ?? null}
+                onChange={(v) => setEditing({ ...editing, campaign_video_url: v })}
+                placeholder="…bottom film — YouTube / Vimeo / video URL"
+              />
+              <p className="mt-1 text-xs text-neutral-400">
+                Plays full-width in the film band below "The collections". Leave empty to keep the default launch film.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">

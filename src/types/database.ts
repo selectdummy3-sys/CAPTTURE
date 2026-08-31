@@ -305,6 +305,7 @@ export type Database = {
       }
       hero_content: {
         Row: {
+          campaign_video_url: string | null
           created_at: string
           cta_link: string
           cta_text: string
@@ -319,6 +320,7 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          campaign_video_url?: string | null
           created_at?: string
           cta_link?: string
           cta_text?: string
@@ -333,6 +335,7 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          campaign_video_url?: string | null
           created_at?: string
           cta_link?: string
           cta_text?: string

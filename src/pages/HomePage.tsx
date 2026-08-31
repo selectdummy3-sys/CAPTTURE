@@ -207,14 +207,24 @@ export function HomePage() {
 
   const hero = heroSlides?.[0];
   const heroImage = assetUrl(hero?.image_url, "store-assets");
-  const videoSlide =
-    heroSlides?.find((s) => s.video_url && !s.video_url.startsWith("blob:")) ?? hero;
-  const embedVideoUrl = toVideoEmbedUrl(videoSlide?.video_url ?? "");
-  const heroFileVideo =
-    videoSlide?.video_url && !videoSlide?.video_url.startsWith("blob:") && !embedVideoUrl
-      ? videoSlide.video_url
+  const heroVideoEmbed = toVideoEmbedUrl(hero?.video_url ?? "");
+  const heroVideoFile =
+    hero?.video_url && !hero?.video_url.startsWith("blob:") && !heroVideoEmbed
+      ? hero.video_url
+      : null;
+
+  const filmSlide =
+    heroSlides?.find(
+      (s) => s.campaign_video_url && !s.campaign_video_url.startsWith("blob:")
+    ) ?? hero;
+  const filmEmbedUrl = toVideoEmbedUrl(filmSlide?.campaign_video_url ?? "");
+  const filmFileVideo =
+    filmSlide?.campaign_video_url &&
+    !filmSlide?.campaign_video_url.startsWith("blob:") &&
+    !filmEmbedUrl
+      ? filmSlide.campaign_video_url
       : "/videos/campaign.mp4";
-  const heroFileVideoType = (videoUrl: string) =>
+  const videoType = (videoUrl: string) =>
     /\.(mp4)(\?|#|$)/i.test(videoUrl)
       ? "video/mp4"
       : /\.(webm)(\?|#|$)/i.test(videoUrl)
@@ -222,7 +232,7 @@ export function HomePage() {
         : /\.(ogg)(\?|#|$)/i.test(videoUrl)
           ? "video/ogg"
           : undefined;
-  const heroFileSource = heroFileVideo !== "/videos/campaign.mp4";
+  const filmHasOwnFile = filmFileVideo !== "/videos/campaign.mp4";
 
   const vibeImages = useMemo(() => {
     const pool = [...(featured.data ?? []), ...(latest.data ?? [])]
@@ -266,15 +276,35 @@ export function HomePage() {
     <div className="bg-paper">
       {/* ── Hero — full-bleed ────────────────────────────────── */}
       <section className="relative flex aspect-[3/4] items-end overflow-hidden bg-ink text-white sm:aspect-[4/3] lg:aspect-[16/9]">
-        <img
-          src={
-            heroImage ??
-            "https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=1600&auto=format&fit=crop"
-          }
-          alt=""
-          className="absolute inset-0 h-full w-full animate-fade-in object-cover"
-          style={{ objectPosition: hero?.image_position || "center" }}
-        />
+        {heroVideoEmbed ? (
+          <iframe
+            src={heroVideoEmbed}
+            title="Hero film"
+            className="absolute inset-0 h-full w-full"
+            allow="autoplay; fullscreen; encrypted-media"
+            allowFullScreen
+          />
+        ) : heroVideoFile ? (
+          <video
+            src={heroVideoFile}
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster={heroImage ?? undefined}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <img
+            src={
+              heroImage ??
+              "https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=1600&auto=format&fit=crop"
+            }
+            alt=""
+            className="absolute inset-0 h-full w-full animate-fade-in object-cover"
+            style={{ objectPosition: hero?.image_position || "center" }}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-ink/5" />
 
         <div className="relative z-10 mx-auto w-full max-w-1440 animate-fade-up px-4 pb-16 sm:px-6 sm:pb-28">
@@ -365,9 +395,9 @@ export function HomePage() {
 
       {/* ── The campaign film — full-bleed video ──────────────── */}
       <section className="relative flex aspect-[3/4] items-end overflow-hidden bg-ink text-white sm:aspect-[4/3] lg:aspect-[21/9]">
-        {embedVideoUrl ? (
+        {filmEmbedUrl ? (
           <iframe
-            src={embedVideoUrl}
+            src={filmEmbedUrl}
             title="Campaign film"
             className="absolute inset-0 h-full w-full"
             allow="autoplay; fullscreen; encrypted-media"
@@ -383,7 +413,7 @@ export function HomePage() {
             poster={heroImage ?? undefined}
             className="absolute inset-0 h-full w-full object-cover"
           >
-            {heroFileSource ? <source src={heroFileVideo} type={heroFileVideoType(heroFileVideo)} /> : null}
+            {filmHasOwnFile ? <source src={filmFileVideo} type={videoType(filmFileVideo)} /> : null}
             <source src="/videos/campaign.mp4" type="video/mp4" />
           </video>
         )}
