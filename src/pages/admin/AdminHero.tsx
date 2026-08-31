@@ -10,7 +10,7 @@ import {
 } from "@/hooks/useHeroContent";
 import { ImageCropper } from "@/components/ui/image-cropper";
 import { supabase } from "@/lib/supabase";
-import { storagePath } from "@/lib/utils";
+import { storagePath, cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -97,8 +97,38 @@ export function AdminHero() {
     setEditing({ ...editing, image_url: url });
   };
 
-  const { user } = useAuth();
-  const [videoUploading, setVideoUploading] = useState(false);
+  function probeVideoPlayable(file: File): Promise<boolean> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement("video");
+    let settled = false;
+    const finish = (ok: boolean) => {
+      if (settled) return;
+      settled = true;
+      URL.revokeObjectURL(url);
+      video.removeAttribute("src");
+      video.load();
+      resolve(ok);
+    };
+    const timer = window.setTimeout(() => finish(false), 12000);
+    video.preload = "metadata";
+    video.muted = true;
+    video.onloadedmetadata = () => {
+      window.clearTimeout(timer);
+      finish(video.videoWidth > 0);
+    };
+    video.onerror = () => {
+      window.clearTimeout(timer);
+      finish(false);
+    };
+    video.src = url;
+  });
+}
+
+type VideoStage = "idle" | "checking" | "uploading";
+
+const { user } = useAuth();
+  const [videoStage, setVideoStage] = useState<VideoStage>("idle");
   const [videoError, setVideoError] = useState<string | null>(null);
 
   const onVideoDrop = useCallback(
@@ -109,8 +139,18 @@ export function AdminHero() {
       }
       const file = accepted[0];
       if (!user || !file) return;
-      setVideoUploading(true);
+      setVideoStage("checking");
       setVideoError(null);
+      const playable = await probeVideoPlayable(file);
+      if (!playable) {
+        setVideoStage("idle");
+        setVideoError(
+          "This file can't play in browsers (likely HEVC from a phone) — it needs converting first. Send it to the developer to convert."
+        );
+        toast.error("File is not browser-compatible");
+        return;
+      }
+      setVideoStage("uploading");
       try {
         const path = await storagePath("store-assets", user.id, file);
         const { error } = await supabase.storage
@@ -125,7 +165,7 @@ export function AdminHero() {
         setVideoError(message);
         toast.error(message);
       } finally {
-        setVideoUploading(false);
+        setVideoStage("idle");
       }
     },
     [user, editing]
@@ -135,7 +175,7 @@ export function AdminHero() {
     onDrop: onVideoDrop,
     accept: { "video/*": [] },
     maxFiles: 1,
-    disabled: videoUploading,
+    disabled: videoStage !== "idle",
   });
 
   const videoPublicUrl = editing.video_url
@@ -327,16 +367,28 @@ export function AdminHero() {
                 {...getRootProps()}
                 role="button"
                 aria-label="Upload a campaign video"
-                className="flex cursor-pointer flex-col items-center justify-center gap-1.5 border-2 border-dashed border-neutral-300 py-6 text-neutral-400 transition-colors hover:border-brand-500 hover:bg-brand-50 hover:text-brand-600"
+                className={cn(
+                  "flex cursor-pointer flex-col items-center justify-center gap-1.5 border-2 border-dashed py-6 transition-colors",
+                  videoStage === "checking"
+                    ? "border-amber-400 bg-amber-50 text-amber-600"
+                    : "border-neutral-300 text-neutral-400 hover:border-brand-500 hover:bg-brand-50 hover:text-brand-600",
+                  videoStage !== "idle" && "pointer-events-none"
+                )}
               >
                 <input {...getInputProps()} />
-                {videoUploading ? (
+                {videoStage === "checking" ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : videoStage === "uploading" ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <Video className="h-5 w-5" />
                 )}
                 <span className="text-xs font-medium">
-                  {videoUploading ? "Uploading…" : "Upload video (MP4)"}
+                  {videoStage === "checking"
+                    ? "Checking the file plays in browsers…"
+                    : videoStage === "uploading"
+                      ? "Uploading…"
+                      : "Upload video (MP4)"}
                 </span>
               </div>
               {videoError && (
