@@ -394,7 +394,7 @@ export function HomePage() {
       )}
 
       {/* ── The campaign film — full-bleed video ──────────────── */}
-      <section className="relative flex aspect-[3/4] items-end overflow-hidden bg-ink text-white sm:aspect-[4/3] lg:aspect-[21/9]">
+      <section className="relative flex aspect-[3/4] items-center overflow-hidden bg-ink text-white sm:aspect-[4/3] lg:aspect-[21/9]">
         {filmEmbedUrl ? (
           <iframe
             src={filmEmbedUrl}
@@ -419,7 +419,7 @@ export function HomePage() {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/35 to-ink/10" />
 
-        <div className="relative z-10 mx-auto w-full max-w-1440 animate-fade-up px-4 pb-14 sm:px-6 sm:pb-24">
+        <div className="relative z-10 mx-auto w-full max-w-1440 animate-fade-up px-4 pt-10 sm:px-6 sm:pt-16">
           <p className="mb-4 flex items-center gap-3 text-[11px] uppercase tracking-editorial text-neutral-200 sm:mb-6">
             <span className="h-px w-8 bg-accent-500" />
             Watch · The film
