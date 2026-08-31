@@ -64,7 +64,7 @@ export function ProductCarousel({
       <div className={cn("relative", className)}>
         <div className="flex gap-4 overflow-x-auto">
           {Array.from({ length: skeletons }).map((_, i) => (
-            <div key={i} className="grow-0 shrink-0 basis-[82%] sm:basis-[46%] md:basis-[29%] xl:basis-[23.5%]">
+            <div key={i} className="grow-0 shrink-0 w-[calc(100%/2.09)] md:w-[calc(100%/3.33)] lg:w-[calc(100%/4.44)] xl:w-[calc(100%/5.33)]">
               <Skeleton dark={dark} className="aspect-[4/5] w-full" />
               <Skeleton dark={dark} className="mt-3 h-4 w-3/4" />
               <Skeleton dark={dark} className="mt-2 h-3 w-1/2" />
@@ -96,7 +96,7 @@ export function ProductCarousel({
           <div
             key={product.id}
             data-carousel-card
-            className="grow-0 shrink-0 basis-[82%] snap-start sm:basis-[46%] md:basis-[29%] xl:basis-[23.5%]"
+            className="grow-0 shrink-0 w-[calc(100%/2.09)] snap-start md:w-[calc(100%/3.33)] lg:w-[calc(100%/4.44)] xl:w-[calc(100%/5.33)]"
           >
             <ProductCard product={product} dark={dark} />
           </div>
