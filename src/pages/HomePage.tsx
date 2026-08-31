@@ -10,6 +10,7 @@ import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { productImageUrl } from "@/components/storefront/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { assetUrl } from "@/lib/assets";
+import { toVideoEmbedUrl } from "@/lib/video";
 import { cn } from "@/lib/utils";
 
 const btnBrass =
@@ -206,8 +207,12 @@ export function HomePage() {
 
   const hero = heroSlides?.[0];
   const heroImage = assetUrl(hero?.image_url, "store-assets");
-  const adminVideo = hero?.video_url && !hero?.video_url.startsWith("blob:");
-  const heroVideoType = (videoUrl: string) =>
+  const embedVideoUrl = toVideoEmbedUrl(hero?.video_url ?? "");
+  const heroFileVideo =
+    hero?.video_url && !hero?.video_url.startsWith("blob:") && !embedVideoUrl
+      ? hero.video_url
+      : "/videos/campaign.mp4";
+  const heroFileVideoType = (videoUrl: string) =>
     /\.(mp4)(\?|#|$)/i.test(videoUrl)
       ? "video/mp4"
       : /\.(webm)(\?|#|$)/i.test(videoUrl)
@@ -215,6 +220,7 @@ export function HomePage() {
         : /\.(ogg)(\?|#|$)/i.test(videoUrl)
           ? "video/ogg"
           : undefined;
+  const heroFileSource = heroFileVideo !== "/videos/campaign.mp4";
 
   const vibeImages = useMemo(() => {
     const pool = [...(featured.data ?? []), ...(latest.data ?? [])]
@@ -357,18 +363,28 @@ export function HomePage() {
 
       {/* ── The campaign film — full-bleed video ──────────────── */}
       <section className="relative flex aspect-[3/4] items-end overflow-hidden bg-ink text-white sm:aspect-[4/3] lg:aspect-[21/9]">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          poster={heroImage ?? undefined}
-          className="absolute inset-0 h-full w-full object-cover"
-        >
-          {adminVideo ? <source src={hero?.video_url ?? undefined} type={heroVideoType(hero?.video_url ?? "")} /> : null}
-          <source src="/videos/campaign.mp4" type="video/mp4" />
-        </video>
+        {embedVideoUrl ? (
+          <iframe
+            src={embedVideoUrl}
+            title="Campaign film"
+            className="absolute inset-0 h-full w-full"
+            allow="autoplay; fullscreen; encrypted-media"
+            allowFullScreen
+          />
+        ) : (
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={heroImage ?? undefined}
+            className="absolute inset-0 h-full w-full object-cover"
+          >
+            {heroFileSource ? <source src={heroFileVideo} type={heroFileVideoType(heroFileVideo)} /> : null}
+            <source src="/videos/campaign.mp4" type="video/mp4" />
+          </video>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/35 to-ink/10" />
 
         <div className="relative z-10 mx-auto w-full max-w-1440 animate-fade-up px-4 pb-14 sm:px-6 sm:pb-24">

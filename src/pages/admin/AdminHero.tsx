@@ -11,6 +11,7 @@ import {
 import { ImageCropper } from "@/components/ui/image-cropper";
 import { supabase } from "@/lib/supabase";
 import { storagePath, cn } from "@/lib/utils";
+import { toVideoEmbedUrl } from "@/lib/video";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -183,6 +184,7 @@ const { user } = useAuth();
       ? editing.video_url
       : null
     : null;
+  const previewEmbedUrl = videoPublicUrl ? toVideoEmbedUrl(videoPublicUrl) : null;
 
   const moveSlide = async (slide: HeroSlide, direction: "up" | "down") => {
     const idx = slides.findIndex((s) => s.id === slide.id);
@@ -346,13 +348,23 @@ const { user } = useAuth();
               <label className="mb-1 block text-sm font-medium text-neutral-700">Campaign video (optional)</label>
               {videoPublicUrl && (
                 <div className="relative mb-2">
-                  <video
-                    src={videoPublicUrl}
-                    controls
-                    muted
-                    playsInline
-                    className="aspect-video w-full bg-black object-cover"
-                  />
+                  {previewEmbedUrl ? (
+                    <iframe
+                      src={previewEmbedUrl}
+                      title="Video preview"
+                      className="aspect-video w-full bg-black"
+                      allow="autoplay; fullscreen; encrypted-media"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <video
+                      src={videoPublicUrl}
+                      controls
+                      muted
+                      playsInline
+                      className="aspect-video w-full bg-black object-cover"
+                    />
+                  )}
                   <button
                     type="button"
                     onClick={() => setEditing({ ...editing, video_url: null })}
@@ -397,11 +409,25 @@ const { user } = useAuth();
               <Input
                 value={editing.video_url ?? ""}
                 onChange={(e) => setEditing({ ...editing, video_url: e.target.value || null })}
-                placeholder="…or paste a video URL (.mp4 / .webm)"
+                placeholder="…or paste a YouTube / Vimeo / video URL"
                 className="mt-2"
               />
+              {editing.video_url && (
+                <p
+                  className={cn(
+                    "mt-1 text-xs",
+                    previewEmbedUrl ? "font-medium text-emerald-600" : videoPublicUrl ? "text-neutral-400" : "font-medium text-amber-600"
+                  )}
+                >
+                  {previewEmbedUrl
+                    ? "Embed link detected — plays on the homepage as YouTube/Vimeo."
+                    : videoPublicUrl
+                      ? "File link detected — plays as a video file."
+                      : "Enter a full http(s) video, YouTube or Vimeo link."}
+                </p>
+              )}
               <p className="mt-1 text-xs text-neutral-400">
-                Plays muted, on loop behind the slide on the homepage. Keep the file small for fast loads.
+                Plays muted, on loop behind the slide on the homepage. Paste a YouTube, Vimeo or video file URL — or upload an MP4.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
