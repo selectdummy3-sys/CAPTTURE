@@ -207,10 +207,12 @@ export function HomePage() {
 
   const hero = heroSlides?.[0];
   const heroImage = assetUrl(hero?.image_url, "store-assets");
-  const embedVideoUrl = toVideoEmbedUrl(hero?.video_url ?? "");
+  const videoSlide =
+    heroSlides?.find((s) => s.video_url && !s.video_url.startsWith("blob:")) ?? hero;
+  const embedVideoUrl = toVideoEmbedUrl(videoSlide?.video_url ?? "");
   const heroFileVideo =
-    hero?.video_url && !hero?.video_url.startsWith("blob:") && !embedVideoUrl
-      ? hero.video_url
+    videoSlide?.video_url && !videoSlide?.video_url.startsWith("blob:") && !embedVideoUrl
+      ? videoSlide.video_url
       : "/videos/campaign.mp4";
   const heroFileVideoType = (videoUrl: string) =>
     /\.(mp4)(\?|#|$)/i.test(videoUrl)
