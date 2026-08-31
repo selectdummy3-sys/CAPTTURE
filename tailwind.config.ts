@@ -36,7 +36,7 @@ export default {
         brand: mono,
         neutral: stone,
         ink: {
-          DEFAULT: "#0C0A09",
+          DEFAULT: "#000000",
           soft: "#1C1917",
         },
         paper: {
