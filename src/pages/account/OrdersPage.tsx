@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OrderStatusBadge, PaymentMethodBadge } from "@/components/ui/status-badge";
 import { buttonClass } from "@/components/ui/button";
-import { formatDate, formatZAR } from "@/lib/utils";
+import { formatDate, formatPrice } from "@/lib/utils";
 
 export function OrdersPage() {
   const { data: orders, isLoading } = useMyOrders();
@@ -70,7 +70,7 @@ export function OrdersPage() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold text-neutral-900">{formatZAR(order.total)}</span>
+                <span className="text-sm font-semibold text-neutral-900">{formatPrice(order.total)}</span>
                 <PaymentMethodBadge method={order.payment_method ?? "cod"} />
                 <OrderStatusBadge status={order.status} />
               </div>

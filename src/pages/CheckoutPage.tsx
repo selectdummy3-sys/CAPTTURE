@@ -13,6 +13,7 @@ import { usePepStores } from "@/hooks/usePepStores";
 import { beginPayFastPayment, getPayFastRedirectData, submitPayFastForm } from "@/hooks/usePayFast";
 import { supabase } from "@/lib/supabase";
 import { useCartStore, type CartItem } from "@/store/useCartStore";
+import { useCountryStore, getSelectedCountry } from "@/store/useCountryStore";
 import { productImageUrl } from "@/components/storefront/ProductCard";
 import { Field } from "@/components/form/Field";
 import { Input } from "@/components/ui/input";
@@ -20,7 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { PROVINCES } from "@/lib/constants";
-import { cn, formatZAR } from "@/lib/utils";
+import { cn, formatPrice, formatLineCustomerPrice, formatDisplayNumber, toDisplayNumber, getCartCustomerPrice } from "@/lib/utils";
 import type { PepDeliveryTier } from "@/types";
 import type { Json } from "@/types/database";
 import { ensureAddressSaved, useSavedAddresses } from "@/hooks/useAddresses";
@@ -57,6 +58,10 @@ export function CheckoutPage() {
   const items = useCartStore((s) => s.items);
   const clearCart = useCartStore((s) => s.clear);
   const navigate = useNavigate();
+
+  const selectedCountry = getSelectedCountry();
+  const countryCode = useCountryStore((s) => s.countryCode);
+  const isDomestic = countryCode === "ZA";
 
   const paymentMethod = "payfast" as const;
   const [couponCode, setCouponCode] = useState("");
@@ -207,9 +212,27 @@ export function CheckoutPage() {
     return { group, discount, shipping, total: group.subtotal - discount + shipping };
   });
 
+  // Customer-visible (rounded whole-number) view of each group so the figures
+  // shown add up exactly: lines → subtotal → total (all in display currency).
+  type DisplayGroup = { group: CheckoutGroup; subtotal: number; discount: number; shipping: number; total: number };
+  const displayTotals: DisplayGroup[] = totals.map((t) => {
+    const subtotal = getCartCustomerPrice(t.group.items.map((i) => ({ price: i.price, quantity: i.quantity })));
+    const discountD = toDisplayNumber(t.discount);
+    const shippingD = toDisplayNumber(t.shipping);
+    return {
+      group: t.group,
+      subtotal,
+      discount: discountD,
+      shipping: shippingD,
+      total: subtotal - discountD + shippingD,
+    };
+  });
+
   const grandTotal = totals.reduce((a, t) => a + t.total, 0);
-  const grandDiscount = totals.reduce((a, t) => a + t.discount, 0);
-  const grandShipping = totals.reduce((a, t) => a + t.shipping, 0);
+  const grandDisplayTotal = displayTotals.reduce((a, t) => a + t.total, 0);
+  const grandDisplaySubtotal = displayTotals.reduce((a, t) => a + t.subtotal, 0);
+  const grandDisplayDiscount = displayTotals.reduce((a, t) => a + t.discount, 0);
+  const grandDisplayShipping = displayTotals.reduce((a, t) => a + t.shipping, 0);
 
   const placeOrder = async (values: AddressValues) => {
     if (items.length === 0) {
@@ -222,7 +245,12 @@ export function CheckoutPage() {
         toast.error("Select your preferred PEP store");
         return;
       }
-    } else if (!values.line1 || !values.city || !values.province || !values.postal_code) {
+    } else if (
+      !values.line1 ||
+      !values.city ||
+      !values.postal_code ||
+      (isDomestic && !values.province)
+    ) {
       toast.error("Complete your delivery address");
       return;
     }
@@ -233,7 +261,12 @@ export function CheckoutPage() {
           recipient: values.recipient,
           phone: values.phone,
         } as unknown as Json)
-      : (toAddressPayload(values) as unknown as Json);
+      : ({
+          ...toAddressPayload(values),
+          province: isDomestic
+            ? values.province.trim()
+            : `${values.province.trim() || ""}${values.province.trim() ? ", " : ""}${selectedCountry.name} (${selectedCountry.code})`.trim(),
+        } as unknown as Json);
 
     const placed: string[] = [];
     try {
@@ -261,7 +294,12 @@ export function CheckoutPage() {
       clearCart();
 
       if (!isCollect) {
-        await ensureAddressSaved(toAddressPayload(values));
+        await ensureAddressSaved({
+          ...toAddressPayload(values),
+          province: isDomestic
+            ? values.province.trim()
+            : `${values.province.trim() || ""}${values.province.trim() ? ", " : ""}${selectedCountry.name} (${selectedCountry.code})`.trim(),
+        });
       }
 
       if (paymentMethod === "payfast" && placed.length > 0) {
@@ -284,7 +322,7 @@ export function CheckoutPage() {
 
       const ids = totals.map((t) => t.group.sellerId);
       navigate("/order/success", {
-        state: { orderNumbers: placed, sellerIds: ids, paymentMethod, grandTotal },
+        state: { orderNumbers: placed, sellerIds: ids, paymentMethod, grandTotal, displayTotal: grandDisplayTotal },
         replace: true,
       });
     } catch (err) {
@@ -367,6 +405,19 @@ export function CheckoutPage() {
           {/* Delivery method */}
           <section className="border border-neutral-200 bg-white p-5 shadow-sm sm:p-6">
             <h2 className="font-display text-2xl font-medium uppercase tracking-tight text-neutral-900">Delivery method</h2>
+            <div className="mt-3 flex items-center gap-2 border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-600">
+              <MapPin className="h-4 w-4 shrink-0 text-brand-600" />
+              <span>
+                Shipping to{" "}
+                <span className="font-semibold text-neutral-900">
+                  {selectedCountry.name} ({selectedCountry.code})
+                </span>{" "}
+                · currency{" "}
+                <span className="font-semibold text-neutral-900">
+                  {selectedCountry.currency} ({selectedCountry.currencySymbol})
+                </span>
+              </span>
+            </div>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               <button
                 type="button"
@@ -379,23 +430,29 @@ export function CheckoutPage() {
                 <Home className="mt-0.5 h-5 w-5 text-neutral-500" />
                 <div>
                   <p className="font-medium text-neutral-900">Home delivery</p>
-                  <p className="text-xs text-neutral-500">Courier to your door · {formatZAR(SHIPPING_FEE)}</p>
+                  <p className="text-xs text-neutral-500">
+                    {isDomestic
+                      ? `Courier to your door · ${formatPrice(SHIPPING_FEE)}`
+                      : `International courier to ${selectedCountry.name}`}
+                  </p>
                 </div>
               </button>
-              <button
-                type="button"
-                onClick={() => setDelivery("pep_collect")}
-                className={cn(
-                  "flex items-start gap-3 border p-4 text-left transition-colors",
-                  delivery === "pep_collect" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
-                )}
-              >
-                <Store className="mt-0.5 h-5 w-5 text-brand-600" />
-                <div>
-                  <p className="font-medium text-neutral-900">PEP Click &amp; Collect</p>
-                  <p className="text-xs text-neutral-500">Collect at a PEP store · from {formatZAR(PEP_STANDARD_FEE)}</p>
-                </div>
-              </button>
+              {isDomestic && (
+                <button
+                  type="button"
+                  onClick={() => setDelivery("pep_collect")}
+                  className={cn(
+                    "flex items-start gap-3 border p-4 text-left transition-colors",
+                    delivery === "pep_collect" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
+                  )}
+                >
+                  <Store className="mt-0.5 h-5 w-5 text-brand-600" />
+                  <div>
+                    <p className="font-medium text-neutral-900">PEP Click &amp; Collect</p>
+                    <p className="text-xs text-neutral-500">Collect at a PEP store · from {formatPrice(PEP_STANDARD_FEE)}</p>
+                  </div>
+                </button>
+              )}
             </div>
 
             {isCollect ? (
@@ -485,7 +542,7 @@ export function CheckoutPage() {
                         <Truck className="mt-0.5 h-5 w-5 text-neutral-500" />
                         <div>
                           <p className="font-medium text-neutral-900">Standard · 7–9 days</p>
-                          <p className="text-xs text-neutral-500">{formatZAR(PEP_STANDARD_FEE)}</p>
+                          <p className="text-xs text-neutral-500">{formatPrice(PEP_STANDARD_FEE)}</p>
                         </div>
                       </button>
                       <button
@@ -499,7 +556,7 @@ export function CheckoutPage() {
                         <Truck className="mt-0.5 h-5 w-5 text-brand-600" />
                         <div>
                           <p className="font-medium text-neutral-900">Express · 3–5 days</p>
-                          <p className="text-xs text-neutral-500">{formatZAR(PEP_EXPRESS_FEE)}</p>
+                          <p className="text-xs text-neutral-500">{formatPrice(PEP_EXPRESS_FEE)}</p>
                         </div>
                       </button>
                     </div>
@@ -540,19 +597,24 @@ export function CheckoutPage() {
                     <Input placeholder="Unit 5, Sandton" {...register("line2")} />
                   </Field>
                   <Field label="Postal code" error={errors.postal_code?.message}>
-                    <Input placeholder="2196" {...register("postal_code")} />
+                    <Input placeholder={isDomestic ? "2196" : "e.g. 10001"} {...register("postal_code")} />
                   </Field>
                   <Field label="City" error={errors.city?.message}>
-                    <Input placeholder="Johannesburg" {...register("city")} />
+                    <Input placeholder={isDomestic ? "Johannesburg" : "e.g. New York"} {...register("city")} />
                   </Field>
-                  <Field label="Province" error={errors.province?.message}>
-                    <Select {...register("province")}>
-                    <option value="">Select province</option>
-                    {PROVINCES.map((p) => (
-                      <option key={p} value={p}>{p}</option>
-                    ))}
-                  </Select>
-                </Field>
+                  <Field label="Country">
+                    <Input value={`${selectedCountry.name} (${selectedCountry.code})`} disabled readOnly />
+                  </Field>
+                  {isDomestic && (
+                    <Field label="Province" error={errors.province?.message}>
+                      <Select {...register("province")}>
+                      <option value="">Select province</option>
+                      {PROVINCES.map((p) => (
+                        <option key={p} value={p}>{p}</option>
+                      ))}
+                    </Select>
+                  </Field>
+                  )}
                 </div>
               </div>
             )}
@@ -588,7 +650,7 @@ export function CheckoutPage() {
 
         {/* Summary */}
         <aside className="h-fit space-y-4 lg:sticky lg:top-32">
-          {totals.map(({ group, discount, shipping, total }) => {
+          {displayTotals.map(({ group, subtotal: groupSubtotal, discount: groupDiscount, shipping: groupShipping, total: groupTotal }) => {
             const liveSeller = displayGroups.find((g) => g.sellerId === group.sellerId);
             return (
             <div key={group.sellerId} className="border border-neutral-200 bg-white p-5 shadow-sm">
@@ -607,19 +669,19 @@ export function CheckoutPage() {
                         {[item.size, item.colour].filter(Boolean).join(" · ") || "One size"} × {item.quantity}
                       </p>
                     </div>
-                    <span className="text-xs font-medium text-neutral-900">{formatZAR(item.price * item.quantity)}</span>
+                    <span className="text-xs font-medium text-neutral-900">{formatLineCustomerPrice(item.price, item.quantity)}</span>
                   </div>
                 ))}
               </div>
               <dl className="mt-4 space-y-1.5 border-t border-neutral-100 pt-3 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-neutral-500">Subtotal</dt>
-                  <dd className="text-neutral-900">{formatZAR(group.subtotal)}</dd>
+                  <dd className="text-neutral-900">{formatDisplayNumber(groupSubtotal)}</dd>
                 </div>
-                {discount > 0 && (
+                {groupDiscount > 0 && (
                   <div className="flex justify-between text-green-600">
                     <dt>Discount</dt>
-                    <dd>-{formatZAR(discount)}</dd>
+                    <dd>-{formatDisplayNumber(groupDiscount)}</dd>
                   </div>
                 )}
                 {isCollect ? (
@@ -627,17 +689,17 @@ export function CheckoutPage() {
                     <dt className="text-neutral-500">
                       Collection ({pepTier === "express" ? "3–5 days" : "7–9 days"})
                     </dt>
-                    <dd className="text-neutral-900">{formatZAR(shipping)}</dd>
+                    <dd className="text-neutral-900">{groupShipping === 0 ? "Free" : formatDisplayNumber(groupShipping)}</dd>
                   </div>
                 ) : (
                   <div className="flex justify-between">
                     <dt className="text-neutral-500">Shipping</dt>
-                    <dd className="text-neutral-900">{shipping === 0 ? "Free" : formatZAR(shipping)}</dd>
+                    <dd className="text-neutral-900">{groupShipping === 0 ? "Free" : formatDisplayNumber(groupShipping)}</dd>
                   </div>
                 )}
                 <div className="flex justify-between border-t border-neutral-100 pt-2 font-semibold">
                   <dt className="text-neutral-900">Total</dt>
-                  <dd className="text-neutral-900">{formatZAR(total)}</dd>
+                  <dd className="text-neutral-900">{formatDisplayNumber(groupTotal)}</dd>
                 </div>
               </dl>
             </div>
@@ -665,7 +727,7 @@ export function CheckoutPage() {
             {couponError && <p className="mt-2 text-xs text-red-600">{(couponError as Error).message}</p>}
             {coupon && (
               <p className="mt-2 text-xs text-green-600">
-                {coupon.code} applied — {coupon.discount_type === "percentage" ? `${coupon.discount_value}% off` : formatZAR(coupon.discount_value) + " off"}
+                {coupon.code} applied — {coupon.discount_type === "percentage" ? `${coupon.discount_value}% off` : formatPrice(coupon.discount_value) + " off"}
               </p>
             )}
           </div>
@@ -673,26 +735,26 @@ export function CheckoutPage() {
           <div className="bg-neutral-900 p-5 text-white">
             <div className="flex justify-between text-sm">
               <span className="text-neutral-300">Subtotal</span>
-              <span>{formatZAR(groups.reduce((a, g) => a + g.subtotal, 0))}</span>
+              <span>{formatDisplayNumber(grandDisplaySubtotal)}</span>
             </div>
-            {grandDiscount > 0 && (
+            {grandDisplayDiscount > 0 && (
               <div className="mt-1 flex justify-between text-sm text-green-400">
                 <span>Discount</span>
-                <span>-{formatZAR(grandDiscount)}</span>
+                <span>-{formatDisplayNumber(grandDisplayDiscount)}</span>
               </div>
             )}
             <div className="mt-1 flex justify-between text-sm">
               <span className="text-neutral-300">
                 {isCollect ? `Collection (${pepTier === "express" ? "3–5 days" : "7–9 days"})` : "Shipping"}
               </span>
-              <span>{formatZAR(grandShipping)}</span>
+              <span>{grandDisplayShipping === 0 ? "Free" : formatDisplayNumber(grandDisplayShipping)}</span>
             </div>
             <div className="mt-3 flex justify-between border-t border-white/10 pt-3">
               <span className="font-semibold">Total</span>
-              <span className="text-lg font-bold">{formatZAR(grandTotal)}</span>
+              <span className="text-lg font-bold">{formatDisplayNumber(grandDisplayTotal)}</span>
             </div>
             <Button type="submit" variant="accent" size="lg" className="mt-4 w-full" loading={submitting}>
-              Place order · {formatZAR(grandTotal)}
+              Place order · {formatDisplayNumber(grandDisplayTotal)}
             </Button>
             <p className="mt-2 text-center text-xs text-neutral-400">
               By placing your order you agree to our terms &amp; conditions.

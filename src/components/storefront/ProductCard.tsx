@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import type { ProductWithDetails } from "@/types";
 import { assetUrl } from "@/lib/assets";
-import { discountPercent, formatZAR } from "@/lib/utils";
+import { discountPercent, formatPrice } from "@/lib/utils";
 import { WishlistButton } from "@/components/storefront/WishlistButton";
 import { cn } from "@/lib/utils";
 
@@ -61,11 +61,11 @@ export function ProductCard({ product, className, dark }: ProductCardProps) {
           </p>
           <div className="flex items-center gap-2">
             <p className={cn("text-sm font-semibold", dark ? "text-white" : "text-neutral-900")}>
-              {formatZAR(product.sale_price ?? product.price)}
+              {formatPrice(product.sale_price ?? product.price)}
             </p>
             {product.sale_price != null && product.sale_price < product.price && (
               <p className={cn("text-xs line-through", dark ? "text-neutral-500" : "text-neutral-400")}>
-                {formatZAR(product.price)}
+                {formatPrice(product.price)}
               </p>
             )}
           </div>

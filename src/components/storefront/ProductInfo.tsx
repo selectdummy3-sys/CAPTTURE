@@ -8,7 +8,7 @@ import { useIsWishlisted, useToggleWishlist } from "@/hooks/useWishlist";
 import { useCartStore } from "@/store/useCartStore";
 import { Price } from "@/components/ui/price";
 import { Button } from "@/components/ui/button";
-import { cn, formatZAR } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 
 interface ProductInfoProps {
   product: ProductWithDetails;
@@ -213,7 +213,7 @@ export function ProductInfo({ product, size, onSize, colour, onColour, qty, onQt
             disabled={outOfStock}
             onClick={buyNow}
           >
-            {formatZAR(product.sale_price ?? product.price)} · Buy now
+            {formatPrice(product.sale_price ?? product.price)} · Buy now
           </Button>
         </div>
       </div>

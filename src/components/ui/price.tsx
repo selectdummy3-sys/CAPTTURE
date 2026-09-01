@@ -1,4 +1,4 @@
-import { cn, discountPercent, formatZAR } from "@/lib/utils";
+import { cn, discountPercent, formatPrice } from "@/lib/utils";
 
 interface PriceProps {
   price: number;
@@ -15,11 +15,11 @@ export function Price({ price, salePrice, size = "md", className }: PriceProps) 
   return (
     <span className={cn("inline-flex flex-wrap items-baseline gap-x-2", className)}>
       <span className={cn("font-semibold tracking-tight text-neutral-900", sizeClass)}>
-        {formatZAR(hasSale ? salePrice : price)}
+        {formatPrice(hasSale ? salePrice : price)}
       </span>
       {hasSale && (
         <>
-          <span className="text-sm text-neutral-400 line-through">{formatZAR(price)}</span>
+          <span className="text-sm text-neutral-400 line-through">{formatPrice(price)}</span>
           {percent != null && (
             <span className="text-xs font-semibold text-green-600">-{percent}%</span>
           )}

@@ -202,7 +202,7 @@ export function PaymentReturnPage() {
               Payment received
             </h1>
             <p className="mt-2 text-neutral-500">
-              Thanks!{amount !== undefined && amount !== null ? <> Your payment of <span className="font-semibold text-neutral-900">{formatZAR(amount)}</span></> : null} for{" "}
+              Thanks!{amount !== undefined && amount !== null ? <> Your payment of <span className="font-semibold text-neutral-900">{formatZAR(amount)}</span> (charged in ZAR)</> : null} for{" "}
               {paymentRef} was successful. Your sellers have been notified.
             </p>
           </>

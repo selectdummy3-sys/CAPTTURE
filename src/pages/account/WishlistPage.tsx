@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { buttonClass } from "@/components/ui/button";
 import { productImageUrl } from "@/components/storefront/ProductCard";
-import { formatZAR } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 
 export function WishlistPage() {
   const { data: items, isLoading } = useWishlist();
@@ -68,7 +68,7 @@ export function WishlistPage() {
                 <div className="mt-2 space-y-0.5">
                   <p className="line-clamp-1 text-sm font-medium text-neutral-900">{product.name}</p>
                   <p className="text-sm font-semibold text-neutral-900">
-                    {formatZAR(product.sale_price ?? product.price)}
+                    {formatPrice(product.sale_price ?? product.price)}
                   </p>
                 </div>
               </Link>

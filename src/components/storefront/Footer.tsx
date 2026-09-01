@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
 import { MapPin, Mail } from "lucide-react";
+import { useState } from "react";
 
 import { Logo } from "@/components/ui/logo";
 import { CONTACT_EMAILS, mailtoHref } from "@/lib/emails";
+import {
+  CountryLanguageModal,
+  CountrySelectorTrigger,
+} from "@/components/storefront/CountryLanguageModal";
 
 const columns = [
   {
@@ -34,6 +39,7 @@ const columns = [
 const paymentMethods = ["Card", "Mobile", "PayFast"];
 
 export function Footer() {
+  const [countryOpen, setCountryOpen] = useState(false);
   return (
     <footer className="relative overflow-hidden border-t border-neutral-800 bg-ink text-neutral-300">
       <span
@@ -42,6 +48,9 @@ export function Footer() {
       >
         CAPTTURE
       </span>
+      <div className="absolute right-4 top-4 sm:right-6">
+        <CountrySelectorTrigger onClick={() => setCountryOpen(true)} />
+      </div>
       <div className="stitch h-px bg-brand-600/60" />
       <div className="relative mx-auto max-w-1440 px-4 pb-8 pt-16 sm:px-6">
         <div className="grid gap-12 md:grid-cols-12">
@@ -140,6 +149,7 @@ export function Footer() {
           <p className="text-xs font-medium text-brand-300">Proudly South African</p>
         </div>
       </div>
+      <CountryLanguageModal open={countryOpen} onClose={() => setCountryOpen(false)} />
     </footer>
   );
 }

@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { OrderStatusBadge, PaymentMethodBadge } from "@/components/ui/status-badge";
 import { buttonClass } from "@/components/ui/button";
 import { productImageUrl } from "@/components/storefront/ProductCard";
-import { formatDate, formatZAR } from "@/lib/utils";
+import { formatDate, formatPrice } from "@/lib/utils";
 
 export function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -109,28 +109,28 @@ export function OrderDetailPage() {
                   {[item.size, item.colour].filter(Boolean).join(" · ") || "Standard"} · Qty {item.quantity}
                 </p>
               </div>
-              <p className="text-sm font-semibold text-neutral-900">{formatZAR(item.line_total)}</p>
+              <p className="text-sm font-semibold text-neutral-900">{formatPrice(item.line_total)}</p>
             </div>
           ))}
         </div>
         <div className="space-y-1.5 border-t border-neutral-100 px-5 py-4 text-sm">
           <div className="flex justify-between text-neutral-500">
             <span>Subtotal</span>
-            <span>{formatZAR(order.subtotal)}</span>
+            <span>{formatPrice(order.subtotal)}</span>
           </div>
           <div className="flex justify-between text-neutral-500">
             <span>{order.delivery_method === "pep_collect" ? "Collection" : "Shipping"}</span>
-            <span>{formatZAR(order.shipping)}</span>
+            <span>{formatPrice(order.shipping)}</span>
           </div>
           {order.discount > 0 && (
             <div className="flex justify-between text-green-600">
               <span>Discount {order.coupon?.code ? `(${order.coupon.code})` : ""}</span>
-              <span>-{formatZAR(order.discount)}</span>
+              <span>-{formatPrice(order.discount)}</span>
             </div>
           )}
           <div className="flex justify-between pt-2 text-base font-semibold text-neutral-900">
             <span>Total</span>
-            <span>{formatZAR(order.total)}</span>
+            <span>{formatPrice(order.total)}</span>
           </div>
         </div>
       </section>
@@ -154,8 +154,8 @@ export function OrderDetailPage() {
               <p className="text-neutral-500">{order.pep_store.address_line}</p>
               <p className="mt-1.5 text-xs font-medium uppercase tracking-editorial text-brand-700">
                 {order.pep_delivery_tier === "express"
-                  ? `Express delivery · 3–5 days · ${formatZAR(order.shipping)}`
-                  : `Standard delivery · 7–9 days · ${formatZAR(order.shipping)}`}
+                  ? `Express delivery · 3–5 days · ${formatPrice(order.shipping)}`
+                  : `Standard delivery · 7–9 days · ${formatPrice(order.shipping)}`}
               </p>
             </div>
           </div>

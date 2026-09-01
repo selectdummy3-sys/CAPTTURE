@@ -2,18 +2,22 @@ import { Link, useLocation } from "react-router-dom";
 import { CheckCircle2, CreditCard } from "lucide-react";
 
 import { buttonClass } from "@/components/ui/button";
-import { formatZAR } from "@/lib/utils";
+import { formatPrice, formatDisplayNumber } from "@/lib/utils";
 
 interface SuccessState {
   orderNumbers?: string[];
   paymentMethod?: "payfast";
   grandTotal?: number;
+  /** Customer-visible (rounded whole-number) total in the display currency. */
+  displayTotal?: number;
 }
 
 export function OrderSuccessPage() {
   const { state } = useLocation() as { state: SuccessState | null };
   const numbers = state?.orderNumbers ?? [];
   const total = state?.grandTotal ?? 0;
+  const showTotal = state?.displayTotal ?? total;
+  const hasDisplayTotal = state?.displayTotal != null;
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">
@@ -35,9 +39,9 @@ export function OrderSuccessPage() {
                 <p key={n}>{n}</p>
               ))}
             </div>
-            <p className="mt-2 text-neutral-500">Total: <span className="font-semibold text-neutral-900">{formatZAR(total)}</span></p>
+            <p className="mt-2 text-neutral-500">Total: <span className="font-semibold text-neutral-900">{hasDisplayTotal ? formatDisplayNumber(showTotal) : formatPrice(total)}</span></p>
             <div className="mt-3 flex items-center justify-center gap-2 text-neutral-600">
-              <CreditCard className="h-4 w-4" /> Payment confirmed
+              <CreditCard className="h-4 w-4" /> Payment confirmed{hasDisplayTotal ? " · charged in ZAR" : ""}
             </div>
           </div>
         )}

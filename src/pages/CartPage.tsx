@@ -4,14 +4,23 @@ import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useLiveSellerNames } from "@/hooks/useStores";
-import { useCartStore, useCartSubtotal, type CartItem } from "@/store/useCartStore";
+import { useCartStore, type CartItem } from "@/store/useCartStore";
 import { productImageUrl } from "@/components/storefront/ProductCard";
 import { Button, buttonClass } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-import { formatZAR } from "@/lib/utils";
+import { formatPrice, formatLineCustomerPrice, formatDisplayNumber, toDisplayNumber, getCartCustomerPrice } from "@/lib/utils";
 
 const FREE_SHIPPING_ABOVE = 1000;
 const SHIPPING_FEE = 60;
+
+/**
+ * Whole-number customer subtotal for a set of lines (sum of rounded line prices).
+ * Implemented here (not via useCartSubtotal) so line items and totals always
+ * use the same per-line rounding and add up consistently.
+ */
+function useRoundedSubtotal(items: Pick<CartItem, "price" | "quantity">[]): number {
+  return useMemo(() => getCartCustomerPrice(items.map((i) => ({ price: i.price, quantity: i.quantity }))), [items]);
+}
 
 function Line({ item, sellerName }: { item: CartItem; sellerName: string }) {
   const updateQuantity = useCartStore((s) => s.updateQuantity);
@@ -70,9 +79,9 @@ function Line({ item, sellerName }: { item: CartItem; sellerName: string }) {
             </button>
           </div>
           <div className="text-right">
-            <p className="font-semibold text-neutral-900">{formatZAR(item.price * item.quantity)}</p>
+            <p className="font-semibold text-neutral-900">{formatLineCustomerPrice(item.price, item.quantity)}</p>
             {item.originalPrice > item.price && (
-              <p className="text-xs text-neutral-400 line-through">{formatZAR(item.originalPrice * item.quantity)}</p>
+              <p className="text-xs text-neutral-400 line-through">{formatLineCustomerPrice(item.originalPrice, item.quantity)}</p>
             )}
           </div>
         </div>
@@ -83,15 +92,13 @@ function Line({ item, sellerName }: { item: CartItem; sellerName: string }) {
 
 export function CartPage() {
   const items = useCartStore((s) => s.items);
-  const subtotal = useCartSubtotal();
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const sellerIds = useMemo(
-    () => Array.from(new Set(items.map((i) => i.sellerId).filter(Boolean))),
-    [items]
+  const subtotal = useRoundedSubtotal(items);
+  const { data: sellerMap } = useLiveSellerNames(
+    useMemo(() => Array.from(new Set(items.map((i) => i.sellerId).filter(Boolean))), [items])
   );
-  const { data: sellerMap } = useLiveSellerNames(sellerIds);
 
   const groups = useMemo(() => {
     const map = new Map<string, CartItem[]>();
@@ -104,11 +111,14 @@ export function CartPage() {
   }, [items]);
 
   const shipping = groups.reduce((acc, group) => {
-    const groupSubtotal = group.reduce((a, i) => a + i.price * i.quantity, 0);
-    return acc + (groupSubtotal >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING_FEE);
+    const groupZarSubtotal = group.reduce((a, i) => a + i.price * i.quantity, 0);
+    return acc + (groupZarSubtotal >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING_FEE);
   }, 0);
 
-  const total = subtotal + shipping;
+  const zarSubtotal = items.reduce((a, i) => a + i.price * i.quantity, 0);
+
+  const shippingDisplay = toDisplayNumber(shipping);
+  const total = subtotal + shippingDisplay;
 
   const goToCheckout = () => {
     if (!user) {
@@ -156,8 +166,9 @@ export function CartPage() {
       <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
         <div>
           {groups.map((group, gi) => {
-            const groupSubtotal = group.reduce((a, i) => a + i.price * i.quantity, 0);
-            const groupShipping = groupSubtotal >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING_FEE;
+            const groupZarSubtotal = group.reduce((a, i) => a + i.price * i.quantity, 0);
+            const groupSubtotal = getCartCustomerPrice(group.map((i) => ({ price: i.price, quantity: i.quantity })));
+            const groupShipping = groupZarSubtotal >= FREE_SHIPPING_ABOVE ? 0 : SHIPPING_FEE;
             const live = sellerMap?.[group[0].sellerId];
             const sellerName = live?.business_name ?? group[0].sellerName;
             const sellerUsername = live?.store_username ?? group[0].sellerUsername;
@@ -176,10 +187,10 @@ export function CartPage() {
                 </div>
                 <div className="flex items-center justify-between pt-3 text-sm">
                   <span className="text-neutral-500">
-                    Shipping: {groupShipping === 0 ? "Free" : formatZAR(groupShipping)}
+                    Shipping: {groupShipping === 0 ? "Free" : formatPrice(groupShipping)}
                   </span>
                   <span className="font-semibold text-neutral-900">
-                    {formatZAR(groupSubtotal + groupShipping)}
+                    {formatDisplayNumber(groupSubtotal + toDisplayNumber(groupShipping))}
                   </span>
                 </div>
               </div>
@@ -192,24 +203,24 @@ export function CartPage() {
           <dl className="mt-5 space-y-2 text-sm">
             <div className="flex justify-between">
               <dt className="text-neutral-500">Subtotal</dt>
-              <dd className="font-medium text-neutral-900">{formatZAR(subtotal)}</dd>
+              <dd className="font-medium text-neutral-900">{formatPrice(subtotal)}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-neutral-500">Shipping estimate</dt>
-              <dd className="font-medium text-neutral-900">{shipping === 0 ? "Free" : formatZAR(shipping)}</dd>
+              <dd className="font-medium text-neutral-900">{shippingDisplay === 0 ? "Free" : formatDisplayNumber(shippingDisplay)}</dd>
             </div>
-            {subtotal < FREE_SHIPPING_ABOVE && (
+            {zarSubtotal < FREE_SHIPPING_ABOVE && (
               <p className="border border-brand-200 bg-brand-50 px-3 py-2 text-xs text-brand-800">
-                Add {formatZAR(FREE_SHIPPING_ABOVE - subtotal)} more to unlock free shipping on qualifying orders.
+                Add {formatPrice(FREE_SHIPPING_ABOVE - zarSubtotal)} more to unlock free shipping on qualifying orders.
               </p>
             )}
           </dl>
           <div className="mt-4 flex justify-between border-t border-neutral-200 pt-4">
             <span className="font-semibold text-neutral-900">Total</span>
-            <span className="text-lg font-bold text-neutral-900">{formatZAR(total)}</span>
+            <span className="text-lg font-bold text-neutral-900">{formatDisplayNumber(total)}</span>
           </div>
           <Button variant="accent" className="mt-5 w-full" size="lg" onClick={goToCheckout}>
-            Checkout · {formatZAR(total)}
+            Checkout · {formatDisplayNumber(total)}
           </Button>
           <p className="mt-3 text-center text-xs text-neutral-400">
             Secure checkout via PayFast

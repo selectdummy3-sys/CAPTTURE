@@ -22,6 +22,46 @@ export function formatZAR(value: number | string | null | undefined): string {
   return zar.format(num);
 }
 
+// ── Currency conversion & display ──────────────────────────────
+// CAPTTURE stores base product prices in ZAR. We convert to the
+// customer's selected currency for display only — we never overwrite
+// the stored ZAR price. Exchange rates are kept at full precision and
+// the final customer-facing price is rounded to a whole number via
+// src/lib/pricing.ts (the single source of truth for pricing).
+import {
+  formatCustomerPrice,
+  formatLineCustomerPrice as formatLine,
+  getCustomerDisplayPrice,
+} from "@/lib/pricing";
+
+/** The full pricing breakdown for a ZAR amount (base, rate, raw, rounded, currency, timestamp). */
+export { getPriceBreakdown } from "@/lib/pricing";
+export type { PriceBreakdown } from "@/lib/pricing";
+
+/**
+ * The authoritative rounded customer-facing price for a ZAR base price.
+ * Whole-number retail (e.g. R300 → $19.00), never the raw FX conversion.
+ */
+export function convertPrice(value: number | string | null | undefined): number {
+  return getCustomerDisplayPrice(value);
+}
+
+/** Format a ZAR base price into the current display currency, whole-number
+ *  retail price, e.g. South Africa → "R300.00", United States → "$19.00". */
+export function formatPrice(value: number | string | null | undefined): string {
+  return formatCustomerPrice(value);
+}
+
+/** Format a cart line total (ZAR base × quantity) as a whole-number customer price. */
+export function formatLineCustomerPrice(
+  value: number | string | null | undefined,
+  quantity: number
+): string {
+  return formatLine(value, quantity);
+}
+
+export { toDisplayNumber, formatDisplayNumber, getCartCustomerPrice } from "@/lib/pricing";
+
 export function formatCompactZAR(value: number | string | null | undefined): string {
   const num = Number(value ?? 0);
   if (Number.isNaN(num)) return "R0";

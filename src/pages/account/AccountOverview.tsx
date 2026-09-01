@@ -8,7 +8,7 @@ import { useWishlist } from "@/hooks/useWishlist";
 import { Avatar } from "@/components/ui/avatar";
 import { StatCard } from "@/components/ui/stat-card";
 import { OrderStatusBadge } from "@/components/ui/status-badge";
-import { formatZAR, timeAgo } from "@/lib/utils";
+import { formatPrice, timeAgo } from "@/lib/utils";
 
 export function AccountOverview() {
   const { profile } = useAuth();
@@ -33,7 +33,7 @@ export function AccountOverview() {
 
       <div className="grid gap-4 sm:grid-cols-3">
         <StatCard label="Orders placed" value={(orders ?? []).length} icon={<Package className="h-5 w-5" />} />
-        <StatCard label="Lifetime spend" value={formatZAR(lifetime)} icon={<Package className="h-5 w-5" />} />
+        <StatCard label="Lifetime spend" value={formatPrice(lifetime)} icon={<Package className="h-5 w-5" />} />
         <StatCard label="Wishlist items" value={(wishlist ?? []).length} icon={<Heart className="h-5 w-5" />} />
       </div>
 
@@ -57,7 +57,7 @@ export function AccountOverview() {
                   <p className="text-sm font-medium text-neutral-800">{order.seller?.business_name ?? "Store"}</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-neutral-900">{formatZAR(order.total)}</span>
+                  <span className="text-sm font-semibold text-neutral-900">{formatPrice(order.total)}</span>
                   <OrderStatusBadge status={order.status} />
                 </div>
               </Link>
