@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1320 1000">
+  <!-- Generator: Adobe Illustrator 29.8.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 2)  -->
+  <defs>
+    <style>
+      .st0, .st1, .st2 {
+        isolation: isolate;
+      }
+
+      .st1 {
+        font-size: 148.17px;
+        letter-spacing: .2em;
+      }
+
+      .st1, .st2 {
+        font-family: dDiam, 'd Diam';
+      }
+
+      .st2 {
+        font-size: 24.31px;
+        letter-spacing: .2em;
+      }
+    </style>
+    <symbol id="New_Symbol" viewBox="0 0 921.32 160.76">
+      <g>
+        <g class="st0">
+          <text class="st1" transform="translate(0 131.1)"><tspan x="0" y="0">CAPTTURE</tspan></text>
+        </g>
+        <circle cx="907.54" cy="117.32" r="13.78"/>
+      </g>
+    </symbol>
+  </defs>
+  <use width="921.32" height="160.76" transform="translate(199.34 396.46)" xlink:href="#New_Symbol"/>
+  <g class="st0">
+    <text class="st2" transform="translate(360 593.52)"><tspan x="0" y="0">CAPTTURE YOUR BEST MOMENTS WITH US</tspan></text>
+  </g>
+</svg>
