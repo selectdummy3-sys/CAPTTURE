@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import logoSvg from "@/assets/CAPTTURE LOGO 2.svg";
+import logoSrc from "@/assets/CAPTTURE LOGO 2 BLA.png";
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";
@@ -14,7 +14,7 @@ export function Logo({ size = "md", className, linkTo }: LogoProps) {
 
   const content = (
     <img
-      src={logoSvg}
+      src={logoSrc}
       alt="CAPTTURE"
       className={cn(heightClass, "w-auto max-w-[45vw] object-contain", className)}
     />
