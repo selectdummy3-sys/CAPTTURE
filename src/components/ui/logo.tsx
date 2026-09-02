@@ -10,13 +10,13 @@ interface LogoProps {
 
 export function Logo({ size = "md", className, linkTo }: LogoProps) {
   const heightClass =
-    size === "lg" ? "h-10" : size === "sm" ? "h-8" : "h-9";
+    size === "lg" ? "h-10" : size === "sm" ? "h-7 sm:h-8" : "h-9";
 
   const content = (
     <img
       src={logoSvg}
       alt="CAPTTURE"
-      className={cn(heightClass, "w-auto", className)}
+      className={cn(heightClass, "h-auto w-auto max-w-[45vw]", className)}
     />
   );
 
