@@ -16,7 +16,7 @@ export function Logo({ size = "md", className, linkTo }: LogoProps) {
     <img
       src={logoSvg}
       alt="CAPTTURE"
-      className={cn(heightClass, "h-auto w-auto max-w-[45vw]", className)}
+      className={cn(heightClass, "w-auto max-w-[45vw] object-contain", className)}
     />
   );
 
