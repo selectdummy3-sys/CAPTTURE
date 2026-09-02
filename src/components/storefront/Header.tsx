@@ -157,7 +157,7 @@ export function Header() {
       </div>
       <div className="stitch h-px bg-brand-500/60" />
 
-      <div className="mx-auto flex h-16 max-w-1440 items-center gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex h-24 max-w-1440 items-center gap-4 px-4 sm:px-6">
         <button
           type="button"
           className="p-2 text-neutral-700 hover:bg-neutral-100 lg:hidden"
@@ -175,9 +175,6 @@ export function Header() {
           </NavLink>
           <NavLink to="/stores" className={navLink}>
             Stores
-          </NavLink>
-          <NavLink to="/sell" className={navLink}>
-            Sell on CAPTTURE
           </NavLink>
         </nav>
 
@@ -269,9 +266,6 @@ export function Header() {
                 </NavLink>
                 <NavLink to="/stores" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
                   Stores
-                </NavLink>
-                <NavLink to="/sell" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
-                  Sell on CAPTTURE
                 </NavLink>
               </div>
             </nav>

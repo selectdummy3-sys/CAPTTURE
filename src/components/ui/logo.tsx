@@ -10,7 +10,7 @@ interface LogoProps {
 
 export function Logo({ size = "md", className, linkTo }: LogoProps) {
   const heightClass =
-    size === "lg" ? "h-16" : size === "sm" ? "h-12" : "h-14";
+    size === "lg" ? "h-20" : size === "sm" ? "h-16" : "h-16";
 
   const content = (
     <img
