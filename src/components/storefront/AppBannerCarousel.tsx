@@ -39,7 +39,7 @@ function BannerCard({
       data-banner-card
       onClick={onPress}
       className={cn(
-        "relative h-48 w-[calc(100vw-3rem)] max-w-[420px] shrink-0 snap-center overflow-hidden text-left shadow-sm active:opacity-90",
+        "relative h-48 w-[calc(100vw-2rem)] max-w-[440px] shrink-0 snap-center overflow-hidden text-left shadow-sm active:opacity-90",
         tone
       )}
     >

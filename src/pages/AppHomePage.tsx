@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
-import { ArrowRight, Search, Store } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowRight, Search, Store, X } from "lucide-react";
 
 import { useCategories } from "@/hooks/useCategories";
 import { useAppSettings } from "@/hooks/useAdminSettings";
@@ -39,6 +40,8 @@ function SectionHeader({
 }
 
 export function AppHomePage() {
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
   const { data: settings } = useAppSettings();
   const { data: categories } = useCategories();
   const featured = useFeaturedProducts(10);
@@ -65,14 +68,44 @@ export function AppHomePage() {
         <p className="font-display text-xl font-bold uppercase leading-none tracking-tight text-neutral-900">
           {settings?.home_header ?? "CAPTTURE"}
         </p>
-        <Link
-          to="/shop"
-          onClick={() => void hapticLight()}
-          className="mt-3 flex h-11 items-center gap-2.5 rounded-full border border-neutral-200 bg-paper-deep px-4 text-sm text-neutral-500 active:bg-neutral-200"
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            void hapticLight();
+            const term = search.trim();
+            navigate(term ? `/shop?q=${encodeURIComponent(term)}` : "/shop");
+          }}
+          className="mt-3 flex h-11 items-center gap-2 rounded-full border border-neutral-200 bg-paper-deep pl-4 pr-2"
         >
-          <Search className="h-4 w-4" />
-          Search products &amp; stores
-        </Link>
+          <Search className="h-4 w-4 shrink-0 text-neutral-500" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search products & stores"
+            autoCapitalize="none"
+            autoCorrect="off"
+            enterKeyHint="search"
+            className="min-w-0 flex-1 bg-transparent text-sm text-neutral-900 outline-none selection:bg-brand-lighter placeholder:text-neutral-500"
+          />
+          {search ? (
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              aria-label="Clear search"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-neutral-200/80 active:bg-neutral-300"
+            >
+              <X className="h-3.5 w-3.5 text-neutral-600" />
+            </button>
+          ) : (
+            <button
+              type="submit"
+              aria-label="Search"
+              className="flex h-7 shrink-0 items-center rounded-full bg-neutral-900 px-3 text-[11px] font-semibold uppercase tracking-editorial text-white active:bg-neutral-700"
+            >
+              Go
+            </button>
+          )}
+        </form>
       </div>
 
       {/* Categories chips */}
