@@ -514,6 +514,7 @@ export type Database = {
       orders: {
         Row: {
           billing_address: Json | null
+          consignment_id: string | null
           coupon_id: string | null
           created_at: string
           delivered_at: string | null
@@ -539,6 +540,7 @@ export type Database = {
         }
         Insert: {
           billing_address?: Json | null
+          consignment_id?: string | null
           coupon_id?: string | null
           created_at?: string
           delivered_at?: string | null
@@ -564,6 +566,7 @@ export type Database = {
         }
         Update: {
           billing_address?: Json | null
+          consignment_id?: string | null
           coupon_id?: string | null
           created_at?: string
           delivered_at?: string | null
@@ -1805,6 +1808,7 @@ export type Database = {
           role: string
         }[]
       }
+      lookup_order: { Args: { p_email: string; p_order_number: string }; Returns: Json }
       mark_message_read: { Args: { p_message_id: string }; Returns: undefined }
       notify_user: {
         Args: {
@@ -1876,6 +1880,7 @@ export type Database = {
       place_order: {
         Args: {
           p_billing_address?: Json
+          p_consignment_id?: string
           p_coupon_code?: string
           p_delivery_method?: string
           p_items: Json
@@ -1885,9 +1890,11 @@ export type Database = {
           p_pep_store_id?: string
           p_seller_id: string
           p_shipping_address: Json
+          p_tracking_number?: string
         }
         Returns: {
           billing_address: Json | null
+          consignment_id: string | null
           coupon_id: string | null
           created_at: string
           delivered_at: string | null

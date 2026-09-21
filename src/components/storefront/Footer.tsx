@@ -30,7 +30,7 @@ const columns = [
     title: "Support",
     links: [
       { label: "Help centre", to: "/help" },
-      { label: "Delivery & returns", to: "/help" },
+      { label: "Track your order", to: "/track" },
       { label: "Contact us", to: "/contact" },
     ],
   },

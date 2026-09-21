@@ -61,16 +61,16 @@ function OrdersPanel({ orders }: { orders: ReturnedOrder[] }) {
             </div>
             <div className="mt-2 flex items-start gap-2 text-sm text-neutral-600">
               <Truck className="mt-0.5 h-4 w-4 shrink-0 text-neutral-400" />
-              {o.tracking_number ? (
+              {o.tracking_number && (o.payment_status === "paid" || ["processing", "shipped", "delivered", "refunded"].includes(o.status)) ? (
                 <p>
-                  Tracking code:{" "}
+                  CAPPTURE tracking code:{" "}
                   <span className="font-mono font-semibold text-neutral-900">{o.tracking_number}</span>
                 </p>
               ) : (
                 <p>
                   {o.payment_status === "paid"
-                    ? "Your seller is preparing your parcel — a tracking code will appear here once it ships."
-                    : "A tracking code will appear here once the order is paid and dispatched."}
+                    ? "Your CAPPTURE tracking code will appear here once your seller dispatches the parcel."
+                    : "Your CAPPTURE tracking code will appear here once payment is confirmed and your parcel is dispatched."}
                 </p>
               )}
             </div>

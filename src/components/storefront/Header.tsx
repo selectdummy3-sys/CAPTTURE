@@ -267,6 +267,9 @@ export function Header() {
                 <NavLink to="/stores" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
                   Stores
                 </NavLink>
+                <NavLink to="/track" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
+                  Track your order
+                </NavLink>
               </div>
             </nav>
             <form onSubmit={submitSearch} className="relative border-t border-neutral-100 p-4">

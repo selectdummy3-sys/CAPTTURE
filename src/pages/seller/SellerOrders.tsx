@@ -7,17 +7,17 @@ import {
   MapPin,
   Phone,
   Printer,
+  Store,
   Truck,
   UserRound,
   Mail,
 } from "lucide-react";
 
-import { useSellerOrders, useUpdateOrderStatus, useUpdateOrderTracking } from "@/hooks/useOrders";
+import { useSellerOrders, useUpdateOrderStatus } from "@/hooks/useOrders";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { OrderStatusBadge, PaymentMethodBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { formatDate, formatDateTime, formatZAR } from "@/lib/utils";
@@ -39,6 +39,37 @@ function ShippingAddress({ address }: { address: Address | null }) {
       </p>
       <p className="flex items-center gap-1.5 text-neutral-500">
         <Phone className="h-3.5 w-3.5" /> {address.phone}
+      </p>
+    </div>
+  );
+}
+
+function PepCollectDetails({ order }: { order: OrderWithRelations }) {
+  const address = order.shipping_address as Address | null;
+  const store = order.pep_store;
+  return (
+    <div className="space-y-1 text-sm text-neutral-600">
+      {address?.recipient && <p className="font-medium text-neutral-900">{address.recipient}</p>}
+      {address?.phone && (
+        <p className="flex items-center gap-1.5 text-neutral-500">
+          <Phone className="h-3.5 w-3.5" /> {address.phone}
+        </p>
+      )}
+      {store && (
+        <>
+          <p className="pt-1 font-medium text-neutral-900">{store.store_name}</p>
+          <p className="text-xs">
+            Paxi / PEP code:{" "}
+            <span className="font-mono font-semibold text-brand-700">{store.store_code}</span>
+          </p>
+          {store.address_line && <p>{store.address_line}</p>}
+          <p>
+            {store.city}, {store.province}
+          </p>
+        </>
+      )}
+      <p className="pt-0.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-400">
+        {order.pep_delivery_tier === "express" ? "Express collect · 3–5 days" : "Standard collect · 7–9 days"}
       </p>
     </div>
   );
@@ -68,8 +99,14 @@ function InvoiceView({ order }: { order: OrderWithRelations }) {
           </div>
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Ship to</p>
-          <ShippingAddress address={order.shipping_address as Address | null} />
+          <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+            {order.delivery_method === "pep_collect" ? "Collect from PEP store" : "Ship to"}
+          </p>
+          {order.delivery_method === "pep_collect" ? (
+            <PepCollectDetails order={order} />
+          ) : (
+            <ShippingAddress address={order.shipping_address as Address | null} />
+          )}
         </div>
       </div>
 
@@ -136,26 +173,13 @@ function InvoiceView({ order }: { order: OrderWithRelations }) {
 function OrderCard({ order }: { order: OrderWithRelations }) {
   const [expanded, setExpanded] = useState(false);
   const updateStatus = useUpdateOrderStatus();
-  const updateTracking = useUpdateOrderTracking();
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
-  const [tracking, setTracking] = useState(order.tracking_number ?? "");
-  const [savedTracking, setSavedTracking] = useState(order.tracking_number ?? "");
 
   const changeStatus = async (id: string, next: string) => {
     setUpdatingId(id);
     try {
       await updateStatus.mutateAsync({ id, status: next });
-    } finally {
-      setUpdatingId(null);
-    }
-  };
-
-  const saveTracking = async () => {
-    setUpdatingId(order.id);
-    try {
-      await updateTracking.mutateAsync({ id: order.id, trackingNumber: tracking.trim() });
-      setSavedTracking(tracking.trim());
     } finally {
       setUpdatingId(null);
     }
@@ -204,14 +228,25 @@ function OrderCard({ order }: { order: OrderWithRelations }) {
                     <Phone className="h-3.5 w-3.5" /> {order.user.phone}
                   </p>
                 )}
-                <div className="pt-2">
-                  <p className="flex items-center gap-1.5 text-neutral-500">
-                    <MapPin className="h-3.5 w-3.5" /> Shipping address
-                  </p>
-                  <div className="ml-5 mt-1">
-                    <ShippingAddress address={order.shipping_address as Address | null} />
+                {order.delivery_method === "pep_collect" ? (
+                  <div className="pt-2">
+                    <p className="flex items-center gap-1.5 text-neutral-500">
+                      <Store className="h-3.5 w-3.5" /> PEP Click &amp; Collect
+                    </p>
+                    <div className="ml-5 mt-1">
+                      <PepCollectDetails order={order} />
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="pt-2">
+                    <p className="flex items-center gap-1.5 text-neutral-500">
+                      <MapPin className="h-3.5 w-3.5" /> Shipping address
+                    </p>
+                    <div className="ml-5 mt-1">
+                      <ShippingAddress address={order.shipping_address as Address | null} />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -281,22 +316,18 @@ function OrderCard({ order }: { order: OrderWithRelations }) {
                 </div>
 
                 <div>
-                  <label className="text-xs font-medium text-neutral-500">Tracking number</label>
-                  <div className="mt-1 flex items-center gap-2">
-                    <Input
-                      value={tracking}
-                      onChange={(e) => setTracking(e.target.value)}
-                      placeholder="e.g. ZZ1234567890"
-                      className="h-9 flex-1 text-xs"
-                    />
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => void saveTracking()}
-                      disabled={updatingId === order.id || tracking.trim() === savedTracking}
-                    >
-                      Save
-                    </Button>
+                  <label className="text-xs font-medium text-neutral-500">CAPPTURE tracking number</label>
+                  <div className="mt-1">
+                    {order.tracking_number ? (
+                      <p className="inline-flex items-center rounded border border-neutral-200 bg-neutral-50 px-3 py-2 font-mono text-xs font-semibold text-neutral-900">
+                        <Truck className="mr-2 h-3.5 w-3.5 text-neutral-400" />
+                        {order.tracking_number}
+                      </p>
+                    ) : (
+                      <p className="text-xs text-neutral-400">
+                        Generated automatically by CAPPTURE — no action needed.
+                      </p>
+                    )}
                   </div>
                   {order.delivered_at && (
                     <p className="mt-1.5 text-xs text-neutral-400">Delivered on {formatDate(order.delivered_at)}</p>

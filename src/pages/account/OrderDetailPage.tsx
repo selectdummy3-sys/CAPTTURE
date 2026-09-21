@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router-dom";
-import { MapPin, PackageOpen, Store } from "lucide-react";
+import { MapPin, PackageOpen, Store, Truck } from "lucide-react";
 
 import { useOrder } from "@/hooks/useOrders";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -134,6 +134,23 @@ export function OrderDetailPage() {
           </div>
         </div>
       </section>
+
+      {order.tracking_number && (
+        <section className="mt-6 border border-neutral-200 p-5">
+          <div className="flex items-start gap-3">
+            <Truck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" />
+            <div className="text-sm">
+              <p className="font-semibold text-neutral-900">Track every parcel</p>
+              <p className="mt-1 text-neutral-600">
+                Use your CAPPTURE tracking code to follow all the parcels in this order.
+              </p>
+              <p className="mt-2 inline-flex items-center rounded border border-neutral-200 bg-neutral-50 px-3 py-1.5 font-mono text-sm font-bold text-neutral-900">
+                {order.tracking_number}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="mt-6 border border-neutral-200 p-5">
         {order.delivery_method === "pep_collect" && order.pep_store ? (

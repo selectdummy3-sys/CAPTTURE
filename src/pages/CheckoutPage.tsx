@@ -32,6 +32,17 @@ const SHIPPING_FEE = 60;
 const PEP_STANDARD_FEE = 60;
 const PEP_EXPRESS_FEE = 100;
 
+function generateTrackingNumber(): string {
+  const d = new Date();
+  const ymd = `${d.getFullYear().toString().slice(2)}${String(d.getMonth() + 1).padStart(2, "0")}${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 6; i += 1) code += chars[Math.floor(Math.random() * chars.length)];
+  return `CPT-${ymd}-${code}`;
+}
+
 type DeliveryMethod = "shipping" | "pep_collect";
 
 const addressSchema = z.object({
@@ -270,6 +281,8 @@ export function CheckoutPage() {
 
     const placed: string[] = [];
     try {
+      const consignmentId = crypto.randomUUID();
+      const trackingNumber = generateTrackingNumber();
       for (const group of groups) {
         const { data, error } = await supabase.rpc("place_order", {
           p_seller_id: group.sellerId,
@@ -286,6 +299,8 @@ export function CheckoutPage() {
           p_delivery_method: delivery,
           ...(isCollect ? { p_pep_delivery_tier: pepTier } : {}),
           ...(isCollect && pepStoreId ? { p_pep_store_id: pepStoreId } : {}),
+          p_consignment_id: consignmentId,
+          p_tracking_number: trackingNumber,
         });
         if (error) throw new Error(error.message);
         if (data?.order_number) placed.push(data.order_number);

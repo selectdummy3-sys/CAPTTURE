@@ -18,6 +18,8 @@ export interface PlaceOrderInput {
   deliveryMethod?: "shipping" | "pep_collect";
   pepStoreId?: string | null;
   pepDeliveryTier?: PepDeliveryTier;
+  consignmentId?: string;
+  trackingNumber?: string;
 }
 
 export function useMyOrders() {
@@ -95,6 +97,8 @@ export function usePlaceOrder() {
         ...(input.deliveryMethod ? { p_delivery_method: input.deliveryMethod } : {}),
         ...(input.pepStoreId ? { p_pep_store_id: input.pepStoreId } : {}),
         ...(input.pepDeliveryTier ? { p_pep_delivery_tier: input.pepDeliveryTier } : {}),
+        ...(input.consignmentId ? { p_consignment_id: input.consignmentId } : {}),
+        ...(input.trackingNumber ? { p_tracking_number: input.trackingNumber } : {}),
       });
       if (error) throw new Error(error.message);
       return data;
@@ -125,22 +129,6 @@ export function useUpdateOrderStatus() {
       void supabase.functions
         .invoke("order-notify", { body: { orderId: id, status } })
         .catch((err) => console.error("order notify email failed:", err));
-    },
-  });
-}
-
-export function useUpdateOrderTracking() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, trackingNumber }: { id: string; trackingNumber: string }) => {
-      const { error } = await supabase
-        .from("orders")
-        .update({ tracking_number: trackingNumber || null })
-        .eq("id", id);
-      if (error) throw new Error(error.message);
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
   });
 }

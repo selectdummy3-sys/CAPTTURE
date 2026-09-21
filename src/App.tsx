@@ -20,6 +20,9 @@ const PaymentReturnPage = lazy(() =>
   import("@/pages/PaymentReturnPage").then((m) => ({ default: m.PaymentReturnPage }))
 );
 const SellPage = lazy(() => import("@/pages/SellPage").then((m) => ({ default: m.SellPage })));
+const TrackOrderPage = lazy(() =>
+  import("@/pages/TrackOrderPage").then((m) => ({ default: m.TrackOrderPage }))
+);
 const StaticPage = lazy(() => import("@/pages/StaticPages").then((m) => ({ default: m.StaticPage })));
 const NotFoundPage = lazy(() => import("@/pages/NotFoundPage").then((m) => ({ default: m.NotFoundPage })));
 
@@ -176,6 +179,7 @@ export function App() {
           <Route path="/checkout" element={<RequireAuth><CheckoutPage /></RequireAuth>} />
           <Route path="/order/success" element={<RequireAuth><OrderSuccessPage /></RequireAuth>} />
           <Route path="/order/payment/return" element={<PaymentReturnPage />} />
+          <Route path="/track" element={<TrackOrderPage />} />
           <Route path="/sell" element={<SellPage />} />
           <Route path="/about" element={<StaticPage page="about" />} />
           <Route path="/terms" element={<StaticPage page="terms" />} />
