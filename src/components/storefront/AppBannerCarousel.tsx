@@ -39,7 +39,7 @@ function BannerCard({
       data-banner-card
       onClick={onPress}
       className={cn(
-        "relative h-72 w-screen shrink-0 snap-start overflow-hidden text-left active:opacity-90",
+        "relative h-80 w-[calc(100vw-2.5rem)] max-w-[480px] shrink-0 snap-center overflow-hidden text-left active:opacity-90",
         tone
       )}
     >
@@ -98,7 +98,7 @@ export function AppBannerCarousel() {
     const el = scrollerRef.current;
     if (!el) return;
     const first = el.querySelector<HTMLElement>("[data-banner-card]");
-    const card = first ? first.offsetWidth : window.innerWidth;
+    const card = (first ? first.offsetWidth : 340) + 12;
     setActive(Math.min(banners.length - 1, Math.max(0, Math.round(el.scrollLeft / card))));
   };
 
@@ -107,7 +107,7 @@ export function AppBannerCarousel() {
       <div
         ref={scrollerRef}
         onScroll={handleScroll}
-        className="flex snap-x snap-mandatory overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {banners.map((banner, index) => {
           const image = assetUrl(banner.image_url, "store-assets");
