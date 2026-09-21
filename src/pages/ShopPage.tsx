@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Filter, SlidersHorizontal, X } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { ChevronRight, Filter, SlidersHorizontal, X } from "lucide-react";
 import { useCategories } from "@/hooks/useCategories";
 import { useProducts } from "@/hooks/useProducts";
+import { useStoreSearch } from "@/hooks/useStores";
 import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
@@ -46,6 +47,7 @@ export function ShopPage() {
     maxPrice: maxPrice ? Number(maxPrice) : undefined,
     page,
   });
+  const { data: stores } = useStoreSearch(q);
 
   const setParam = (key: string, value: string) => {
     const next = new URLSearchParams(params);
@@ -159,6 +161,41 @@ export function ShopPage() {
           <button onClick={clearAll} className="text-xs font-semibold uppercase tracking-editorial text-brand-700 hover:underline">
             Clear all
           </button>
+        </div>
+      )}
+
+      {q && stores && stores.length > 0 && (
+        <div className="mt-6">
+          <div className="flex items-end justify-between">
+            <h2 className="font-display text-lg font-medium uppercase tracking-tight text-neutral-900">
+              Stores
+            </h2>
+            <span className="text-xs text-neutral-500">{stores.length} found</span>
+          </div>
+          <div className="mt-3 space-y-2">
+            {stores.map((s) => (
+              <Link
+                key={s.id}
+                to={`/store/${s.store_username}`}
+                onClick={() => void hapticLight()}
+                className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-3 active:bg-neutral-100"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-sm font-semibold text-white">
+                  {(s.business_name ?? s.store_username ?? "S").slice(0, 1).toUpperCase()}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold text-neutral-900">
+                    {s.business_name ?? s.store_username}
+                  </span>
+                  <span className="block truncate text-xs text-neutral-500">
+                    @{s.store_username}
+                    {s.followers_count ? ` · ${s.followers_count} follower${s.followers_count === 1 ? "" : "s"}` : ""}
+                  </span>
+                </span>
+                <ChevronRight className="h-4 w-4 shrink-0 text-neutral-400" />
+              </Link>
+            ))}
+          </div>
         </div>
       )}
 

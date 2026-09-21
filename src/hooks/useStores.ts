@@ -69,6 +69,30 @@ export function useApprovedSellers(limit = 12) {
   });
 }
 
+export function useStoreSearch(query: string, limit = 5) {
+  const term = query.trim();
+  return useQuery({
+    queryKey: ["stores", "search", term, limit],
+    queryFn: async () => {
+      if (!term) return [] as StoreWithStats[];
+      const f = term.toLowerCase().replace(/[%_.'"()]/g, "").replace(/\s+/g, "%");
+      if (!f) return [] as StoreWithStats[];
+      const pattern = `%${f}%`;
+      const { data, error } = await supabase
+        .from("sellers")
+        .select(storeSelect)
+        .eq("application_status", "approved")
+        .eq("products.status", "published")
+        .or(`business_name.ilike.${pattern},store_username.ilike.${pattern}`)
+        .order("featured", { ascending: false })
+        .limit(limit);
+      if (error) throw error;
+      return ((data ?? []) as unknown as StoreRow[]).map(mapStoreStats);
+    },
+    enabled: Boolean(term),
+  });
+}
+
 export function useStore(username: string | undefined) {
   return useQuery({
     queryKey: ["stores", "detail", username],
