@@ -12,6 +12,26 @@ function escapeHtml(value: string): string {
     .replace(/'/g, "&#39;");
 }
 
+function stripTags(value: string): string {
+  return value.replace(/<[^>]*>/g, "").trim();
+}
+
+function orderStatusSummary(status: string, store: string): string {
+  const storeName = store || "your store";
+  switch (status) {
+    case "processing":
+      return `Your CAPTTURE order is being prepared by ${storeName}.`;
+    case "shipped":
+      return `Your CAPTTURE order has shipped from ${storeName}.`;
+    case "delivered":
+      return `Your CAPTTURE order from ${storeName} has been delivered.`;
+    case "cancelled":
+      return `Your CAPTTURE order from ${storeName} was cancelled. A refund will follow.`;
+    default:
+      return `Your CAPTTURE order is now ${status}.`;
+  }
+}
+
 async function sendEmail(supabaseUrl: string, serviceKey: string, payload: Record<string, unknown>): Promise<void> {
   const res = await fetch(`${supabaseUrl}/functions/v1/email-send`, {
     method: "POST",
@@ -219,6 +239,23 @@ Deno.serve(async (req: Request) => {
         subject: copy.subject,
         html: copy.html,
       });
+    }
+
+    // Create an in-app notification for the buyer; the notifications trigger
+    // dispatches an FCM push for it automatically.
+    const { error: notifyError } = await admin.rpc("notify_user", {
+      p_user_id: order.user_id,
+      p_type: `order_${status}`,
+      p_title: copy ? stripTags(copy.subject) : `Your order #${String(order.order_number)}`,
+      p_body: copy ? orderStatusSummary(status, seller?.business_name ?? "") : `Order #${String(order.order_number)} is now ${status}.`,
+      p_data: {
+        order_id: order.id,
+        order_number: String(order.order_number),
+        status,
+      },
+    });
+    if (notifyError) {
+      console.error("buyer notification failed:", notifyError.message);
     }
   } catch (err) {
     console.error("order-notify failed:", err);

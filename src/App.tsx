@@ -5,6 +5,7 @@ import { StorefrontLayout } from "@/components/storefront/StorefrontLayout";
 import { AppTabBar } from "@/components/storefront/AppTabBar";
 import { RequireAdmin, RequireApprovedSeller, RequireAuth, RequireSeller, LoadingScreen } from "@/components/guards";
 import { isNative } from "@/lib/capacitor";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 const HomePage = lazy(() => import("@/pages/HomePage").then((m) => ({ default: m.HomePage })));
 const AppHomePage = lazy(() => import("@/pages/AppHomePage").then((m) => ({ default: m.AppHomePage })));
@@ -175,6 +176,7 @@ function Loadable({ children }: { children: React.ReactNode }) {
 }
 
 export function App() {
+  usePushNotifications();
   return (
     <Loadable>
       <Routes>
