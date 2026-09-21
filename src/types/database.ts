@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_banners: {
+        Row: {
+          created_at: string
+          cta_link: string
+          cta_text: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          sort_order: number
+          subtitle: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_link?: string
+          cta_text?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          sort_order?: number
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_link?: string
+          cta_text?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          sort_order?: number
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       addresses: {
         Row: {
           city: string
@@ -1975,6 +2014,10 @@ export type Database = {
       }
       set_announcement: {
         Args: { p_enabled: boolean; p_text: string }
+        Returns: undefined
+      }
+      set_app_settings: {
+        Args: { p_settings: Json }
         Returns: undefined
       }
       set_commission_settings: {

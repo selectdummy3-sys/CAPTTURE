@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent phantom horizontal scroll (esp. Android WebView scrollbar gutter).
+   `clip` avoids creating a scroll container so sticky headers keep working. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+/* Capacitor app: hide the WebView's reserved scrollbar gutter entirely */
+html[data-capacitor],
+html[data-capacitor] body {
+  scrollbar-width: none;
+}
+
 @keyframes overlay-in {
   from {
     opacity: 0;
@@ -74,6 +89,17 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -184,6 +210,23 @@
   .animate-fade-in {
     animation: fade-in 0.4s ease-out both;
   }
+  .animate-page {
+    animation: page-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+
+  /* Scroll-reveal: elements start hidden and fade/slide in when they
+     enter the viewport. `.is-visible` is toggled by an IntersectionObserver. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   /* Skeleton: garment-texture shimmer on a cut-of-cloth base */
   .skeleton {
@@ -250,8 +293,14 @@
   @media (prefers-reduced-motion: reduce) {
     .animate-marquee,
     .animate-fade-up,
-    .animate-fade-in {
+    .animate-fade-in,
+    .animate-page {
       animation: none;
+    }
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
     }
     .skeleton::after {
       animation: none;

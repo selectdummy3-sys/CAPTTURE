@@ -10,6 +10,7 @@ import { ProductGrid } from "@/components/storefront/ProductGrid";
 import { ProductCarousel } from "@/components/storefront/ProductCarousel";
 import { productImageUrl } from "@/components/storefront/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Reveal } from "@/components/ui/reveal";
 import { assetUrl } from "@/lib/assets";
 import { toVideoEmbedUrl } from "@/lib/video";
 import { cn } from "@/lib/utils";
@@ -334,19 +335,21 @@ export function HomePage() {
         </div>
       </section>
 
-      <Marquee
-        items={[
-          "Direct from the maker",
-          "Secure checkout",
-          "Free shipping over R1,000",
-          "Independent designers & tailors",
-          "100% South African",
-        ]}
-        className="border-y border-ink bg-paper text-ink"
-      />
+      <Reveal>
+        <Marquee
+          items={[
+            "Direct from the maker",
+            "Secure checkout",
+            "Free shipping over R1,000",
+            "Independent designers & tailors",
+            "100% South African",
+          ]}
+          className="border-y border-ink bg-paper text-ink"
+        />
+      </Reveal>
 
       {/* ── Now live — The Edit ──────────────────────────────── */}
-      <section className="bg-paper py-24 lg:py-32">
+      <Reveal as="section" className="bg-paper py-24 lg:py-32">
         <div className="mx-auto max-w-1440 px-4 sm:px-6">
           <SectionHeading
             eyebrow="Now live"
@@ -362,11 +365,11 @@ export function HomePage() {
             />
           </div>
         </div>
-      </section>
+      </Reveal>
 
       {/* ── The collections — numbered tiles ─────────────────── */}
       {(categories === undefined || categories.length > 0) && (
-        <section className="overflow-hidden bg-ink py-24 text-white lg:py-32">
+        <Reveal as="section" className="overflow-hidden bg-ink py-24 text-white lg:py-32">
           <div className="mx-auto max-w-1440 px-4 sm:px-6">
             <SectionHeading
               dark
@@ -395,7 +398,7 @@ export function HomePage() {
                   ))}
             </div>
           </div>
-        </section>
+        </Reveal>
       )}
 
       {/* ── The campaign film — full-bleed video ──────────────── */}
@@ -448,7 +451,7 @@ export function HomePage() {
       </section>
 
       {/* ── Fresh drops — New In ─────────────────────────────── */}
-      <section className="bg-paper py-24 lg:py-32">
+      <Reveal as="section" className="bg-paper py-24 lg:py-32">
         <div className="mx-auto max-w-1440 px-4 sm:px-6">
           <SectionHeading
             eyebrow="Just landed"
@@ -460,11 +463,11 @@ export function HomePage() {
             <ProductGrid products={latest.data} loading={latest.isLoading} skeletons={8} />
           </div>
         </div>
-      </section>
+      </Reveal>
 
       {/* ── The makers — horizontal scroll ───────────────────── */}
       {stores.data && stores.data.length > 0 && (
-        <section className="overflow-hidden bg-paper py-24 lg:py-32">
+        <Reveal as="section" className="overflow-hidden bg-paper py-24 lg:py-32">
           <div className="mx-auto max-w-1440 px-4 sm:px-6">
             <SectionHeading
               eyebrow="Independent stores"
@@ -508,7 +511,7 @@ export function HomePage() {
               })}
             </div>
           </div>
-        </section>
+        </Reveal>
       )}
 
       {/* ── Shop by vibe ─────────────────────────────────────── */}
@@ -537,7 +540,7 @@ export function HomePage() {
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-ink py-24 text-center text-white lg:py-32">
+      <Reveal as="section" className="relative overflow-hidden bg-ink py-24 text-center text-white lg:py-32">
         <span
           aria-hidden
           className="pointer-events-none absolute left-1/2 top-6 -translate-x-1/2 select-none whitespace-nowrap font-display text-[16vw] font-bold uppercase leading-none tracking-tight text-white/[0.04]"
@@ -565,7 +568,7 @@ export function HomePage() {
             Platform commission from 8% · Payouts to your bank
           </p>
         </div>
-      </section>
+      </Reveal>
     </div>
   );
 }

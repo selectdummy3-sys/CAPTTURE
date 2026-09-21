@@ -7,8 +7,12 @@ import { CircleCheck, CircleX } from "lucide-react";
 
 import { queryClient } from "@/lib/queryClient";
 import { AuthProvider } from "@/hooks/useAuth";
+import { registerDeepLinkHandler, setupNativeApp } from "@/lib/capacitor";
 import { App } from "@/App";
 import "./index.css";
+
+setupNativeApp();
+registerDeepLinkHandler();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

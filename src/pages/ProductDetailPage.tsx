@@ -13,6 +13,7 @@ import { Price } from "@/components/ui/price";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { hapticLight, isNative } from "@/lib/capacitor";
 
 export function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -213,7 +214,7 @@ export function ProductDetailPage() {
           )}
 
           {/* Add to cart */}
-          <div className="mt-7">
+          <div className={cn("mt-7", isNative && "hidden")}>
             <Button variant="accent" className="w-full" size="lg" disabled={outOfStock} onClick={handleAddToCart}>
               <ShoppingBag className="h-5 w-5" />
               {outOfStock ? "Sold out" : "Add to bag"}
@@ -221,7 +222,7 @@ export function ProductDetailPage() {
           </div>
 
           {/* Wishlist */}
-          <div className="mt-3">
+          <div className={cn("mt-3", isNative && "hidden")}>
             <button
               type="button"
               onClick={handleWishlist}
@@ -313,6 +314,46 @@ export function ProductDetailPage() {
             </div>
           </section>
         )}
+
+      {isNative && (
+        <>
+          <div className="h-24" aria-hidden />
+          <div className="fixed inset-x-0 bottom-[calc(3.5rem+env(safe-area-inset-bottom))] z-40 border-t border-neutral-200 bg-white/95 px-4 py-3 backdrop-blur">
+            <div className="flex items-center gap-3">
+              <div className="shrink-0">
+                <Price price={product.price} salePrice={product.sale_price} />
+              </div>
+              <Button
+                variant="accent"
+                className="flex-1"
+                size="lg"
+                disabled={outOfStock}
+                onClick={() => {
+                  void hapticLight();
+                  handleAddToCart();
+                }}
+              >
+                <ShoppingBag className="h-5 w-5" />
+                {outOfStock ? "Sold out" : "Add to bag"}
+              </Button>
+              <button
+                type="button"
+                onClick={() => {
+                  void hapticLight();
+                  handleWishlist();
+                }}
+                aria-label="Toggle wishlist"
+                className={cn(
+                  "grid h-12 w-12 shrink-0 place-items-center border transition-colors",
+                  wishlisted ? "border-brand-500 bg-brand-50 text-brand-800" : "border-neutral-300 text-neutral-600"
+                )}
+              >
+                <Heart className={cn("h-5 w-5", wishlisted && "fill-current")} />
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

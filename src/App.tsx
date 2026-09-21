@@ -2,9 +2,12 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 
 import { StorefrontLayout } from "@/components/storefront/StorefrontLayout";
+import { AppTabBar } from "@/components/storefront/AppTabBar";
 import { RequireAdmin, RequireApprovedSeller, RequireAuth, RequireSeller, LoadingScreen } from "@/components/guards";
+import { isNative } from "@/lib/capacitor";
 
 const HomePage = lazy(() => import("@/pages/HomePage").then((m) => ({ default: m.HomePage })));
+const AppHomePage = lazy(() => import("@/pages/AppHomePage").then((m) => ({ default: m.AppHomePage })));
 const ShopPage = lazy(() => import("@/pages/ShopPage").then((m) => ({ default: m.ShopPage })));
 const ProductDetailPage = lazy(() =>
   import("@/pages/ProductDetailPage").then((m) => ({ default: m.ProductDetailPage }))
@@ -120,6 +123,12 @@ const AdminWithdrawals = lazy(() =>
 const AdminSettings = lazy(() =>
   import("@/pages/admin/AdminSettings").then((m) => ({ default: m.default }))
 );
+const AdminAppSettings = lazy(() =>
+  import("@/pages/admin/AdminAppSettings").then((m) => ({ default: m.default }))
+);
+const AdminBanners = lazy(() =>
+  import("@/pages/admin/AdminBanners").then((m) => ({ default: m.AdminBanners }))
+);
 const AdminTeam = lazy(() =>
   import("@/pages/admin/AdminTeam").then((m) => ({ default: m.AdminTeam }))
 );
@@ -170,7 +179,7 @@ export function App() {
     <Loadable>
       <Routes>
         <Route element={<StorefrontLayout />}>
-          <Route index element={<HomePage />} />
+          <Route index element={isNative ? <AppHomePage /> : <HomePage />} />
           <Route path="/shop" element={<ShopPage />} />
           <Route path="/p/:slug" element={<ProductDetailPage />} />
           <Route path="/store/:username" element={<StorePage />} />
@@ -233,6 +242,8 @@ export function App() {
           <Route path="withdrawals" element={<AdminWithdrawals />} />
           <Route path="settings" element={<AdminSettings />} />
           <Route path="team" element={<AdminTeam />} />
+          <Route path="app" element={<AdminAppSettings />} />
+          <Route path="banners" element={<AdminBanners />} />
           <Route path="coupons" element={<AdminCoupons />} />
           <Route path="messages" element={<AdminMessages />} />
           <Route path="hero" element={<AdminHero />} />
@@ -252,7 +263,8 @@ export function App() {
 
         <Route path="*" element={<NotFoundPage />} />
         <Route path="/404" element={<NotFoundPage />} />
-      </Routes>
+        </Routes>
+      <AppTabBar />
     </Loadable>
   );
 }

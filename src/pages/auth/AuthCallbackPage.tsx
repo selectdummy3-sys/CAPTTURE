@@ -8,6 +8,17 @@ export function AuthCallbackPage() {
 
   useEffect(() => {
     const handle = async () => {
+      const code = new URLSearchParams(window.location.search).get("code");
+
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (!error) {
+          window.history.replaceState(null, "", "/");
+        }
+        navigate("/", { replace: true });
+        return;
+      }
+
       const { error } = await supabase.auth.getSession();
       if (error) {
         navigate("/login", { replace: true });

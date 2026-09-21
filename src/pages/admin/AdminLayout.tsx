@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { BadgeCheck, Banknote, Boxes, ClipboardList, FolderTree, Image, LayoutDashboard, LayoutGrid, Mail, Package, Settings, ShoppingCart, Ticket, Users } from "lucide-react";
+import { BadgeCheck, Banknote, Boxes, ClipboardList, FolderTree, Image, LayoutDashboard, LayoutGrid, Mail, Megaphone, Package, Settings, Smartphone, ShoppingCart, Ticket, Users } from "lucide-react";
 
 import { usePendingSellersCount, usePendingProductsCount } from "@/hooks/useAdmin";
 import { cn } from "@/lib/utils";
@@ -15,6 +15,8 @@ const links = [
   { to: "/admin/hero", label: "Hero", icon: Image },
   { to: "/admin/collections", label: "Collections", icon: LayoutGrid },
   { to: "/admin/team", label: "Team", icon: Users },
+  { to: "/admin/app", label: "App settings", icon: Smartphone },
+  { to: "/admin/banners", label: "Banners", icon: Megaphone },
   { to: "/admin/settings", label: "Settings", icon: Settings },
   { divider: true, to: "", label: "Supplies", icon: Boxes },
   { to: "/admin/supplies", label: "Supply Overview", icon: Boxes, end: true },

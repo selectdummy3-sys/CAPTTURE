@@ -2,6 +2,9 @@ import { NavLink, Outlet } from "react-router-dom";
 import { Bell, Heart, LayoutDashboard, Package, Settings, User } from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
+import { PageTransition } from "@/components/PageTransition";
+import { NativeAppBar } from "@/components/storefront/NativeAppBar";
+import { isNative } from "@/lib/capacitor";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -16,7 +19,8 @@ export function AccountLayout() {
   const { isApprovedSeller } = useAuth();
 
   return (
-    <div className="mx-auto flex max-w-1440 flex-col gap-8 px-4 py-10 sm:px-6 lg:flex-row">
+    <div className={isNative ? "mx-auto flex max-w-1440 flex-col gap-8 px-4 pb-[calc(3.5rem+env(safe-area-inset-bottom))] pt-4 sm:px-6 lg:flex-row" : "mx-auto flex max-w-1440 flex-col gap-8 px-4 py-10 sm:px-6 lg:flex-row"}>
+      {isNative && <NativeAppBar />}
       <aside className="lg:w-56 lg:shrink-0">
         <nav className="flex gap-1 overflow-x-auto lg:flex-col">
           {links.map(({ to, label, icon: Icon, end }) => (
@@ -52,7 +56,9 @@ export function AccountLayout() {
         </nav>
       </aside>
       <div className="min-w-0 flex-1">
-        <Outlet />
+        <PageTransition>
+          <Outlet />
+        </PageTransition>
       </div>
     </div>
   );

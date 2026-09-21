@@ -35,7 +35,7 @@ function AccountMenu() {
   if (!user) {
     return (
       <div className="flex items-center gap-2">
-        <Link to="/login" className={buttonClass("ghost", "sm")}>
+        <Link to="/login" className={cn(buttonClass("ghost", "sm"), "hidden md:inline-flex")}>
           Sign in
         </Link>
         <Link to="/signup" className={buttonClass("primary", "sm")}>
@@ -116,6 +116,7 @@ export function Header() {
   const [countryOpen, setCountryOpen] = useState(false);
   const { data: categories } = useCategories();
   const { data: announcement } = useAnnouncement();
+  const { user } = useAuth();
   const cartCount = useCartCount();
   const navigate = useNavigate();
 
@@ -128,9 +129,9 @@ export function Header() {
 
   const navLink = ({ isActive }: { isActive: boolean }) =>
     cn(
-      "relative text-sm font-medium transition-colors hover:text-neutral-900",
+      "relative text-sm font-medium transition-colors hover:text-neutral-900 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-500 after:transition-[width] after:duration-300 hover:after:w-full",
       isActive
-        ? "text-neutral-900 after:absolute after:-bottom-[19px] after:left-0 after:right-0 after:h-0.5 after:bg-brand-500"
+        ? "text-neutral-900 after:bottom-[-19px] after:w-full"
         : "text-neutral-600"
     );
 
@@ -138,17 +139,19 @@ export function Header() {
     <header className="sticky top-0 z-40 border-b border-neutral-200 bg-paper/90 backdrop-blur">
       <div className="bg-neutral-950 text-center text-xs text-neutral-400">
         <div className="relative mx-auto flex max-w-1440 items-center justify-center px-4 sm:px-6">
-          {announcement?.enabled && announcement.text ? (
-            <p className="mx-auto max-w-1440 py-2 uppercase tracking-editorial">
-              <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-300 align-middle" />
-              <span className="text-neutral-100">{announcement.text}</span>
-            </p>
-          ) : (
-            <p className="mx-auto max-w-1440 py-2 uppercase tracking-editorial">
-              <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-300 align-middle" />
-              Free shipping over <span className="text-neutral-100">R1,000</span> · Secure checkout ·{" "}
-              <span className="text-brand-300">100% South African</span>
-            </p>
+          {announcement?.enabled && (
+            announcement.text ? (
+              <p className="mx-auto max-w-1440 py-2 uppercase tracking-editorial">
+                <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-300 align-middle" />
+                <span className="text-neutral-100">{announcement.text}</span>
+              </p>
+            ) : (
+              <p className="mx-auto max-w-1440 py-2 uppercase tracking-editorial">
+                <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-brand-300 align-middle" />
+                Free shipping over <span className="text-neutral-100">R1,000</span> · Secure checkout ·{" "}
+                <span className="text-brand-300">100% South African</span>
+              </p>
+            )
           )}
           <div className="absolute right-4 hidden sm:right-6 md:block">
             <CountrySelectorTrigger onClick={() => setCountryOpen(true)} />
@@ -160,7 +163,7 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-1440 items-center gap-4 px-4 sm:px-6">
         <button
           type="button"
-          className="p-2 text-neutral-700 hover:bg-neutral-100 lg:hidden"
+          className="touch-target flex items-center rounded-md p-1 text-neutral-700 transition-[background-color,transform] hover:bg-neutral-100 active:scale-90 lg:hidden"
           onClick={() => setOpen(true)}
           aria-label="Open menu"
         >
@@ -191,14 +194,14 @@ export function Header() {
         <div className="ml-auto flex items-center gap-1 md:ml-2">
           <Link
             to="/account/wishlist"
-            className="relative p-2 text-neutral-700 hover:bg-neutral-100"
+            className="relative rounded-md p-2 text-neutral-700 transition-[background-color,transform] hover:bg-neutral-100 active:scale-90"
             aria-label="Wishlist"
           >
             <Heart className="h-5 w-5" />
           </Link>
           <Link
             to="/cart"
-            className="relative p-2 text-neutral-700 hover:bg-neutral-100"
+            className="relative rounded-md p-2 text-neutral-700 transition-[background-color,transform] hover:bg-neutral-100 active:scale-90"
             aria-label="Cart"
           >
             <ShoppingBag className="h-5 w-5" />
@@ -271,6 +274,17 @@ export function Header() {
                   Track your order
                 </NavLink>
               </div>
+              {!user && (
+                <div className="mt-4 border-t border-neutral-100 pt-3">
+                  <div className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-neutral-400">Account</div>
+                  <NavLink to="/login" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-medium text-neutral-800 hover:bg-neutral-100">
+                    Sign in
+                  </NavLink>
+                  <NavLink to="/signup" onClick={() => setOpen(false)} className="block px-3 py-2 text-sm font-bold text-brand-700 hover:bg-neutral-100">
+                    Create account
+                  </NavLink>
+                </div>
+              )}
             </nav>
             <form onSubmit={submitSearch} className="relative border-t border-neutral-100 p-4">
               <Search className="pointer-events-none absolute left-7 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />

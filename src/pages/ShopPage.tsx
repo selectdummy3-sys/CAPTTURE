@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { GENDERS, GENDER_LABELS } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+import { hapticLight, isNative } from "@/lib/capacitor";
 
 const SORTS = [
   { value: "newest", label: "Newest" },
@@ -92,14 +94,14 @@ export function ShopPage() {
   );
 
   return (
-    <div className="mx-auto max-w-1440 px-4 py-12 sm:px-6 lg:py-16">
+    <div className={cn("mx-auto max-w-1440 px-4 sm:px-6", isNative ? "pb-6 pt-4" : "py-12 lg:py-16")}>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="flex items-center gap-3 text-[11px] uppercase tracking-editorial text-neutral-500">
             <span className="h-px w-8 bg-brand-500" />
             {category ? "Collection" : "The marketplace"}
           </p>
-          <h1 className="mt-4 font-display text-5xl font-medium uppercase leading-[1.02] tracking-tight text-neutral-900 sm:text-6xl">
+          <h1 className={cn("mt-4 font-display font-medium uppercase leading-[1.02] tracking-tight text-neutral-900", isNative ? "text-3xl" : "text-5xl sm:text-6xl")}>
             {categoryName ?? (q ? `Results for "${q}"` : "Shop all")}
           </h1>
           <p className="mt-3 text-sm text-neutral-500">
@@ -112,7 +114,10 @@ export function ShopPage() {
             variant="outline"
             size="sm"
             className="lg:hidden"
-            onClick={() => setFiltersOpen(true)}
+            onClick={() => {
+              void hapticLight();
+              setFiltersOpen(true);
+            }}
           >
             <Filter className="h-4 w-4" /> Filters
           </Button>
@@ -175,18 +180,41 @@ export function ShopPage() {
       {filtersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-neutral-900/50" onClick={() => setFiltersOpen(false)} aria-hidden />
-          <div className="absolute right-0 top-0 flex h-full w-80 max-w-[85vw] overflow-y-auto bg-paper p-5 shadow-xl">
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="font-display text-2xl font-medium uppercase tracking-tight">Filters</h2>
-              <button onClick={() => setFiltersOpen(false)} aria-label="Close filters" className="p-2 hover:bg-neutral-100">
-                <X className="h-5 w-5" />
-              </button>
+          {isNative ? (
+            <div className="absolute inset-x-0 bottom-0 max-h-[80vh] overflow-y-auto rounded-t-2xl bg-paper p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-xl">
+              <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-neutral-300" />
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="font-display text-2xl font-medium uppercase tracking-tight">Filters</h2>
+                <button onClick={() => setFiltersOpen(false)} aria-label="Close filters" className="p-2 hover:bg-neutral-100">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              {filterPanel}
+              <Button
+                variant="accent"
+                className="mt-6 w-full"
+                onClick={() => {
+                  void hapticLight();
+                  setFiltersOpen(false);
+                }}
+              >
+                Show results
+              </Button>
             </div>
-            {filterPanel}
-            <Button variant="accent" className="mt-8 w-full" onClick={() => setFiltersOpen(false)}>
-              Show results
-            </Button>
-          </div>
+          ) : (
+            <div className="absolute right-0 top-0 flex h-full w-80 max-w-[85vw] overflow-y-auto bg-paper p-5 shadow-xl">
+              <div className="mb-6 flex items-center justify-between">
+                <h2 className="font-display text-2xl font-medium uppercase tracking-tight">Filters</h2>
+                <button onClick={() => setFiltersOpen(false)} aria-label="Close filters" className="p-2 hover:bg-neutral-100">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              {filterPanel}
+              <Button variant="accent" className="mt-8 w-full" onClick={() => setFiltersOpen(false)}>
+                Show results
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>

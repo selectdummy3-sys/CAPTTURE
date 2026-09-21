@@ -20,6 +20,68 @@ export interface AnnouncementSettings {
   text: string;
 }
 
+export interface AppSettings {
+  home_header: string;
+  edit_label: string;
+  fresh_label: string;
+  categories_label: string;
+  deals_label: string;
+  stores_label: string;
+  show_edit: boolean;
+  show_fresh: boolean;
+  show_categories: boolean;
+  show_deals: boolean;
+  show_stores: boolean;
+}
+
+export const DEFAULT_APP_SETTINGS: AppSettings = {
+  home_header: "CAPTTURE",
+  edit_label: "The edit",
+  fresh_label: "Fresh drops",
+  categories_label: "Shop by category",
+  deals_label: "On sale",
+  stores_label: "Local stores",
+  show_edit: true,
+  show_fresh: true,
+  show_categories: true,
+  show_deals: true,
+  show_stores: true,
+};
+
+export function useAppSettings() {
+  return useQuery({
+    queryKey: ["admin", "app-settings"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("platform_settings")
+        .select("value")
+        .eq("key", "app")
+        .maybeSingle();
+      if (error) throw error;
+      const value = (data?.value ?? {}) as Partial<AppSettings>;
+      return {
+        ...DEFAULT_APP_SETTINGS,
+        ...value,
+      } as AppSettings;
+    },
+  });
+}
+
+export function useSetAppSettings() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: AppSettings) => {
+      const { error } = await supabase.rpc("set_app_settings", {
+        p_settings: input as unknown as Json,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["admin", "app-settings"] });
+    },
+  });
+}
+
 export function useAnnouncement() {
   return useQuery({
     queryKey: ["admin", "announcement-settings"],

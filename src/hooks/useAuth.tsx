@@ -9,7 +9,10 @@ import {
 } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 
+import { Browser } from "@capacitor/browser";
+
 import { appUrl, supabase } from "@/lib/supabase";
+import { isNative } from "@/lib/capacitor";
 import type { Profile, Seller } from "@/types";
 
 interface AuthContextValue {
@@ -132,10 +135,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error: error?.message ?? null };
       },
       signInWithGoogle: async () => {
-        const { error } = await supabase.auth.signInWithOAuth({
+        const { data, error } = await supabase.auth.signInWithOAuth({
           provider: "google",
-          options: { redirectTo: `${appUrl}/auth/callback` },
+          options: {
+            redirectTo: `${appUrl}/auth/callback`,
+            ...(isNative ? { skipBrowserRedirect: true } : {}),
+          },
         });
+        if (!error && isNative && data?.url) {
+          await Browser.open({ url: data.url });
+        }
         return { error: error?.message ?? null };
       },
       signOut: async () => {
