@@ -60,7 +60,24 @@ export function useProducts(params: ProductQueryParams = {}) {
         q = q.eq("seller_id", params.sellerId);
       }
       if (params.search) {
-        q = q.ilike("name", `%${params.search}%`);
+        const f = params.search
+          .trim()
+          .toLowerCase()
+          .replace(/[%_.'"()]/g, "")
+          .replace(/\s+/g, "%");
+        const pattern = f ? `%${f}%` : `%${params.search}%`;
+        const { data: sellers } = await supabase
+          .from("sellers")
+          .select("id")
+          .eq("application_status", "approved")
+          .or(`business_name.ilike.${pattern},store_username.ilike.${pattern}`)
+          .limit(10);
+        const sellerIds = (sellers ?? []).map((s) => s.id);
+        if (sellerIds.length > 0) {
+          q = q.or(`name.ilike.${pattern},seller_id.in.(${sellerIds.join(",")})`);
+        } else {
+          q = q.ilike("name", pattern);
+        }
       }
       if (params.gender) {
         q = q.eq("gender", params.gender);
