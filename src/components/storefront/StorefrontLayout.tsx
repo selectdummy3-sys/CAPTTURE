@@ -4,6 +4,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Header } from "@/components/storefront/Header";
 import { Footer } from "@/components/storefront/Footer";
 import { NativeAppBar } from "@/components/storefront/NativeAppBar";
+import { SupportFab } from "@/components/support/SupportFab";
 import { PageTransition } from "@/components/PageTransition";
 import { isNative } from "@/lib/capacitor";
 
@@ -27,6 +28,7 @@ export function StorefrontLayout() {
         </PageTransition>
       </main>
       {!isNative && <Footer />}
+      <SupportFab />
     </div>
   );
 }

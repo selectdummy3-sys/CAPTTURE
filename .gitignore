@@ -44,3 +44,7 @@ coverage
 
 # Local tooling
 .opencode
+
+# Firebase secrets / config (never commit private keys)
+android/app/google-services.json
+*firebase-adminsdk*.json

@@ -228,6 +228,19 @@ Deno.serve(async (req: Request) => {
     });
   }
 
+  // Respect the recipient's notification preferences (order_updates, etc.).
+  // The DB trigger already gates creation, but this keeps push-send honouring
+  // prefs even for notifications inserted through other paths.
+  const { data: prefAllowed } = await admin.rpc("notification_pref_allowed", {
+    p_user_id: notification.user_id,
+    p_type: notification.type ?? "",
+  });
+  if (prefAllowed === false) {
+    return new Response(JSON.stringify({ ok: true, skipped: "preferences_disabled" }), {
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
+  }
+
   const { data: tokens } = await admin
     .from("push_tokens")
     .select("id, token")

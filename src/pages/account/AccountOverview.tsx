@@ -1,96 +1,105 @@
 import { Link } from "react-router-dom";
-import { Bell, Heart, Package, ArrowRight } from "lucide-react";
+import {
+  Bell,
+  Heart,
+  MapPin,
+  Package,
+  SlidersHorizontal,
+  User,
+  Wallet,
+  ChevronRight,
+} from "lucide-react";
 
 import { useAuth } from "@/hooks/useAuth";
-import { useMyOrders } from "@/hooks/useOrders";
-import { useNotifications } from "@/hooks/useNotifications";
-import { useWishlist } from "@/hooks/useWishlist";
 import { Avatar } from "@/components/ui/avatar";
-import { StatCard } from "@/components/ui/stat-card";
-import { OrderStatusBadge } from "@/components/ui/status-badge";
-import { formatPrice, timeAgo } from "@/lib/utils";
+import { MenuGroup, MenuItem } from "@/components/account/MenuGroup";
+import { SupportFab } from "@/components/support/SupportFab";
+import { isNative } from "@/lib/capacitor";
 
 export function AccountOverview() {
-  const { profile } = useAuth();
-  const { data: orders } = useMyOrders();
-  const { data: wishlist } = useWishlist();
-  const { data: notifications } = useNotifications();
-
-  const unread = (notifications ?? []).filter((n) => !n.read_at).length;
-  const lifetime = (orders ?? []).reduce((a, o) => a + o.total, 0);
+  const { user, profile } = useAuth();
+  const isLoggedIn = user != null;
+  const first = (profile?.full_name ?? user?.user_metadata?.full_name ?? "")
+    .split(" ")[0] || "there";
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center gap-4">
-        <Avatar src={profile?.avatar_url} name={profile?.full_name} size="lg" />
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-neutral-900">
-            Hi, {profile?.full_name?.split(" ")[0] ?? "there"}
+    <div
+      className="min-h-screen bg-canvas text-neutral-900"
+      style={isNative ? { paddingTop: "env(safe-area-inset-top)" } : undefined}
+    >
+      <div className="mx-auto w-full max-w-md px-4 pb-36 pt-8">
+        <header className="mb-6">
+          <h1 className="font-display text-3xl font-bold tracking-tight">
+            {isLoggedIn ? `Hi, ${first}` : "Hello!"}
           </h1>
-          <p className="text-sm text-neutral-500">Welcome back to your account.</p>
-        </div>
-      </div>
+          <p className="mt-1 text-sm text-neutral-500">
+            {isLoggedIn
+              ? "Welcome back to your CAPTTURE account."
+              : "Sign in to access your orders, wishlist and more."}
+          </p>
+        </header>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="Orders placed" value={(orders ?? []).length} icon={<Package className="h-5 w-5" />} />
-        <StatCard label="Lifetime spend" value={formatPrice(lifetime)} icon={<Package className="h-5 w-5" />} />
-        <StatCard label="Wishlist items" value={(wishlist ?? []).length} icon={<Heart className="h-5 w-5" />} />
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <section className="border border-neutral-200 p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-neutral-900">Recent orders</h2>
-            <Link to="/account/orders" className="inline-flex items-center gap-1 text-sm text-brand-700 hover:underline">
-              View all <ArrowRight className="h-3.5 w-3.5" />
+        {!isLoggedIn ? (
+          <section className="mb-8 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm">
+            <h2 className="font-display text-xl font-bold">Welcome</h2>
+            <p className="mt-1.5 text-sm leading-relaxed text-neutral-500">
+              Create a free account to save your details, track orders and get the best of CAPTTURE.
+            </p>
+            <Link
+              to="/login?redirect=/account"
+              className="mt-5 flex h-12 w-full items-center justify-center gap-1.5 rounded-xl bg-royal-600 text-sm font-bold text-white transition-colors hover:bg-royal-700 active:bg-royal-800"
+            >
+              Log in or register
+              <ChevronRight className="h-4 w-4" />
             </Link>
-          </div>
-          <div className="mt-3 space-y-2">
-            {(orders ?? []).slice(0, 4).map((order) => (
-              <Link
-                key={order.id}
-                to={`/account/orders/${order.id}`}
-                className="flex items-center justify-between border border-neutral-100 px-3 py-2.5 hover:bg-neutral-50"
-              >
-                <div>
-                  <p className="font-mono text-xs text-neutral-500">{order.order_number}</p>
-                  <p className="text-sm font-medium text-neutral-800">{order.seller?.business_name ?? "Store"}</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-neutral-900">{formatPrice(order.total)}</span>
-                  <OrderStatusBadge status={order.status} />
-                </div>
-              </Link>
-            ))}
-            {(orders ?? []).length === 0 && (
-              <p className="py-4 text-sm text-neutral-400">No orders yet.</p>
-            )}
-          </div>
-        </section>
+          </section>
+        ) : (
+          <section className="mb-8 flex items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm">
+            <Avatar src={profile?.avatar_url} name={profile?.full_name} size="md" />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[15px] font-bold text-neutral-900">{profile?.full_name}</p>
+              <p className="truncate text-xs text-neutral-500">{user?.email ?? profile?.email}</p>
+            </div>
+            <Link
+              to="/account/profile"
+              aria-label="Edit profile details"
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-neutral-200 text-neutral-700 transition-colors hover:bg-neutral-50"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+          </section>
+        )}
 
-        <section className="border border-neutral-200 p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-neutral-900">Notifications</h2>
-            {unread > 0 && (
-              <Link to="/account/notifications" className="inline-flex items-center gap-1 text-sm text-brand-700 hover:underline">
-                <Bell className="h-3.5 w-3.5" /> {unread} unread
-              </Link>
-            )}
-          </div>
-          <div className="mt-3 space-y-2">
-            {(notifications ?? []).slice(0, 4).map((n) => (
-              <div key={n.id} className="border border-neutral-100 px-3 py-2.5">
-                <p className="text-sm font-medium text-neutral-800">{n.title}</p>
-                {n.body && <p className="text-xs text-neutral-500">{n.body}</p>}
-                <p className="mt-1 text-[11px] text-neutral-400">{timeAgo(n.created_at)}</p>
-              </div>
-            ))}
-            {(notifications ?? []).length === 0 && (
-              <p className="py-4 text-sm text-neutral-400">You're all caught up.</p>
-            )}
-          </div>
-        </section>
+        <div className="space-y-8">
+          <MenuGroup title="Profile">
+            <MenuItem to="/account/orders" icon={Package} label="Orders" />
+            <MenuItem icon={Wallet} label="Wallet" subtitle="Coming soon" disabled />
+            <MenuItem to="/account/wishlist" icon={Heart} label="Wishlist" />
+            <MenuItem to="/account/addresses" icon={MapPin} label="Address book" subtitle="Manage shipping addresses" />
+            <MenuItem to="/account/notifications" icon={Bell} label="Notifications" />
+            <MenuItem to="/account/preferences" icon={SlidersHorizontal} label="Preferences" />
+            <MenuItem to="/account/profile" icon={User} label="Profile details" />
+          </MenuGroup>
+
+          <MenuGroup title="Help and support">
+            <MenuItem to="/stores" label="Store finder" />
+            <MenuItem to="/contact" label="Contact us" />
+            <MenuItem to="/help" label="Collect" />
+            <MenuItem to="/help" label="Delivery" />
+            <MenuItem to="/help" label="Returns and Refunds" />
+            <MenuItem to="/help" label="FAQs" />
+            <MenuItem to="/help" label="How to shop online" />
+            <MenuItem to="/privacy" label="Privacy policy" />
+            <MenuItem to="/help" label="Profile and Login" />
+            <MenuItem to="/terms" label="Terms & Conditions" />
+          </MenuGroup>
+        </div>
+
+        <p className="mt-10 text-center text-xs text-neutral-400">
+          Need a hand? Tap the chat bubble to message support.
+        </p>
       </div>
+      <SupportFab />
     </div>
   );
 }

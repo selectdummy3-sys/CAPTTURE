@@ -4,9 +4,9 @@ import { MapPin, PackageSearch, Search, Store, Truck } from "lucide-react";
 
 import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { OrderStatusBadge, PaymentMethodBadge } from "@/components/ui/status-badge";
 import { productImageUrl } from "@/components/storefront/ProductCard";
+import { isNative } from "@/lib/capacitor";
 import { formatDate, formatPrice } from "@/lib/utils";
 
 interface TrackedItem {
@@ -102,68 +102,75 @@ export function TrackOrderPage() {
     setError(null);
   };
 
-  return (
-    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
-      <div className="flex items-center gap-2 text-brand-700">
-        <PackageSearch className="h-4 w-4" aria-hidden />
-        <p className="text-xs font-semibold uppercase tracking-editorial">Customer care</p>
-      </div>
-      <h1 className="mt-2 text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
-        Track your order
-      </h1>
-      <p className="mt-3 max-w-xl text-sm leading-relaxed text-neutral-600">
-        Enter the order number from your confirmation email and the email address you checked out
-        with to see the status of every parcel — no sign-in needed.
-      </p>
+  const inputClass =
+    "h-12 w-full rounded-xl border border-transparent bg-neutral-100 px-3.5 text-[15px] text-neutral-900 placeholder:text-neutral-400 focus:border-royal-500 focus:ring-2 focus:ring-royal-500/30";
 
-      <div className="mt-8 border border-neutral-200 bg-white p-5 sm:p-6">
-        <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
-          <label className="block text-sm">
-            <span className="mb-1.5 block font-medium text-neutral-800">Order number</span>
-            <Input
-              value={orderNumber}
-              onChange={(e) => setOrderNumber(e.target.value)}
-              placeholder="e.g. CPT-260921-8K4Q9Z"
-              autoComplete="off"
-            />
-          </label>
-          <label className="block text-sm">
-            <span className="mb-1.5 block font-medium text-neutral-800">Email address</span>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              autoComplete="email"
-            />
-          </label>
-          <div className="sm:col-span-2">
-            <Button type="submit" disabled={loading} className="w-full sm:w-auto">
+  return (
+    <div
+      className="min-h-screen bg-canvas text-neutral-900"
+      style={isNative ? { paddingTop: "env(safe-area-inset-top)" } : undefined}
+    >
+      <div className="mx-auto w-full max-w-md px-4 pb-40 pt-8">
+        <div className="flex items-center gap-2 text-royal-700">
+          <PackageSearch className="h-4 w-4" aria-hidden />
+          <p className="text-xs font-semibold uppercase tracking-editorial">Customer care</p>
+        </div>
+        <h1 className="mt-3 font-display text-3xl font-bold tracking-tight text-neutral-900">
+          Track your order
+        </h1>
+        <p className="mt-2 text-sm leading-relaxed text-neutral-500">
+          Enter the order number from your confirmation email and the email address you checked out
+          with to see the status of every parcel — no sign-in needed.
+        </p>
+
+        <div className="mt-6 rounded-2xl border border-neutral-200/70 bg-white p-5 shadow-sm">
+          <form onSubmit={handleSubmit} className="grid gap-4">
+            <label className="block text-sm">
+              <span className="mb-1.5 block font-semibold text-neutral-800">Order number</span>
+              <input
+                value={orderNumber}
+                onChange={(e) => setOrderNumber(e.target.value)}
+                placeholder="e.g. CPT-260921-8K4Q9Z"
+                autoComplete="off"
+                className={inputClass}
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-1.5 block font-semibold text-neutral-800">Email address</span>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
+                className={inputClass}
+              />
+            </label>
+            <Button type="submit" disabled={loading} className="h-12 w-full rounded-xl">
               <Search className="mr-2 h-4 w-4" aria-hidden />
               {loading ? "Looking up…" : "Find my order"}
             </Button>
-          </div>
-        </form>
+          </form>
 
-        {error && !result && (
-          <p className="mt-4 rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-            {error}
-          </p>
-        )}
-      </div>
+          {error && !result && (
+            <p className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
+            </p>
+          )}
+        </div>
 
       {result && (
         <div className="mt-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-2xl font-bold tracking-tight text-neutral-900">
+              <h2 className="font-display text-2xl font-bold tracking-tight text-neutral-900">
                 {result.order_number}
               </h2>
-              <p className="mt-1 text-sm text-neutral-500">
+              <p className="mt-0.5 text-sm text-neutral-500">
                 Placed {formatDate(result.created_at)}
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <PaymentMethodBadge method={result.payment_method ?? "cod"} />
               <OrderStatusBadge status={result.status} />
             </div>
@@ -172,30 +179,34 @@ export function TrackOrderPage() {
           <button
             type="button"
             onClick={reset}
-            className="mt-2 text-sm font-medium text-brand-700 hover:underline"
+            className="mt-2 text-sm font-semibold text-royal-700 hover:underline"
           >
             Track another order
           </button>
 
           {result.tracking_number ? (
-            <section className="mt-6 border border-neutral-200 bg-white p-5">
+            <section className="mt-4 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm">
               <div className="flex items-start gap-3">
-                <Truck className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden />
+                <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-royal-50 text-royal-600">
+                  <Truck className="h-4 w-4" aria-hidden />
+                </span>
                 <div className="text-sm">
                   <p className="font-semibold text-neutral-900">CAPPTURE tracking code</p>
-                  <p className="mt-1 text-neutral-600">
+                  <p className="mt-0.5 text-neutral-600">
                     Use this code with any of our partners to follow your parcels.
                   </p>
-                  <p className="mt-2 inline-flex items-center rounded border border-neutral-200 bg-neutral-50 px-3 py-1.5 font-mono text-sm font-bold text-neutral-900">
+                  <p className="mt-2 inline-flex items-center rounded-lg border border-neutral-200 bg-neutral-50 px-3 py-1.5 font-mono text-sm font-bold text-neutral-900">
                     {result.tracking_number}
                   </p>
                 </div>
               </div>
             </section>
           ) : (
-            <section className="mt-6 border border-neutral-200 bg-white p-5">
+            <section className="mt-4 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm">
               <div className="flex items-start gap-3">
-                <Truck className="mt-0.5 h-4 w-4 shrink-0 text-neutral-400" aria-hidden />
+                <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-neutral-100 text-neutral-500">
+                  <Truck className="h-4 w-4" aria-hidden />
+                </span>
                 <p className="text-sm text-neutral-600">
                   Your CAPPTURE tracking code will appear here once your order is dispatched.
                 </p>
@@ -203,14 +214,14 @@ export function TrackOrderPage() {
             </section>
           )}
 
-          <section className="mt-6 border border-neutral-200 bg-white">
-            <div className="border-b border-neutral-100 px-5 py-3 text-sm font-semibold text-neutral-900">
+          <section className="mt-4 overflow-hidden rounded-2xl border border-neutral-200/70 bg-white shadow-sm">
+            <div className="border-b border-neutral-100 bg-neutral-50 px-4 py-3 text-sm font-semibold text-neutral-900">
               Items ({result.items.length})
             </div>
             <div className="divide-y divide-neutral-100">
               {result.items.map((item, i) => (
-                <div key={`${item.product_name}-${i}`} className="flex items-center gap-4 px-5 py-4">
-                  <div className="h-16 w-16 shrink-0 overflow-hidden bg-neutral-100">
+                <div key={`${item.product_name}-${i}`} className="flex items-center gap-3 px-4 py-3">
+                  <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-neutral-100 bg-neutral-50">
                     {item.product_image && productImageUrl(item.product_image) && (
                       <img
                         src={productImageUrl(item.product_image)!}
@@ -220,7 +231,7 @@ export function TrackOrderPage() {
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-neutral-900">
+                    <p className="truncate text-sm font-semibold text-neutral-900">
                       {item.product_name}
                     </p>
                     <p className="mt-0.5 text-xs text-neutral-500">
@@ -228,13 +239,13 @@ export function TrackOrderPage() {
                       {item.quantity}
                     </p>
                   </div>
-                  <p className="text-sm font-semibold text-neutral-900">
+                  <p className="text-sm font-bold text-neutral-900">
                     {formatPrice(item.line_total)}
                   </p>
                 </div>
               ))}
             </div>
-            <div className="space-y-1.5 border-t border-neutral-100 px-5 py-4 text-sm">
+            <div className="space-y-1.5 border-t border-neutral-100 px-4 py-4 text-sm">
               <div className="flex justify-between text-neutral-500">
                 <span>Subtotal</span>
                 <span>{formatPrice(result.subtotal)}</span>
@@ -249,26 +260,28 @@ export function TrackOrderPage() {
                   <span>-{formatPrice(result.discount)}</span>
                 </div>
               )}
-              <div className="flex justify-between pt-2 text-base font-semibold text-neutral-900">
+              <div className="flex justify-between pt-2 text-base font-bold text-neutral-900">
                 <span>Total</span>
                 <span>{formatPrice(result.total)}</span>
               </div>
             </div>
           </section>
 
-          <section className="mt-6 border border-neutral-200 bg-white p-5">
+          <section className="mt-4 rounded-2xl border border-neutral-200/70 bg-white p-4 shadow-sm">
             {result.delivery_method === "pep_collect" && result.pep_store ? (
               <div className="flex items-start gap-3">
-                <Store className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden />
+                <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-royal-50 text-royal-600">
+                  <Store className="h-4 w-4" aria-hidden />
+                </span>
                 <div className="text-sm">
                   <p className="font-semibold text-neutral-900">Collect at PEP store</p>
-                  <p className="mt-1 text-neutral-600">
+                  <p className="mt-0.5 text-neutral-600">
                     {shipping?.full_name ?? "—"}
                     {shipping?.phone ? ` · ${shipping.phone}` : ""}
                   </p>
                   <p className="mt-1 font-medium text-neutral-800">
                     {result.pep_store.store_name} ·{" "}
-                    <span className="text-brand-700">
+                    <span className="text-royal-700">
                       Paxi / PEP code: {result.pep_store.store_code}
                     </span>
                   </p>
@@ -276,7 +289,7 @@ export function TrackOrderPage() {
                     {result.pep_store.city}, {result.pep_store.province}
                   </p>
                   <p className="text-neutral-500">{result.pep_store.address_line}</p>
-                  <p className="mt-1.5 text-xs font-medium uppercase tracking-editorial text-brand-700">
+                  <p className="mt-1.5 text-xs font-medium uppercase text-royal-700">
                     {result.pep_delivery_tier === "express"
                       ? `Express delivery · 3–5 days · ${formatPrice(result.shipping)}`
                       : `Standard delivery · 7–9 days · ${formatPrice(result.shipping)}`}
@@ -285,10 +298,12 @@ export function TrackOrderPage() {
               </div>
             ) : (
               <div className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-neutral-400" aria-hidden />
+                <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-neutral-100 text-neutral-500">
+                  <MapPin className="h-4 w-4" aria-hidden />
+                </span>
                 <div className="text-sm">
                   <p className="font-semibold text-neutral-900">Estimated delivery address</p>
-                  <p className="mt-1 text-neutral-600">
+                  <p className="mt-0.5 text-neutral-600">
                     {shipping?.full_name ?? "—"}
                     {shipping?.phone ? ` · ${shipping.phone}` : ""}
                   </p>
@@ -303,12 +318,13 @@ export function TrackOrderPage() {
 
           <p className="mt-6 text-sm text-neutral-600">
             Want to manage this order?{" "}
-            <Link to="/account/orders" className="font-medium text-brand-700 hover:underline">
+            <Link to="/account/orders" className="font-semibold text-royal-700 hover:underline">
               Sign in to your account
             </Link>
           </p>
         </div>
       )}
+      </div>
     </div>
   );
 }

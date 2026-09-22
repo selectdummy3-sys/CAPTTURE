@@ -45,11 +45,13 @@ const EmailConfirmedPage = lazy(() =>
   import("@/pages/auth/EmailConfirmedPage").then((m) => ({ default: m.EmailConfirmedPage }))
 );
 
-const AccountLayout = lazy(() => import("@/pages/account/AccountLayout").then((m) => ({ default: m.AccountLayout })));
 const AccountOverview = lazy(() =>
   import("@/pages/account/AccountOverview").then((m) => ({ default: m.AccountOverview }))
 );
 const ProfilePage = lazy(() => import("@/pages/account/ProfilePage").then((m) => ({ default: m.ProfilePage })));
+const CustomerSupportScreen = lazy(() =>
+  import("@/pages/support/CustomerSupportScreen").then((m) => ({ default: m.CustomerSupportScreen }))
+);
 const OrdersPage = lazy(() => import("@/pages/account/OrdersPage").then((m) => ({ default: m.OrdersPage })));
 const OrderDetailPage = lazy(() =>
   import("@/pages/account/OrderDetailPage").then((m) => ({ default: m.OrderDetailPage }))
@@ -57,6 +59,12 @@ const OrderDetailPage = lazy(() =>
 const WishlistPage = lazy(() => import("@/pages/account/WishlistPage").then((m) => ({ default: m.WishlistPage })));
 const NotificationsPage = lazy(() =>
   import("@/pages/account/NotificationsPage").then((m) => ({ default: m.NotificationsPage }))
+);
+const AddressBookPage = lazy(() =>
+  import("@/pages/account/AddressBookPage").then((m) => ({ default: m.AddressBookPage }))
+);
+const PreferencesPage = lazy(() =>
+  import("@/pages/account/PreferencesPage").then((m) => ({ default: m.PreferencesPage }))
 );
 
 const SellerLayout = lazy(() => import("@/pages/seller/SellerLayout").then((m) => ({ default: m.SellerLayout })));
@@ -201,14 +209,17 @@ export function App() {
           <Route path="/sell/apply" element={<RequireAuth><SellerApplyPage /></RequireAuth>} />
         </Route>
 
-        <Route path="/account" element={<RequireAuth><AccountLayout /></RequireAuth>}>
-          <Route index element={<AccountOverview />} />
-          <Route path="profile" element={<ProfilePage />} />
-          <Route path="orders" element={<OrdersPage />} />
-          <Route path="orders/:id" element={<OrderDetailPage />} />
-          <Route path="wishlist" element={<WishlistPage />} />
-          <Route path="notifications" element={<NotificationsPage />} />
-        </Route>
+        <Route path="/account" element={<AccountOverview />} />
+
+        <Route path="/account/orders" element={<RequireAuth><OrdersPage /></RequireAuth>} />
+        <Route path="/account/orders/:id" element={<RequireAuth><OrderDetailPage /></RequireAuth>} />
+        <Route path="/account/wishlist" element={<RequireAuth><WishlistPage /></RequireAuth>} />
+        <Route path="/account/notifications" element={<RequireAuth><NotificationsPage /></RequireAuth>} />
+        <Route path="/account/addresses" element={<RequireAuth><AddressBookPage /></RequireAuth>} />
+        <Route path="/account/preferences" element={<RequireAuth><PreferencesPage /></RequireAuth>} />
+
+        <Route path="/account/profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
+        <Route path="/support" element={<CustomerSupportScreen />} />
 
         <Route path="/seller" element={<RequireAuth><RequireSeller><SellerLayout /></RequireSeller></RequireAuth>}>
           <Route index element={<SellerDashboard />} />

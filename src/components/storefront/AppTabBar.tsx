@@ -10,7 +10,7 @@ const items = [
   { to: "/shop", label: "Shop", icon: ShoppingBag },
   { to: "/stores", label: "Stores", icon: Store },
   { to: "/cart", label: "Cart", icon: ShoppingCart },
-  { to: "/account", label: "Account", icon: User },
+  { to: "/account", label: "Profile", icon: User },
 ];
 
 export function AppTabBar() {
@@ -18,7 +18,7 @@ export function AppTabBar() {
   const cartCount = useCartCount();
 
   if (!isNative) return null;
-  if (/^\/(login|signup|forgot-password|reset-password|email-confirmed|auth|seller|supplies|admin|checkout|order\/)/.test(location.pathname)) return null;
+  if (/^\/(login|signup|forgot-password|reset-password|email-confirmed|auth|seller|supplies|admin|checkout|order\/|support)/.test(location.pathname)) return null;
 
   return (
     <nav
@@ -35,20 +35,31 @@ export function AppTabBar() {
             onClick={() => void hapticLight()}
             className={({ isActive }) =>
               cn(
-                "flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold uppercase tracking-wide transition-colors",
-                isActive ? "text-brand-700" : "text-neutral-500 hover:text-neutral-800"
+                "relative flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold uppercase tracking-wide transition-colors",
+                isActive ? "text-neutral-900" : "text-neutral-500 hover:text-neutral-800"
               )
             }
           >
-            <span className="relative">
-              <Icon className="h-5 w-5" />
-              {to === "/cart" && cartCount > 0 && (
-                <span className="absolute -right-2 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-brand-500 px-1 text-[9px] font-bold text-white">
-                  {cartCount}
+            {({ isActive }) => (
+              <>
+                <span className="relative">
+                  <Icon className="h-5 w-5" />
+                  {to === "/cart" && cartCount > 0 && (
+                    <span className="absolute -right-2 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-royal-600 px-1 text-[9px] font-bold text-white">
+                      {cartCount}
+                    </span>
+                  )}
                 </span>
-              )}
-            </span>
-            {label}
+                {label}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute inset-x-4 bottom-[3px] h-0.5 rounded-full bg-neutral-900 transition-opacity",
+                    isActive ? "opacity-100" : "opacity-0"
+                  )}
+                />
+              </>
+            )}
           </NavLink>
         ))}
       </div>

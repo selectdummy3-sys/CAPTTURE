@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Capacitor } from "@capacitor/core";
-import { PushNotifications } from "@capacitor/push-notifications";
+import { PushNotifications, type PushNotificationSchema } from "@capacitor/push-notifications";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
@@ -16,6 +17,23 @@ function routeFromPayload(data: Record<string, unknown> | undefined): string | n
   const route = data.route;
   if (typeof route === "string" && route.startsWith("/")) return route;
   return null;
+}
+
+// FCM delivers a tray notification when the app is backgrounded, but when it's
+// open the OS keeps quiet. Surface foreground pushes as a tappable in-app toast
+// that jumps straight to the relevant page.
+function showInAppToast(notification: PushNotificationSchema, navigate: ReturnType<typeof useNavigate>) {
+  const data = notification.data as Record<string, unknown> | undefined;
+  const route = routeFromPayload(data);
+  toast(
+    <button type="button" className="block w-full text-left" onClick={() => route && navigate(route)}>
+      <span className="text-sm font-semibold text-neutral-900">{notification.title || "CAPPTURE"}</span>
+      {notification.body ? (
+        <span className="mt-0.5 block text-xs leading-snug text-neutral-500">{notification.body}</span>
+      ) : null}
+    </button>,
+    { duration: 6000 },
+  );
 }
 
 export function usePushNotifications() {
@@ -73,7 +91,8 @@ export function usePushNotifications() {
     const errListener = PushNotifications.addListener("registrationError", (err) => {
       console.warn("push registration error:", err.error);
     });
-    const recvListener = PushNotifications.addListener("pushNotificationReceived", () => {
+    const recvListener = PushNotifications.addListener("pushNotificationReceived", (notification) => {
+      showInAppToast(notification, navigate);
       const userId = user?.id;
       if (!userId) return;
       void queryClient.invalidateQueries({ queryKey: ["notifications", userId] });

@@ -1131,6 +1131,7 @@ push_tokens: {
           full_name: string
           id: string
           phone: string | null
+          preferences: Json | null
           role: string
           updated_at: string
         }
@@ -1141,6 +1142,7 @@ push_tokens: {
           full_name?: string
           id: string
           phone?: string | null
+          preferences?: Json | null
           role?: string
           updated_at?: string
         }
@@ -1151,6 +1153,7 @@ push_tokens: {
           full_name?: string
           id?: string
           phone?: string | null
+          preferences?: Json | null
           role?: string
           updated_at?: string
         }
