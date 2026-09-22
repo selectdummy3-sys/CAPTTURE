@@ -355,7 +355,7 @@ export function CheckoutPage() {
       return (
         <div className="mx-auto max-w-1440 px-4 py-16 sm:px-6">
           <p className="flex items-center gap-3 text-[11px] uppercase tracking-editorial text-neutral-500">
-            <span className="h-px w-8 bg-brand-500" />
+            <span className="h-px w-8 bg-royal-500" />
             Order placed
           </p>
           <h1 className="mt-4 font-display text-5xl font-medium uppercase leading-[1.02] tracking-tight text-neutral-900 sm:text-6xl">
@@ -364,7 +364,7 @@ export function CheckoutPage() {
           <div className="mt-6 border border-neutral-200 bg-white p-12 text-center shadow-sm">
             {redirecting ? (
               <>
-                <Loader2 className="mx-auto h-10 w-10 animate-spin text-brand-600" />
+                <Loader2 className="mx-auto h-10 w-10 animate-spin text-royal-600" />
                 <p className="mt-3 font-medium text-neutral-700">Confirming your order…</p>
                 <p className="mt-1 text-sm text-neutral-500">
                   Order{placedOrderNumbers.length > 1 ? "s" : ""} {" "}
@@ -374,7 +374,7 @@ export function CheckoutPage() {
               </>
             ) : (
               <>
-                <PackageCheck className="mx-auto h-10 w-10 text-brand-600" />
+                <PackageCheck className="mx-auto h-10 w-10 text-royal-600" />
                 <p className="mt-3 font-medium text-neutral-700">Your order is confirmed</p>
                 <p className="mt-1 text-sm text-neutral-500">
                   Order number{placedOrderNumbers.length > 1 ? "s" : ""}{" "}
@@ -395,7 +395,7 @@ export function CheckoutPage() {
         <div className="mt-6 border border-dashed border-neutral-300 p-12 text-center">
           <PackageCheck className="mx-auto h-10 w-10 text-neutral-300" />
           <p className="mt-3 font-medium text-neutral-700">Your bag is empty</p>
-          <Link to="/shop" className="mt-3 inline-block text-sm font-semibold uppercase tracking-editorial text-brand-700 hover:underline">
+          <Link to="/shop" className="mt-3 inline-block text-sm font-semibold uppercase tracking-editorial text-royal-700 hover:underline">
             Go shopping
           </Link>
         </div>
@@ -408,7 +408,7 @@ export function CheckoutPage() {
   return (
     <div className="mx-auto max-w-1440 px-4 py-12 sm:px-6 lg:py-16">
       <p className="flex items-center gap-3 text-[11px] uppercase tracking-editorial text-neutral-500">
-        <span className="h-px w-8 bg-brand-500" />
+        <span className="h-px w-8 bg-royal-500" />
         Almost there
       </p>
       <h1 className="mt-4 font-display text-5xl font-medium uppercase leading-[1.02] tracking-tight text-neutral-900 sm:text-6xl">
@@ -421,7 +421,7 @@ export function CheckoutPage() {
           <section className="border border-neutral-200 bg-white p-5 shadow-sm sm:p-6">
             <h2 className="font-display text-2xl font-medium uppercase tracking-tight text-neutral-900">Delivery method</h2>
             <div className="mt-3 flex items-center gap-2 border border-neutral-200 bg-neutral-50 px-4 py-3 text-sm text-neutral-600">
-              <MapPin className="h-4 w-4 shrink-0 text-brand-600" />
+              <MapPin className="h-4 w-4 shrink-0 text-royal-600" />
               <span>
                 Shipping to{" "}
                 <span className="font-semibold text-neutral-900">
@@ -439,7 +439,7 @@ export function CheckoutPage() {
                 onClick={() => setDelivery("shipping")}
                 className={cn(
                   "flex items-start gap-3 border p-4 text-left transition-colors",
-                  delivery === "shipping" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
+                  delivery === "shipping" ? "border-royal-500 bg-royal-50" : "border-neutral-200 hover:border-neutral-300"
                 )}
               >
                 <Home className="mt-0.5 h-5 w-5 text-neutral-500" />
@@ -458,10 +458,10 @@ export function CheckoutPage() {
                   onClick={() => setDelivery("pep_collect")}
                   className={cn(
                     "flex items-start gap-3 border p-4 text-left transition-colors",
-                    delivery === "pep_collect" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
+                    delivery === "pep_collect" ? "border-royal-500 bg-royal-50" : "border-neutral-200 hover:border-neutral-300"
                   )}
                 >
-                  <Store className="mt-0.5 h-5 w-5 text-brand-600" />
+                  <Store className="mt-0.5 h-5 w-5 text-royal-600" />
                   <div>
                     <p className="font-medium text-neutral-900">PEP Click &amp; Collect</p>
                     <p className="text-xs text-neutral-500">Collect at a PEP store · from {formatPrice(PEP_STANDARD_FEE)}</p>
@@ -532,7 +532,7 @@ export function CheckoutPage() {
                 </div>
                 {selectedStore && (
                   <div className="flex items-start gap-3 border border-neutral-200 bg-neutral-50 p-4">
-                    <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+                    <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-royal-600" />
                     <div className="text-sm">
                       <p className="font-semibold text-neutral-900">{selectedStore.store_name} · {selectedStore.store_code}</p>
                       <p className="mt-0.5 text-neutral-600">{selectedStore.raw_address}</p>
@@ -551,7 +551,7 @@ export function CheckoutPage() {
                         onClick={() => setPepTier("standard")}
                         className={cn(
                           "flex items-start gap-3 border p-4 text-left transition-colors",
-                          pepTier === "standard" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
+                          pepTier === "standard" ? "border-royal-500 bg-royal-50" : "border-neutral-200 hover:border-neutral-300"
                         )}
                       >
                         <Truck className="mt-0.5 h-5 w-5 text-neutral-500" />
@@ -565,10 +565,10 @@ export function CheckoutPage() {
                         onClick={() => setPepTier("express")}
                         className={cn(
                           "flex items-start gap-3 border p-4 text-left transition-colors",
-                          pepTier === "express" ? "border-brand-500 bg-brand-50" : "border-neutral-200 hover:border-neutral-300"
+                          pepTier === "express" ? "border-royal-500 bg-royal-50" : "border-neutral-200 hover:border-neutral-300"
                         )}
                       >
-                        <Truck className="mt-0.5 h-5 w-5 text-brand-600" />
+                        <Truck className="mt-0.5 h-5 w-5 text-royal-600" />
                         <div>
                           <p className="font-medium text-neutral-900">Express · 3–5 days</p>
                           <p className="text-xs text-neutral-500">{formatPrice(PEP_EXPRESS_FEE)}</p>
@@ -589,9 +589,9 @@ export function CheckoutPage() {
                           key={a.id}
                           type="button"
                           onClick={() => applySavedAddress(a)}
-                          className="flex items-center gap-2 border border-neutral-200 bg-white px-3 py-2 text-left text-xs text-neutral-600 transition-colors hover:border-brand-500 hover:bg-brand-50"
+                          className="flex items-center gap-2 border border-neutral-200 bg-white px-3 py-2 text-left text-xs text-neutral-600 transition-colors hover:border-royal-500 hover:bg-royal-50"
                         >
-                          <MapPin className="h-3.5 w-3.5 shrink-0 text-brand-600" />
+                          <MapPin className="h-3.5 w-3.5 shrink-0 text-royal-600" />
                           <span>{a.recipient} · {a.line1}, {a.city}</span>
                         </button>
                       ))}
@@ -638,8 +638,8 @@ export function CheckoutPage() {
           {/* Payment */}
           <section className="border border-neutral-200 bg-white p-5 shadow-sm sm:p-6">
             <h2 className="font-display text-2xl font-medium uppercase tracking-tight text-neutral-900">Payment method</h2>
-            <div className="mt-4 flex w-full items-start gap-3 border border-brand-500 bg-brand-50 p-4 text-left">
-              <Zap className="mt-0.5 h-5 w-5 shrink-0 text-brand-600" />
+            <div className="mt-4 flex w-full items-start gap-3 border border-royal-500 bg-royal-50 p-4 text-left">
+              <Zap className="mt-0.5 h-5 w-5 shrink-0 text-royal-600" />
               <div>
                 <p className="font-medium text-neutral-900">PayFast</p>
                 <p className="text-xs text-neutral-500">Card &amp; mobile — paid securely through PayFast</p>
@@ -780,7 +780,7 @@ export function CheckoutPage() {
 
       {redirecting && (
         <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-3 bg-neutral-950/70 px-6 text-center backdrop-blur-sm">
-          <Loader2 className="h-14 w-14 animate-spin text-brand-400" strokeWidth={1.5} />
+          <Loader2 className="h-14 w-14 animate-spin text-royal-400" strokeWidth={1.5} />
           <p className="text-lg font-semibold text-white">Redirecting you to a secure payment gateway</p>
           <p className="flex items-center gap-1.5 text-sm text-neutral-300">
             <Lock className="h-3.5 w-3.5" /> Card · Mobile — powered by PayFast
