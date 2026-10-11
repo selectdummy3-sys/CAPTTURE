@@ -211,26 +211,28 @@ export function CustomerSupportScreen() {
       </div>
 
       <div className="shrink-0 border-t border-neutral-200/70 bg-paper">
-        <div className="px-4 pt-4">
-          <p className="mb-2 text-xs font-bold uppercase tracking-wide text-neutral-500">
-            What can we help you with?
-          </p>
-          <div className="space-y-2">
-            {QUICK_OPTIONS.map((option) => (
-              <button
-                key={option.label}
-                type="button"
-                onClick={() => pickOption(option)}
-                className="flex min-h-[48px] w-full items-center justify-between gap-3 rounded-full border border-neutral-200 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-800 shadow-sm transition-colors hover:border-royal-300 active:bg-neutral-50"
-              >
-                {option.label}
-                <span className="text-base leading-none" aria-hidden>
-                  {option.emoji}
-                </span>
-              </button>
-            ))}
+        {messages.length === 1 && !typing && input.trim().length === 0 && (
+          <div className="px-4 pt-4">
+            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-neutral-500">
+              What can we help you with?
+            </p>
+            <div className="space-y-2">
+              {QUICK_OPTIONS.map((option) => (
+                <button
+                  key={option.label}
+                  type="button"
+                  onClick={() => pickOption(option)}
+                  className="flex min-h-[48px] w-full items-center justify-between gap-3 rounded-full border border-neutral-200 bg-white px-4 py-2.5 text-sm font-semibold text-neutral-800 shadow-sm transition-colors hover:border-royal-300 active:bg-neutral-50"
+                >
+                  {option.label}
+                  <span className="text-base leading-none" aria-hidden>
+                    {option.emoji}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         <div className="px-4 py-4">
           <button
             type="button"

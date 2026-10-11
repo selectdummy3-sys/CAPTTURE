@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -45,17 +45,41 @@ function generateTrackingNumber(): string {
 
 type DeliveryMethod = "shipping" | "pep_collect";
 
-const addressSchema = z.object({
-  recipient: z.string().min(2, "Enter the recipient's full name"),
-  phone: z.string().min(7, "Enter a valid phone number"),
-  line1: z.string(),
-  line2: z.string().optional(),
-  city: z.string(),
-  province: z.string(),
-  postal_code: z.string(),
-});
+const SA_PHONE_REGEX = /^(0\d{9}|\+27\d{9})$/;
+const INTL_PHONE_REGEX = /^\+?\d{7,15}$/;
 
-type AddressValues = z.infer<typeof addressSchema>;
+function hasNameAndSurname(value: string): boolean {
+  const parts = value.trim().split(/\s+/).filter(Boolean);
+  return parts.length >= 2 && parts.every((part) => /^[A-Za-zÀ-ÿ'.-]+$/.test(part));
+}
+
+function buildAddressSchema(isDomestic: boolean, requireFullName: boolean) {
+  return z.object({
+    recipient: z
+      .string()
+      .min(3, "Enter the recipient's full name")
+      .refine(
+        (value) => (requireFullName ? hasNameAndSurname(value) : true),
+        "Enter both a name and surname"
+      ),
+    phone: z.string().refine(
+      (value) =>
+        (isDomestic ? SA_PHONE_REGEX : INTL_PHONE_REGEX).test(
+          value.replace(/[\s\-()]/g, "")
+        ),
+      isDomestic
+        ? "Enter a valid SA number: 10 digits starting with 0, or +27 followed by 9 digits"
+        : "Enter a valid phone number"
+    ),
+    line1: z.string(),
+    line2: z.string().optional(),
+    city: z.string(),
+    province: z.string(),
+    postal_code: z.string(),
+  });
+}
+
+type AddressValues = z.infer<ReturnType<typeof buildAddressSchema>>;
 
 interface CheckoutGroup {
   sellerId: string;
@@ -93,11 +117,16 @@ export function CheckoutPage() {
   const [pepStoreId, setPepStoreId] = useState("");
   const [pepTier, setPepTier] = useState<PepDeliveryTier>("standard");
 
+  const addressSchema = useMemo(
+    () => buildAddressSchema(isDomestic, delivery === "pep_collect"),
+    [isDomestic, delivery]
+  );
+
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<AddressValues>({
     resolver: zodResolver(addressSchema),
     defaultValues: {
@@ -143,6 +172,8 @@ export function CheckoutPage() {
 
   const { data: pepStores, isLoading: pepLoading } = usePepStores();
   const { data: savedAddresses } = useSavedAddresses();
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const autoFilledAddressRef = useRef(false);
 
   const applySavedAddress = (a: SavedAddress) => {
     setValue("recipient", a.recipient);
@@ -152,7 +183,20 @@ export function CheckoutPage() {
     setValue("city", a.city);
     setValue("province", a.province);
     setValue("postal_code", a.postal_code);
+    setSelectedAddressId(a.id);
   };
+
+  // On load, fill the required fields from the default (or first) saved address
+  // so delivery details never start blank. Only applies once, before any edits.
+  useEffect(() => {
+    if (delivery !== "shipping") return;
+    if (autoFilledAddressRef.current || isDirty) return;
+    const list = savedAddresses ?? [];
+    const preferred = list.find((a) => a.is_default) ?? list[0];
+    if (!preferred) return;
+    autoFilledAddressRef.current = true;
+    applySavedAddress(preferred);
+  }, [savedAddresses, delivery, isDirty]);
 
   const pepCities = useMemo(() => {
     if (!pepProvince) return [];
@@ -496,17 +540,24 @@ export function CheckoutPage() {
                       ))}
                     </Select>
                   </Field>
-                  <Field label="City / town">
+                  <Field
+                    label="City / town"
+                    hint={
+                      pepProvince && !pepLoading && pepCities.length === 0
+                        ? "No towns listed — pick any PEP store"
+                        : undefined
+                    }
+                  >
                     <Select
                       value={pepCity}
-                      disabled={!pepProvince || pepCities.length === 0}
+                      disabled={!pepProvince}
                       onChange={(e) => {
                         setPepCity(e.target.value);
                         setPepStoreId("");
                       }}
                     >
                       <option value="">
-                        {!pepProvince ? "Select province first" : "Any city"}
+                        {!pepProvince ? "Select province first" : pepLoading ? "Loading towns…" : "Any city"}
                       </option>
                       {pepCities.map((c) => (
                         <option key={c} value={c}>{c}</option>
@@ -589,10 +640,20 @@ export function CheckoutPage() {
                           key={a.id}
                           type="button"
                           onClick={() => applySavedAddress(a)}
-                          className="flex items-center gap-2 border border-neutral-200 bg-white px-3 py-2 text-left text-xs text-neutral-600 transition-colors hover:border-royal-500 hover:bg-royal-50"
+                          className={cn(
+                            "flex items-center gap-2 border px-3 py-2 text-left text-xs transition-colors hover:border-royal-500",
+                            selectedAddressId === a.id
+                              ? "border-royal-500 bg-royal-50 text-neutral-900"
+                              : "border-neutral-200 bg-white text-neutral-600 hover:bg-royal-50"
+                          )}
                         >
                           <MapPin className="h-3.5 w-3.5 shrink-0 text-royal-600" />
                           <span>{a.recipient} · {a.line1}, {a.city}</span>
+                          {a.is_default && (
+                            <span className="rounded-full bg-royal-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-royal-700">
+                              Default
+                            </span>
+                          )}
                         </button>
                       ))}
                     </div>
@@ -768,7 +829,12 @@ export function CheckoutPage() {
               <span className="font-semibold">Total</span>
               <span className="text-lg font-bold">{formatDisplayNumber(grandDisplayTotal)}</span>
             </div>
-            <Button type="submit" variant="accent" size="lg" className="mt-4 w-full" loading={submitting}>
+            <Button
+              type="submit"
+              size="lg"
+              className="mt-4 w-full bg-royal-600 text-white shadow-lg shadow-royal-900/50 ring-1 ring-white/20 hover:bg-royal-500 active:bg-royal-700"
+              loading={submitting}
+            >
               Place order · {formatDisplayNumber(grandDisplayTotal)}
             </Button>
             <p className="mt-2 text-center text-xs text-neutral-400">
