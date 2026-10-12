@@ -168,9 +168,15 @@ function TicketDialog({ ticketId, onClose }: { ticketId: string; onClose: () => 
   const handleReply = async () => {
     if (!body.trim()) return;
     try {
-      await reply.mutateAsync({ ticketId, body });
+      const result = await reply.mutateAsync({ ticketId, body });
       setBody("");
-      toast.success("Reply sent");
+      if (result.emailed) {
+        toast.success("Reply sent and emailed to the customer");
+      } else if (result.reason === "no-email") {
+        toast.success("Reply sent (no email on this ticket)");
+      } else {
+        toast.warning("Reply saved, but the email failed to send");
+      }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to send reply");
     }

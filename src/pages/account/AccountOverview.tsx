@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import {
   Bell,
   Heart,
+  LifeBuoy,
   MapPin,
   Package,
   SlidersHorizontal,
@@ -73,6 +74,7 @@ export function AccountOverview() {
         <div className="space-y-8">
           <MenuGroup title="Profile">
             <MenuItem to="/account/orders" icon={Package} label="Orders" />
+            <MenuItem to="/account/support" icon={LifeBuoy} label="Support tickets" />
             <MenuItem icon={Wallet} label="Wallet" subtitle="Coming soon" disabled />
             <MenuItem to="/account/wishlist" icon={Heart} label="Wishlist" />
             <MenuItem to="/account/addresses" icon={MapPin} label="Address book" subtitle="Manage shipping addresses" />

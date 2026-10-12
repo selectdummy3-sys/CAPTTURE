@@ -57,6 +57,9 @@ const OrderDetailPage = lazy(() =>
   import("@/pages/account/OrderDetailPage").then((m) => ({ default: m.OrderDetailPage }))
 );
 const WishlistPage = lazy(() => import("@/pages/account/WishlistPage").then((m) => ({ default: m.WishlistPage })));
+const SupportTicketsPage = lazy(() =>
+  import("@/pages/account/SupportTicketsPage").then((m) => ({ default: m.SupportTicketsPage }))
+);
 const NotificationsPage = lazy(() =>
   import("@/pages/account/NotificationsPage").then((m) => ({ default: m.NotificationsPage }))
 );
@@ -220,6 +223,7 @@ export function App() {
         <Route path="/account/notifications" element={<RequireAuth><NotificationsPage /></RequireAuth>} />
         <Route path="/account/addresses" element={<RequireAuth><AddressBookPage /></RequireAuth>} />
         <Route path="/account/preferences" element={<RequireAuth><PreferencesPage /></RequireAuth>} />
+        <Route path="/account/support" element={<RequireAuth><SupportTicketsPage /></RequireAuth>} />
 
         <Route path="/account/profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
         <Route path="/support" element={<CustomerSupportScreen />} />
