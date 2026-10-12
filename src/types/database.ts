@@ -2019,6 +2019,7 @@ export type Database = {
     Functions: {
       admin_commission_stats: { Args: never; Returns: Json }
       admin_seller_finance: { Args: { p_seller_id: string }; Returns: Json }
+      admin_work_queue: { Args: never; Returns: Json }
       apply_payfast_itn: {
         Args: {
           p_amount_gross: number
@@ -2473,6 +2474,10 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      staff_set_order_status: {
+        Args: { p_order_id: string; p_status: string }
+        Returns: undefined
+      }
       track_product_view: { Args: { p_product_id: string }; Returns: undefined }
       track_store_visit: { Args: { p_seller_id: string }; Returns: undefined }
       unread_message_count: { Args: never; Returns: number }

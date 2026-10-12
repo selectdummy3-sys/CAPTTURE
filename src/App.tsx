@@ -157,6 +157,9 @@ const AuditLog = lazy(() =>
 const AdminStaff = lazy(() =>
   import("@/pages/admin/AdminStaff").then((m) => ({ default: m.AdminStaff }))
 );
+const AdminQueue = lazy(() =>
+  import("@/pages/admin/AdminQueue").then((m) => ({ default: m.default }))
+);
 
 const SupplyLayout = lazy(() =>
   import("@/components/supply/SupplyLayout").then((m) => ({ default: m.SupplyLayout }))
@@ -266,6 +269,7 @@ export function App() {
 
         <Route path="/admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
           <Route index element={<AdminHome />} />
+          <Route path="queue" element={<RequirePermission permission={PERMISSIONS.ordersView}><AdminQueue /></RequirePermission>} />
           <Route path="overview" element={<RequirePermission permission={PERMISSIONS.reportsView}><AdminDashboard /></RequirePermission>} />
           <Route path="products" element={<RequirePermission permission={PERMISSIONS.productsModerate}><AdminProducts /></RequirePermission>} />
           <Route path="sellers" element={<RequirePermission permission={PERMISSIONS.sellersReview}><AdminSellers /></RequirePermission>} />

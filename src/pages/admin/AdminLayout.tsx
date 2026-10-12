@@ -6,6 +6,7 @@ import {
   ClipboardList,
   FolderTree,
   Image,
+  Inbox,
   LayoutDashboard,
   LayoutGrid,
   LifeBuoy,
@@ -23,9 +24,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-import { usePendingSellersCount, usePendingProductsCount } from "@/hooks/useAdmin";
-import { useOpenTicketsCount } from "@/hooks/useSupportTickets";
 import { can, useAdminAccess } from "@/hooks/usePermissions";
+import { useWorkQueue } from "@/hooks/useWorkQueue";
 import { ADMIN_ROLE_LABELS, PERMISSIONS, type Permission } from "@/lib/permissions";
 import { cn } from "@/lib/utils";
 
@@ -35,7 +35,7 @@ interface NavItem {
   icon: LucideIcon;
   end?: boolean;
   permission: Permission;
-  badge?: "sellers" | "products" | "support";
+  badge?: "sellers" | "products" | "support" | "queue";
 }
 
 interface NavGroup {
@@ -47,6 +47,7 @@ const GROUPS: NavGroup[] = [
   {
     label: "Executive",
     items: [
+      { to: "/admin/queue", label: "Work queue", icon: Inbox, permission: PERMISSIONS.ordersView, badge: "queue" },
       { to: "/admin/overview", label: "Overview", icon: LayoutDashboard, permission: PERMISSIONS.reportsView },
     ],
   },
@@ -108,9 +109,7 @@ const GROUPS: NavGroup[] = [
 
 export function AdminLayout() {
   const { access } = useAdminAccess();
-  const { data: pendingSellers = 0 } = usePendingSellersCount();
-  const { data: pendingProducts = 0 } = usePendingProductsCount();
-  const { data: openTickets = 0 } = useOpenTicketsCount();
+  const { data: queue } = useWorkQueue();
 
   const groups = GROUPS.map((group) => ({
     ...group,
@@ -118,9 +117,10 @@ export function AdminLayout() {
   })).filter((group) => group.items.length > 0);
 
   const badgeCount = (badge?: NavItem["badge"]) => {
-    if (badge === "sellers") return pendingSellers;
-    if (badge === "products") return pendingProducts;
-    if (badge === "support") return openTickets;
+    if (badge === "sellers") return queue?.sellers?.applications_pending ?? 0;
+    if (badge === "products") return queue?.sellers?.products_pending ?? 0;
+    if (badge === "support") return queue?.support?.open ?? 0;
+    if (badge === "queue") return (queue?.alerts ?? []).filter((a) => a.count > 0).length;
     return 0;
   };
 

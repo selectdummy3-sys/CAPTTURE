@@ -120,6 +120,25 @@ export function useAllOrders() {
   });
 }
 
+/** Admin/fulfilment: change an order's status (guarded by orders.manage). */
+export function useSetOrderStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ orderId, status }: { orderId: string; status: string }) => {
+      const { error } = await supabase.rpc("staff_set_order_status", {
+        p_order_id: orderId,
+        p_status: status,
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "orders"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin", "stats"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin", "work-queue"] });
+    },
+  });
+}
+
 export function useCoupons() {
   return useQuery({
     queryKey: ["admin", "coupons"],

@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 import { ClipboardList, Search } from "lucide-react";
+import { toast } from "sonner";
 
-import { useAllOrders } from "@/hooks/useAdmin";
+import { useAllOrders, useSetOrderStatus } from "@/hooks/useAdmin";
+import { can, useAdminAccess } from "@/hooks/usePermissions";
+import { PERMISSIONS } from "@/lib/permissions";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SkeletonTable } from "@/components/ui/skeleton-table";
 import { OrderStatusBadge, PaymentMethodBadge } from "@/components/ui/status-badge";
@@ -11,6 +14,9 @@ import type { Address } from "@/types";
 
 export function AdminOrders() {
   const { data: orders, isLoading } = useAllOrders();
+  const { access } = useAdminAccess();
+  const setStatus = useSetOrderStatus();
+  const canManage = can(access, PERMISSIONS.ordersManage);
   const [filter, setFilter] = useState("all");
   const [search, setSearch] = useState("");
 
@@ -99,6 +105,33 @@ export function AdminOrders() {
                   <td className="px-4 py-3 font-semibold text-neutral-900">{formatZAR(order.total)}</td>
                   <td className="px-4 py-3">
                     <OrderStatusBadge status={order.status} />
+                    {canManage && (
+                      <Select
+                        value={order.status}
+                        disabled={setStatus.isPending}
+                        onChange={(e) => {
+                          const next = e.target.value;
+                          if (next === order.status) return;
+                          setStatus.mutate(
+                            { orderId: order.id, status: next },
+                            {
+                              onSuccess: () => toast.success(`Order ${order.order_number} → ${next}`),
+                              onError: (err) =>
+                                toast.error(err instanceof Error ? err.message : "Failed to update status"),
+                            }
+                          );
+                        }}
+                        className="mt-2 h-8 text-xs"
+                      >
+                        {["pending", "paid", "processing", "shipped", "delivered", "cancelled", "refunded"].map(
+                          (s) => (
+                            <option key={s} value={s}>
+                              {s}
+                            </option>
+                          )
+                        )}
+                      </Select>
+                    )}
                   </td>
                 </tr>
               ))}
