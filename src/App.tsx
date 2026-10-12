@@ -113,6 +113,9 @@ const AdminCoupons = lazy(() => import("@/pages/admin/AdminCoupons").then((m) =>
 const AdminMessages = lazy(() =>
   import("@/pages/admin/AdminMessages").then((m) => ({ default: m.default }))
 );
+const AdminSupport = lazy(() =>
+  import("@/pages/admin/AdminSupport").then((m) => ({ default: m.default }))
+);
 const AdminHero = lazy(() =>
   import("@/pages/admin/AdminHero").then((m) => ({ default: m.AdminHero }))
 );
@@ -259,6 +262,7 @@ export function App() {
           <Route path="banners" element={<AdminBanners />} />
           <Route path="coupons" element={<AdminCoupons />} />
           <Route path="messages" element={<AdminMessages />} />
+          <Route path="support" element={<AdminSupport />} />
           <Route path="hero" element={<AdminHero />} />
           <Route path="collections" element={<AdminCategories />} />
           <Route path="supplies" element={<AdminSupplyOverview />} />

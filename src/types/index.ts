@@ -23,6 +23,8 @@ export type SupplyProduct = Tables<"supply_products">;
 export type SupplyOrder = Tables<"supply_orders">;
 export type SupplyOrderItem = Tables<"supply_order_items">;
 export type PepStore = Tables<"pep_stores">;
+export type SupportTicket = Tables<"support_tickets">;
+export type SupportTicketMessage = Tables<"support_ticket_messages">;
 
 export type PepDeliveryTier = "standard" | "express";
 

@@ -16,46 +16,41 @@ interface ChatMessage {
 interface QuickOption {
   label: string;
   emoji: string;
-  reply: string;
+  prompt: string;
 }
 
 const QUICK_OPTIONS: QuickOption[] = [
   {
-    label: "Returns & Refunds",
+    label: "Where's my order?",
     emoji: "📦",
-    reply:
-      "If an item arrives damaged or isn't what you ordered, raise it within 7 days via the order in your account and the seller will make it right. Full policy is under Help & FAQ.",
+    prompt: "Where is my order?",
   },
   {
-    label: "Orders, Delivery & Collection",
-    emoji: "🔔",
-    reply:
-      "Delivery is a flat R60 per order (free over R1,000) and takes 3–9 days depending on the method. You can track every parcel with your CAPPTURE tracking code on the Track order page.",
-  },
-  {
-    label: "Profile and Login",
-    emoji: "🧑‍💻",
-    reply:
-      "Head to Profile details in your account to update your name, mobile number or email. Forgot your password? Use 'Forgot password' on the login screen and we'll email you a reset link.",
-  },
-  {
-    label: "Account & Rewards",
+    label: "Payment help",
     emoji: "💳",
-    reply:
-      "Your account keeps your orders, wishlist and delivery details in one place. Wallet-style rewards are on the way for CAPTTURE customers — watch your notifications for when they launch.",
+    prompt: "I need help with a payment for my order.",
   },
   {
-    label: "How do I shop online",
-    emoji: "🛍️",
-    reply:
-      "Browse the Shop tab, tap any product to pick your size and colour, add it to your cart, then check out securely by card or mobile. Order confirmation lands the moment payment is received.",
+    label: "Delivery & collection",
+    emoji: "🚚",
+    prompt: "How does delivery and PEP store collection work, and what does it cost?",
+  },
+  {
+    label: "Returns & refunds",
+    emoji: "↩️",
+    prompt: "How do returns and refunds work if something is wrong with my order?",
+  },
+  {
+    label: "Talk to a human",
+    emoji: "🧑‍💻",
+    prompt: "I'd like to speak to a human about my order.",
   },
 ];
 
 const GREETING: ChatMessage = {
   id: 0,
   from: "bot",
-  text: "Hi there 👋 Thanks for reaching out to CAPTTURE support. Ask us anything below, or pick a topic and we'll point you in the right direction.",
+  text: "Hi there 👋 Thanks for reaching out to CAPTTURE support. Ask me about your order, delivery, payments or returns — or pick a topic below. If you'd like a person, just say so and I'll log a ticket.",
   ts: new Date(),
 };
 
@@ -66,6 +61,29 @@ let nextId = 1;
 
 function formatTime(date: Date): string {
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+const TICKET_REF = /(CAPP-\d{4,8})/g;
+const TICKET_REF_TEST = /^CAPP-\d{4,8}$/;
+
+function MessageText({ text }: { text: string }) {
+  const parts = text.split(TICKET_REF);
+  return (
+    <>
+      {parts.map((part, index) =>
+        TICKET_REF_TEST.test(part) ? (
+          <span
+            key={index}
+            className="mx-0.5 inline-block rounded-md bg-neutral-900 px-1.5 py-0.5 font-mono text-[12px] font-semibold text-white"
+          >
+            {part}
+          </span>
+        ) : (
+          <span key={index}>{part}</span>
+        )
+      )}
+    </>
+  );
 }
 
 export function CustomerSupportScreen() {
@@ -84,7 +102,7 @@ export function CustomerSupportScreen() {
       .slice(1)
       .map((m) => ({ role: m.from === "bot" ? "assistant" : "user", content: m.text }));
 
-  const sendQuestion = (question: string, fallback?: string) => {
+  const sendQuestion = (question: string) => {
     if (typing) return;
     const text = question.trim();
     if (!text) return;
@@ -97,7 +115,7 @@ export function CustomerSupportScreen() {
     history.push({ role: "user", content: text });
 
     window.setTimeout(async () => {
-      let reply = fallback ?? OFFLINE_FALLBACK;
+      let reply = OFFLINE_FALLBACK;
       try {
         const { data, error } = await supabase.functions.invoke("support-ai", {
           body: { messages: history },
@@ -115,7 +133,7 @@ export function CustomerSupportScreen() {
 
   const pickOption = (option: QuickOption) => {
     if (typing) return;
-    sendQuestion(option.label, option.reply);
+    sendQuestion(option.prompt);
   };
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -175,7 +193,7 @@ export function CustomerSupportScreen() {
                       "text-sm leading-relaxed text-neutral-800"
                     )}
                   >
-                    {message.text}
+                    <MessageText text={message.text} />
                   </div>
                   <p className="mt-1 px-1 text-[11px] text-neutral-400">{formatTime(message.ts)}</p>
                 </div>

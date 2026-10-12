@@ -1,7 +1,8 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { BadgeCheck, Banknote, Boxes, ClipboardList, FolderTree, Image, LayoutDashboard, LayoutGrid, Mail, Megaphone, Package, Settings, Smartphone, ShoppingCart, Ticket, Users } from "lucide-react";
+import { BadgeCheck, Banknote, Boxes, ClipboardList, FolderTree, Image, LayoutDashboard, LayoutGrid, LifeBuoy, Mail, Megaphone, Package, Settings, Smartphone, ShoppingCart, Ticket, Users } from "lucide-react";
 
 import { usePendingSellersCount, usePendingProductsCount } from "@/hooks/useAdmin";
+import { useOpenTicketsCount } from "@/hooks/useSupportTickets";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -12,6 +13,7 @@ const links = [
   { to: "/admin/withdrawals", label: "Withdrawals", icon: Banknote },
   { to: "/admin/coupons", label: "Coupons", icon: Ticket },
   { to: "/admin/messages", label: "Messages", icon: Mail },
+  { to: "/admin/support", label: "Support", icon: LifeBuoy },
   { to: "/admin/hero", label: "Hero", icon: Image },
   { to: "/admin/collections", label: "Collections", icon: LayoutGrid },
   { to: "/admin/team", label: "Team", icon: Users },
@@ -28,6 +30,7 @@ const links = [
 export function AdminLayout() {
   const { data: pendingSellers = 0 } = usePendingSellersCount();
   const { data: pendingProducts = 0 } = usePendingProductsCount();
+  const { data: openTickets = 0 } = useOpenTicketsCount();
   return (
     <div className="mx-auto flex max-w-1440 flex-col gap-8 px-4 py-10 sm:px-6 lg:flex-row">
       <aside className="lg:w-56 lg:shrink-0">
@@ -41,7 +44,7 @@ export function AdminLayout() {
                 </div>
               );
             }
-            const count = to === "/admin/sellers" ? pendingSellers : to === "/admin/products" ? pendingProducts : 0;
+            const count = to === "/admin/sellers" ? pendingSellers : to === "/admin/products" ? pendingProducts : to === "/admin/support" ? openTickets : 0;
             const showBadge = count > 0;
             return (
               <NavLink
