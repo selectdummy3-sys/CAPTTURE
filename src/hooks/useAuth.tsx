@@ -13,12 +13,13 @@ import { Browser } from "@capacitor/browser";
 
 import { appUrl, supabase } from "@/lib/supabase";
 import { isNative } from "@/lib/capacitor";
-import type { Profile, Seller } from "@/types";
+import type { Profile, Seller, SellerPrivate } from "@/types";
 
 interface AuthContextValue {
   user: User | null;
   profile: Profile | null;
   seller: Seller | null;
+  sellerPrivate: SellerPrivate | null;
   isLoading: boolean;
   isAdmin: boolean;
   isApprovedSeller: boolean;
@@ -38,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [seller, setSeller] = useState<Seller | null>(null);
+  const [sellerPrivate, setSellerPrivate] = useState<SellerPrivate | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadProfile = useCallback(async (userId: string) => {
@@ -51,6 +53,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ]);
     setProfile(profileData ?? null);
     setSeller(sellerData ?? null);
+
+    if (sellerData?.id) {
+      const { data: privateData } = await supabase
+        .from("seller_private")
+        .select("seller_id, bank_details, id_document_url, proof_of_residence_url")
+        .eq("seller_id", sellerData.id)
+        .maybeSingle();
+      setSellerPrivate(privateData ?? null);
+    } else {
+      setSellerPrivate(null);
+    }
   }, []);
 
   const refresh = useCallback(async () => {
@@ -61,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       setProfile(null);
       setSeller(null);
+      setSellerPrivate(null);
     }
   }, [loadProfile]);
 
@@ -97,6 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         setProfile(null);
         setSeller(null);
+        setSellerPrivate(null);
       }
     });
 
@@ -111,6 +126,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       user,
       profile,
       seller,
+      sellerPrivate,
       isLoading,
       isAdmin: profile?.role === "admin",
       isApprovedSeller: profile?.role === "seller" && seller?.application_status === "approved",
@@ -162,7 +178,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
       refresh,
     }),
-    [user, profile, seller, isLoading, refresh]
+    [user, profile, seller, sellerPrivate, isLoading, refresh]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

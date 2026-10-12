@@ -2,6 +2,10 @@ import type { Tables } from "@/types/database";
 
 export type Profile = Tables<"profiles">;
 export type Seller = Tables<"sellers">;
+export type SellerPrivate = Pick<
+  Tables<"seller_private">,
+  "seller_id" | "bank_details" | "id_document_url" | "proof_of_residence_url"
+>;
 export type Category = Tables<"categories">;
 export type Product = Tables<"products">;
 export type ProductImage = Tables<"product_images">;

@@ -99,7 +99,7 @@ function BlankSignatureBlock() {
 }
 
 function SellerPrintView({ seller }: { seller: AdminSellerRow }) {
-  const bank = (seller.bank_details ?? {}) as Record<string, string>;
+  const bank = (seller.private?.bank_details ?? {}) as Record<string, string>;
   const socials = (seller.social_links ?? {}) as Record<string, string>;
 
   return (
@@ -167,8 +167,8 @@ function SellerPrintView({ seller }: { seller: AdminSellerRow }) {
           <dl className="mt-2 space-y-2">
             <DetailRow label="Products">{seller.products ?? 0}</DetailRow>
             <DetailRow label="Followers">{seller.followers ?? 0}</DetailRow>
-            <DetailRow label="ID document">{seller.id_document_url ? "On file" : null}</DetailRow>
-            <DetailRow label="Proof of residence">{seller.proof_of_residence_url ? "On file" : null}</DetailRow>
+            <DetailRow label="ID document">{seller.private?.id_document_url ? "On file" : null}</DetailRow>
+            <DetailRow label="Proof of residence">{seller.private?.proof_of_residence_url ? "On file" : null}</DetailRow>
           </dl>
         </div>
       </div>
@@ -393,18 +393,18 @@ function SellerDetailDialog({
     let cancelled = false;
     setDocUrl(null);
     setProofUrl(null);
-    if (open && seller.id_document_url) {
+    if (open && seller.private?.id_document_url) {
       void supabase.storage
         .from("documents")
-        .createSignedUrl(seller.id_document_url, 300)
+        .createSignedUrl(seller.private.id_document_url, 300)
         .then(({ data, error }) => {
           if (!cancelled && !error) setDocUrl(data?.signedUrl ?? null);
         });
     }
-    if (open && seller.proof_of_residence_url) {
+    if (open && seller.private?.proof_of_residence_url) {
       void supabase.storage
         .from("documents")
-        .createSignedUrl(seller.proof_of_residence_url, 300)
+        .createSignedUrl(seller.private.proof_of_residence_url, 300)
         .then(({ data, error }) => {
           if (!cancelled && !error) setProofUrl(data?.signedUrl ?? null);
         });
@@ -412,9 +412,9 @@ function SellerDetailDialog({
     return () => {
       cancelled = true;
     };
-  }, [open, seller.id_document_url, seller.proof_of_residence_url]);
+  }, [open, seller.private?.id_document_url, seller.private?.proof_of_residence_url]);
 
-  const bank = (seller.bank_details ?? {}) as Record<string, string>;
+  const bank = (seller.private?.bank_details ?? {}) as Record<string, string>;
   const socials = (seller.social_links ?? {}) as Record<string, string>;
 
   return (
@@ -574,7 +574,7 @@ function SellerDetailDialog({
           </div>
         )}
 
-        {seller.id_document_url && (
+        {seller.private?.id_document_url && (
           <div>
             <h3 className="text-sm font-semibold text-neutral-900">ID document</h3>
             {docUrl ? (
@@ -592,7 +592,7 @@ function SellerDetailDialog({
           </div>
         )}
 
-        {seller.proof_of_residence_url && (
+        {seller.private?.proof_of_residence_url && (
           <div>
             <h3 className="text-sm font-semibold text-neutral-900">Proof of residence</h3>
             {proofUrl ? (

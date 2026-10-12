@@ -1268,13 +1268,47 @@ export type Database = {
         }
         Relationships: []
       }
+      seller_private: {
+        Row: {
+          bank_details: Json
+          created_at: string
+          id_document_url: string | null
+          proof_of_residence_url: string | null
+          seller_id: string
+          updated_at: string
+        }
+        Insert: {
+          bank_details?: Json
+          created_at?: string
+          id_document_url?: string | null
+          proof_of_residence_url?: string | null
+          seller_id: string
+          updated_at?: string
+        }
+        Update: {
+          bank_details?: Json
+          created_at?: string
+          id_document_url?: string | null
+          proof_of_residence_url?: string | null
+          seller_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seller_private_seller_id_fkey"
+            columns: ["seller_id"]
+            isOneToOne: true
+            referencedRelation: "sellers"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       sellers: {
         Row: {
           accepted_terms_at: string | null
           address_line1: string | null
           application_status: string
           approved_at: string | null
-          bank_details: Json
           banner_url: string | null
           business_name: string
           city: string | null
@@ -1284,11 +1318,9 @@ export type Database = {
           email: string | null
           featured: boolean
           id: string
-          id_document_url: string | null
           logo_url: string | null
           phone: string | null
           postal_code: string | null
-          proof_of_residence_url: string | null
           province: string
           rejection_reason: string | null
           social_links: Json
@@ -1301,7 +1333,6 @@ export type Database = {
           address_line1?: string | null
           application_status?: string
           approved_at?: string | null
-          bank_details?: Json
           banner_url?: string | null
           business_name: string
           city?: string | null
@@ -1311,11 +1342,9 @@ export type Database = {
           email?: string | null
           featured?: boolean
           id?: string
-          id_document_url?: string | null
           logo_url?: string | null
           phone?: string | null
           postal_code?: string | null
-          proof_of_residence_url?: string | null
           province?: string
           rejection_reason?: string | null
           social_links?: Json
@@ -1328,7 +1357,6 @@ export type Database = {
           address_line1?: string | null
           application_status?: string
           approved_at?: string | null
-          bank_details?: Json
           banner_url?: string | null
           business_name?: string
           city?: string | null
@@ -1338,11 +1366,9 @@ export type Database = {
           email?: string | null
           featured?: boolean
           id?: string
-          id_document_url?: string | null
           logo_url?: string | null
           phone?: string | null
           postal_code?: string | null
-          proof_of_residence_url?: string | null
           province?: string
           rejection_reason?: string | null
           social_links?: Json
@@ -2435,7 +2461,6 @@ export type Database = {
           address_line1: string | null
           application_status: string
           approved_at: string | null
-          bank_details: Json
           banner_url: string | null
           business_name: string
           city: string | null
@@ -2445,11 +2470,9 @@ export type Database = {
           email: string | null
           featured: boolean
           id: string
-          id_document_url: string | null
           logo_url: string | null
           phone: string | null
           postal_code: string | null
-          proof_of_residence_url: string | null
           province: string
           rejection_reason: string | null
           social_links: Json

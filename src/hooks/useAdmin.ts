@@ -15,6 +15,12 @@ export function useAllSellers() {
         )
         .order("created_at", { ascending: false });
       if (error) throw error;
+
+      const { data: privateRows } = await supabase
+        .from("seller_private")
+        .select("seller_id, bank_details, id_document_url, proof_of_residence_url");
+      const privateBySeller = new Map((privateRows ?? []).map((row) => [row.seller_id, row]));
+
       const rows = (data ?? []) as unknown as Array<
         Seller & {
           user?: { id: string; full_name: string | null; avatar_url: string | null; role: string; email: string | null } | null;
@@ -26,6 +32,7 @@ export function useAllSellers() {
         ...seller,
         products: Array.isArray(seller.products) ? seller.products[0]?.count ?? 0 : seller.products?.count ?? 0,
         followers: Array.isArray(seller.followers) ? seller.followers[0]?.count ?? 0 : seller.followers?.count ?? 0,
+        private: privateBySeller.get(seller.id) ?? null,
       }));
     },
   });

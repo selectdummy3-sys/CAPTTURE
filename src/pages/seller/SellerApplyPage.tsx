@@ -22,11 +22,11 @@ function notifyApplicationSubmitted(type: "registered" | "reapplied", businessNa
 }
 
 export function SellerApplyPage() {
-  const { user, seller, refresh } = useAuth();
+  const { user, seller, sellerPrivate, refresh } = useAuth();
   const navigate = useNavigate();
 
   const isReapply = seller?.application_status === "rejected";
-  const bank = (seller?.bank_details as Record<string, string> | null) ?? {};
+  const bank = (sellerPrivate?.bank_details as Record<string, string> | null) ?? {};
   const socials = (seller?.social_links as Record<string, string> | null) ?? {};
 
   const [businessName, setBusinessName] = useState(seller?.business_name ?? "");
@@ -39,8 +39,8 @@ export function SellerApplyPage() {
   const [email, setEmail] = useState(user?.email ?? "");
   const [description, setDescription] = useState(seller?.description ?? "");
   const [logoUrl, setLogoUrl] = useState<string | null>(seller?.logo_url ?? null);
-  const [idDocumentUrl, setIdDocumentUrl] = useState<string | null>(seller?.id_document_url ?? null);
-  const [proofOfResidenceUrl, setProofOfResidenceUrl] = useState<string | null>(seller?.proof_of_residence_url ?? null);
+  const [idDocumentUrl, setIdDocumentUrl] = useState<string | null>(sellerPrivate?.id_document_url ?? null);
+  const [proofOfResidenceUrl, setProofOfResidenceUrl] = useState<string | null>(sellerPrivate?.proof_of_residence_url ?? null);
   const [socialInstagram, setSocialInstagram] = useState(socials.instagram ?? "");
   const [socialTiktok, setSocialTiktok] = useState(socials.tiktok ?? "");
   const [socialFacebook, setSocialFacebook] = useState(socials.facebook ?? "");
@@ -100,6 +100,23 @@ export function SellerApplyPage() {
       if (socialTiktok.trim()) social_links.tiktok = socialTiktok.trim();
       if (socialFacebook.trim()) social_links.facebook = socialFacebook.trim();
 
+      const upsertPrivate = async (sellerId: string) => {
+        const { error } = await supabase.from("seller_private").upsert(
+          {
+            seller_id: sellerId,
+            id_document_url: idDocumentUrl,
+            proof_of_residence_url: proofOfResidenceUrl,
+            bank_details: {
+              bank_name: bankName,
+              account_name: bankAccountName,
+              account_number: bankAccountNumber,
+            },
+          },
+          { onConflict: "seller_id" }
+        );
+        if (error) throw error;
+      };
+
       const { data: existing } = await supabase
         .from("sellers")
         .select("id, application_status")
@@ -122,14 +139,7 @@ export function SellerApplyPage() {
             email: email || null,
             description: description || null,
             logo_url: logoUrl,
-            id_document_url: idDocumentUrl,
-            proof_of_residence_url: proofOfResidenceUrl,
             social_links,
-            bank_details: {
-              bank_name: bankName,
-              account_name: bankAccountName,
-              account_number: bankAccountNumber,
-            },
             application_status: "pending",
             rejection_reason: null,
             accepted_terms_at: new Date().toISOString(),
@@ -141,36 +151,35 @@ export function SellerApplyPage() {
           }
           throw updateError;
         }
+        await upsertPrivate(existing!.id);
         void notifyApplicationSubmitted("reapplied", businessName);
       } else {
-        const { error: insertError } = await supabase.from("sellers").insert({
-          user_id: user!.id,
-          accepted_terms_at: new Date().toISOString(),
-          business_name: businessName,
-          store_username: slugify(storeUsername).replace(/-/g, "_").slice(0, 24),
-          province,
-          address_line1: addressLine1 || null,
-          city: city || null,
-          postal_code: postalCode || null,
-          phone: phone || null,
-          email: email || null,
-          description: description || null,
-          logo_url: logoUrl,
-          id_document_url: idDocumentUrl,
-          proof_of_residence_url: proofOfResidenceUrl,
-          social_links,
-          bank_details: {
-            bank_name: bankName,
-            account_name: bankAccountName,
-            account_number: bankAccountNumber,
-          },
-        });
+        const { data: inserted, error: insertError } = await supabase
+          .from("sellers")
+          .insert({
+            user_id: user!.id,
+            accepted_terms_at: new Date().toISOString(),
+            business_name: businessName,
+            store_username: slugify(storeUsername).replace(/-/g, "_").slice(0, 24),
+            province,
+            address_line1: addressLine1 || null,
+            city: city || null,
+            postal_code: postalCode || null,
+            phone: phone || null,
+            email: email || null,
+            description: description || null,
+            logo_url: logoUrl,
+            social_links,
+          })
+          .select("id")
+          .single();
         if (insertError) {
           if (insertError.message.toLowerCase().includes("duplicate")) {
             throw new Error("That store handle is already taken. Try another.");
           }
           throw insertError;
         }
+        await upsertPrivate(inserted.id);
         void notifyApplicationSubmitted("registered", businessName);
       }
       await refresh();

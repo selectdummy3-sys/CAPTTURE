@@ -13,10 +13,10 @@ import { PROVINCES } from "@/lib/constants";
 import { ImageUploadButton } from "@/components/ui/image-upload";
 
 export function SellerSettings() {
-  const { seller, refresh } = useAuth();
+  const { seller, sellerPrivate, refresh } = useAuth();
   const update = useUpdateSellerProfile();
 
-  const bank = (seller?.bank_details as Record<string, unknown> | null) ?? {};
+  const bank = (sellerPrivate?.bank_details as Record<string, unknown> | null) ?? {};
   const socials = (seller?.social_links as Record<string, unknown> | null) ?? {};
 
   const [businessName, setBusinessName] = useState(seller?.business_name ?? "");
