@@ -1,7 +1,7 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
-import { BadgeCheck, Check, Eye, FileText, Mail, Phone, Printer, RotateCcw, Trash2, X } from "lucide-react";
+import { BadgeCheck, Check, Eye, FileText, Mail, Phone, Printer, RotateCcw, Search, Trash2, X } from "lucide-react";
 
 import { useAdminSellerFinance, useAllSellers, useDeleteSeller, useSetSellerStatus } from "@/hooks/useAdmin";
 import { Button, type ButtonVariant } from "@/components/ui/button";
@@ -631,8 +631,26 @@ export function AdminSellers() {
   const [statusDialog, setStatusDialog] = useState<{ seller: AdminSellerRow; action: StatusAction } | null>(null);
   const [reason, setReason] = useState("");
   const [showReasonError, setShowReasonError] = useState(false);
+  const [search, setSearch] = useState("");
 
   const selected = (sellers ?? []).find((s) => s.id === selectedId) ?? null;
+
+  const visible = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return sellers ?? [];
+    return (sellers ?? []).filter((s) =>
+      [
+        s.business_name,
+        s.store_username,
+        s.user?.full_name,
+        s.user?.email,
+        s.email,
+        s.phone,
+        s.province,
+        s.city,
+      ].some((value) => (value ?? "").toLowerCase().includes(q))
+    );
+  }, [sellers, search]);
 
   const act = async (seller: AdminSellerRow, status: string, reason?: string, notifyKind?: string) => {
     setBusyId(seller.id);
@@ -686,11 +704,26 @@ export function AdminSellers() {
     <div>
       <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Sellers</h1>
 
-      {(sellers ?? []).length === 0 ? (
-        <EmptyState icon={<BadgeCheck className="h-8 w-8" />} title="No sellers yet" className="mt-8" />
+      <div className="relative mt-4 w-full sm:max-w-xs">
+        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search seller, owner, email…"
+          className="h-9 w-full border border-neutral-200 bg-white pl-9 pr-3 text-sm outline-none focus:border-neutral-400"
+        />
+      </div>
+
+      {visible.length === 0 ? (
+        <EmptyState
+          icon={<BadgeCheck className="h-8 w-8" />}
+          title={search.trim() ? "No sellers match your search" : "No sellers yet"}
+          className="mt-8"
+        />
       ) : (
         <div className="mt-6 space-y-4">
-          {(sellers ?? []).map((seller) => {
+          {visible.map((seller) => {
             const actions = statusActions(seller.application_status);
             return (
               <div key={seller.id} className="border border-neutral-200 p-5">

@@ -7,6 +7,12 @@ const FROM_PROFILES: Record<string, string> = {
 
 const RESEND_URL = "https://api.resend.com/emails";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
+};
+
 interface EmailRequest {
   to: string | string[];
   subject: string;
@@ -99,66 +105,62 @@ async function sendResend(resendKey: string, from: string, fromName: string, bod
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-        "Access-Control-Allow-Methods": "GET, HEAD, POST, OPTIONS",
-      },
-    });
+    return new Response(null, { status: 204, headers: corsHeaders });
   }
   if (req.method !== "POST") {
-    return new Response("method not allowed", { status: 405 });
+    return new Response("method not allowed", { status: 405, headers: corsHeaders });
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
   const resendKey = Deno.env.get("RESEND_API_KEY") ?? "";
   if (!supabaseUrl || !serviceKey || !resendKey) {
-    return new Response("server misconfigured", { status: 500 });
+    return new Response("server misconfigured", { status: 500, headers: corsHeaders });
   }
 
   const authHeader = req.headers.get("Authorization") ?? "";
   const token = authHeader.startsWith("Bearer ") ? authHeader.slice("Bearer ".length) : "";
   if (!token) {
-    return new Response("unauthorized", { status: 401 });
+    return new Response("unauthorized", { status: 401, headers: corsHeaders });
   }
 
   const isService = token === serviceKey;
   if (!isService && !(await verifyAdmin(supabaseUrl, serviceKey, token))) {
-    return new Response("forbidden", { status: 403 });
+    return new Response("forbidden", { status: 403, headers: corsHeaders });
   }
 
   let body: SendInput;
   try {
     body = (await req.json()) as SendInput;
   } catch {
-    return new Response("invalid json", { status: 400 });
+    return new Response("invalid json", { status: 400, headers: corsHeaders });
   }
 
   const from = body.from ?? "support@captture.co.za";
   const fromName = FROM_PROFILES[from];
   if (!fromName) {
-    return new Response("unsupported sender", { status: 400 });
+    return new Response("unsupported sender", { status: 400, headers: corsHeaders });
   }
 
   const to = typeof body.to === "string" ? body.to.trim() : (body.to ?? []).map((t) => String(t).trim());
   if (typeof to === "string" ? !to : to.length === 0) {
-    return new Response("missing recipient", { status: 400 });
+    return new Response("missing recipient", { status: 400, headers: corsHeaders });
   }
   if (!body.subject || !body.html) {
-    return new Response("subject and html are required", { status: 400 });
+    return new Response("subject and html are required", { status: 400, headers: corsHeaders });
   }
 
   try {
     await sendResend(resendKey, from, fromName, body);
   } catch (err) {
     console.error("email-send failed:", err);
-    return new Response(err instanceof Error ? err.message : "send failed", { status: 500 });
+    return new Response(err instanceof Error ? err.message : "send failed", {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
 
   return new Response(JSON.stringify({ ok: true }), {
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...corsHeaders },
   });
 });

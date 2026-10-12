@@ -109,7 +109,9 @@ export function useAllOrders() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("orders")
-        .select("*, seller:sellers(id, business_name, store_username, logo_url, province, application_status), items:order_items(*)")
+        .select(
+          "*, seller:sellers(id, business_name, store_username, logo_url, province, application_status), items:order_items(*), user:profiles(id, full_name, avatar_url, email, phone)"
+        )
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as OrderWithRelations[];

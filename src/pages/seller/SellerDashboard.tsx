@@ -33,7 +33,7 @@ export function SellerDashboard() {
   const unreadCount = useUnreadNotificationCount();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Dashboard</h1>
@@ -45,7 +45,7 @@ export function SellerDashboard() {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <StatCard
           label="Today's Sales"
           value={formatCompactZAR(today)}
@@ -95,7 +95,7 @@ export function SellerDashboard() {
       {/* Low Stock Alert Section */}
       {lowStock.data && lowStock.data.length > 0 && (
         <section className="border border-amber-200 bg-amber-50">
-          <div className="flex items-center justify-between border-b border-amber-200/50 px-5 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200/50 px-5 py-3">
             <h2 className="flex items-center gap-2 font-semibold text-amber-900">
               <AlertTriangle className="h-5 w-5" />
               Low Stock Products
@@ -109,8 +109,8 @@ export function SellerDashboard() {
           </div>
           <div className="divide-y divide-amber-200/50">
             {lowStock.data.slice(0, 5).map((product) => (
-              <div key={product.id} className="flex items-center justify-between px-5 py-3">
-                <div className="flex items-center gap-3">
+              <div key={product.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
+                <div className="flex min-w-0 items-center gap-3">
                   <div className="h-10 w-10 shrink-0 overflow-hidden bg-neutral-100">
                     {product.featured_image ? (
                       <img src={product.featured_image} alt="" className="h-full w-full object-cover" />
@@ -135,7 +135,7 @@ export function SellerDashboard() {
         </section>
       )}
 
-      <div className="grid gap-8 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
         {/* Recent Orders */}
         <section className="border border-neutral-200">
           <div className="flex items-center justify-between border-b border-neutral-100 px-5 py-3">

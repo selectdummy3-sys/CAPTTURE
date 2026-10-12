@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   ChevronDown,
   ClipboardList,
@@ -7,6 +7,7 @@ import {
   MapPin,
   Phone,
   Printer,
+  Search,
   Store,
   Truck,
   UserRound,
@@ -376,7 +377,24 @@ function OrderCard({ order }: { order: OrderWithRelations }) {
 
 export function SellerOrders() {
   const [status, setStatus] = useState<string>("all");
+  const [search, setSearch] = useState("");
   const { data: orders, isLoading } = useSellerOrders(status);
+
+  const visible = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return orders ?? [];
+    return (orders ?? []).filter((o) => {
+      const recipient = (o.shipping_address as Address | null)?.recipient ?? "";
+      return (
+        o.order_number.toLowerCase().includes(q) ||
+        (o.user?.full_name ?? "").toLowerCase().includes(q) ||
+        (o.user?.email ?? "").toLowerCase().includes(q) ||
+        (o.tracking_number ?? "").toLowerCase().includes(q) ||
+        recipient.toLowerCase().includes(q) ||
+        (o.items ?? []).some((item) => item.product_name.toLowerCase().includes(q))
+      );
+    });
+  }, [orders, search]);
 
   if (isLoading) {
     return (
@@ -391,32 +409,44 @@ export function SellerOrders() {
     <div>
       <h1 className="text-2xl font-bold tracking-tight text-neutral-900">Orders</h1>
 
-      <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1">
-        {STATUSES.map((s) => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => setStatus(s)}
-            className={cn(
-              "shrink-0 px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
-              status === s ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
-            )}
-          >
-            {s}
-          </button>
-        ))}
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex gap-1.5 overflow-x-auto pb-1">
+          {STATUSES.map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setStatus(s)}
+              className={cn(
+                "shrink-0 px-3.5 py-1.5 text-xs font-medium capitalize transition-colors",
+                status === s ? "bg-neutral-900 text-white" : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200"
+              )}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+        <div className="relative w-full sm:ml-auto sm:max-w-xs">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search order, customer, email…"
+            className="h-9 w-full border border-neutral-200 bg-white pl-9 pr-3 text-sm outline-none focus:border-neutral-400"
+          />
+        </div>
       </div>
 
-      {(orders ?? []).length === 0 ? (
+      {visible.length === 0 ? (
         <EmptyState
           icon={<ClipboardList className="h-8 w-8" />}
-          title="No orders here"
-          description="Orders placed for your store will appear here."
+          title={search.trim() ? "No orders match your search" : "No orders here"}
+          description={search.trim() ? undefined : "Orders placed for your store will appear here."}
           className="mt-8"
         />
       ) : (
         <div className="mt-6 space-y-4">
-          {(orders ?? []).map((order) => (
+          {visible.map((order) => (
             <OrderCard key={order.id} order={order} />
           ))}
         </div>
