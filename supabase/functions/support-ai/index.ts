@@ -1,10 +1,55 @@
 import { createClient, type SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
-const MODEL = "gemini-3.6-flash";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
+const GEMINI_BASE = "https://generativelanguage.googleapis.com/v1beta";
+
+const DEFAULT_MODELS = [
+  "gemini-flash-latest",
+  "gemini-3.8-flash",
+  "gemini-3.5-flash",
+  "gemini-3.5-flash-lite",
+];
 
 const SUPPORT_EMAIL = "support@captture.co.za";
 const MAX_TOOL_ROUNDS = 4;
+
+const BUSY_REPLY =
+  "I'm helping a lot of customers right now, so I couldn't finish that answer. Please try again in a few minutes, or email " +
+  SUPPORT_EMAIL +
+  " and a human will get back to you during business hours.";
+
+class GeminiError extends Error {
+  status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+  }
+}
+
+function modelCandidates(): string[] {
+  const configured = (Deno.env.get("GEMINI_MODEL") ?? "")
+    .split(",")
+    .map((m) => m.trim())
+    .filter(Boolean);
+  return configured.length > 0 ? configured : DEFAULT_MODELS;
+}
+
+let activeModel: string | null = null;
+
+async function listModels(apiKey: string): Promise<string[]> {
+  try {
+    const res = await fetch(`${GEMINI_BASE}/models?key=${encodeURIComponent(apiKey)}&pageSize=100`);
+    if (!res.ok) return [];
+    const data = (await res.json()) as {
+      models?: Array<{ name?: string; supportedGenerationMethods?: string[] }>;
+    };
+    return (data.models ?? [])
+      .filter((m) => m.supportedGenerationMethods?.includes("generateContent"))
+      .map((m) => (m.name ?? "").replace(/^models\//, ""))
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
 
 const KNOWLEDGE_BASE = `
 CAPTTURE is a South African fashion marketplace connecting independent designers and tailors directly with customers across the country. Every store is vetted before it can sell. Orders ship directly from the maker to the customer's door.
@@ -397,7 +442,7 @@ async function notifyTicket(
       `<p style="margin:0 0 18px;">Hi there,</p>` +
         `<p style="margin:0 0 18px;">Thanks for reaching out to CAPTTURE support. We've logged your request and a member of our team will get back to you during business hours.</p>` +
         `<p style="margin:0 0 18px;">Your reference is <strong>${escapeHtml(ticket.reference)}</strong>. Quote it if you contact us again.</p>` +
-        `<p style="margin:0;">— The CAPTTURE Support team</p>`,
+        `<p style="margin:0;">â€” The CAPTTURE Support team</p>`,
     );
   }
 }
@@ -472,11 +517,12 @@ interface GeminiContent {
 }
 
 async function callGemini(
+  model: string,
   apiKey: string,
   systemPrompt: string,
   contents: GeminiContent[],
 ): Promise<{ parts: GeminiPart[]; text: string }> {
-  const res = await fetch(`${GEMINI_URL}?key=${encodeURIComponent(apiKey)}`, {
+  const res = await fetch(`${GEMINI_BASE}/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -490,8 +536,8 @@ async function callGemini(
 
   if (!res.ok) {
     const detail = await res.text().catch(() => "");
-    console.error("gemini error:", res.status, detail.slice(0, 300));
-    throw new Error(`gemini ${res.status}`);
+    console.error("gemini error:", model, res.status, detail.slice(0, 300));
+    throw new GeminiError(res.status, `gemini ${res.status}`);
   }
 
   const data = (await res.json()) as {
@@ -500,6 +546,42 @@ async function callGemini(
   const parts = data.candidates?.[0]?.content?.parts ?? [];
   const text = parts.map((p) => p.text ?? "").join("").trim();
   return { parts, text };
+}
+
+async function generateWithFallback(
+  apiKey: string,
+  systemPrompt: string,
+  contents: GeminiContent[],
+): Promise<{ parts: GeminiPart[]; text: string }> {
+  const models = modelCandidates();
+  const ordered = activeModel
+    ? [activeModel, ...models.filter((m) => m !== activeModel)]
+    : models;
+
+  let lastError: unknown = null;
+  for (const model of ordered) {
+    try {
+      const result = await callGemini(model, apiKey, systemPrompt, contents);
+      if (activeModel !== model) {
+        console.log("support-ai using model:", model);
+      }
+      activeModel = model;
+      return result;
+    } catch (err) {
+      lastError = err;
+      const status = err instanceof GeminiError ? err.status : 0;
+      if (status === 429 || status === 404 || status === 503) {
+        continue;
+      }
+      throw err;
+    }
+  }
+
+  if (lastError instanceof GeminiError && lastError.status === 429) {
+    const available = await listModels(apiKey);
+    console.error("all models rate-limited; available models:", available.join(","));
+  }
+  throw lastError ?? new Error("no model available");
 }
 
 async function runAssistant(
@@ -514,7 +596,7 @@ async function runAssistant(
   }));
 
   for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
-    const { parts, text } = await callGemini(apiKey, systemPrompt, contents);
+    const { parts, text } = await generateWithFallback(apiKey, systemPrompt, contents);
     const calls = parts.filter((p) => p.functionCall?.name);
 
     if (calls.length === 0) {
@@ -609,6 +691,9 @@ Deno.serve(async (req: Request) => {
     return json({ reply });
   } catch (err) {
     console.error("support-ai failed:", err);
+    if (err instanceof GeminiError && (err.status === 429 || err.status === 503)) {
+      return json({ reply: BUSY_REPLY, rateLimited: true });
+    }
     return json({ error: err instanceof Error ? err.message : "upstream error" }, 502);
   }
 });
