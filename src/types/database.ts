@@ -14,45 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      app_banners: {
-        Row: {
-          created_at: string
-          cta_link: string
-          cta_text: string
-          id: string
-          image_url: string | null
-          is_active: boolean
-          sort_order: number
-          subtitle: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          cta_link?: string
-          cta_text?: string
-          id?: string
-          image_url?: string | null
-          is_active?: boolean
-          sort_order?: number
-          subtitle?: string
-          title?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          cta_link?: string
-          cta_text?: string
-          id?: string
-          image_url?: string | null
-          is_active?: boolean
-          sort_order?: number
-          subtitle?: string
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       addresses: {
         Row: {
           city: string
@@ -95,6 +56,96 @@ export type Database = {
           recipient?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      admin_audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: number
+          metadata: Json | null
+          outcome: string | null
+          reason: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: never
+          metadata?: Json | null
+          outcome?: string | null
+          reason?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: never
+          metadata?: Json | null
+          outcome?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "admin_audit_log_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "user_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      app_banners: {
+        Row: {
+          created_at: string
+          cta_link: string
+          cta_text: string
+          id: string
+          image_url: string | null
+          is_active: boolean
+          sort_order: number
+          subtitle: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          cta_link?: string
+          cta_text?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          sort_order?: number
+          subtitle?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          cta_link?: string
+          cta_text?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          sort_order?: number
+          subtitle?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -985,48 +1036,6 @@ export type Database = {
           },
         ]
       }
-push_tokens: {
-        Row: {
-          created_at: string
-          id: string
-          platform: string
-          token: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          platform: string
-          token: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          platform?: string
-          token?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "push_tokens_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "push_tokens_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "user_public"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       products: {
         Row: {
           category_id: string | null
@@ -1159,6 +1168,48 @@ push_tokens: {
         }
         Relationships: []
       }
+      push_tokens: {
+        Row: {
+          created_at: string
+          id: string
+          platform: string
+          token: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          platform?: string
+          token: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          platform?: string
+          token?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_tokens_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "push_tokens_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "user_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       recently_viewed: {
         Row: {
           id: string
@@ -1201,6 +1252,21 @@ push_tokens: {
             referencedColumns: ["id"]
           },
         ]
+      }
+      role_permissions: {
+        Row: {
+          admin_role: Database["public"]["Enums"]["admin_role"]
+          permission: string
+        }
+        Insert: {
+          admin_role: Database["public"]["Enums"]["admin_role"]
+          permission: string
+        }
+        Update: {
+          admin_role?: Database["public"]["Enums"]["admin_role"]
+          permission?: string
+        }
+        Relationships: []
       }
       sellers: {
         Row: {
@@ -1294,6 +1360,59 @@ push_tokens: {
           },
           {
             foreignKeyName: "sellers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "user_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_accounts: {
+        Row: {
+          admin_role: Database["public"]["Enums"]["admin_role"]
+          created_at: string
+          created_by: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_role: Database["public"]["Enums"]["admin_role"]
+          created_at?: string
+          created_by?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_role?: Database["public"]["Enums"]["admin_role"]
+          created_at?: string
+          created_by?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_accounts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_accounts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "user_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_accounts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_accounts_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "user_public"
@@ -1911,9 +2030,21 @@ push_tokens: {
         }
         Returns: string
       }
+      assign_staff_role: {
+        Args: {
+          p_reason?: string
+          p_role: Database["public"]["Enums"]["admin_role"]
+          p_user_id: string
+        }
+        Returns: Json
+      }
       begin_payfast_payment: {
         Args: { p_order_numbers: string[] }
         Returns: string
+      }
+      current_admin_role: {
+        Args: never
+        Returns: Database["public"]["Enums"]["admin_role"]
       }
       current_seller: { Args: never; Returns: string }
       current_seller_id: { Args: never; Returns: string }
@@ -1927,7 +2058,28 @@ push_tokens: {
           product_id: string
         }[]
       }
+      get_audit_log: {
+        Args: { p_limit?: number }
+        Returns: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: number
+          metadata: Json | null
+          outcome: string | null
+          reason: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "admin_audit_log"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_payfast_config_admin: { Args: never; Returns: Json }
+      get_push_webhook_secret: { Args: never; Returns: string }
       get_seller_best_selling_products: {
         Args: { p_limit?: number; p_seller_id: string }
         Returns: {
@@ -2000,9 +2152,11 @@ push_tokens: {
         }[]
       }
       get_supply_stats: { Args: never; Returns: Json }
+      has_permission: { Args: { p_permission: string }; Returns: boolean }
       increment_view: { Args: { p_product_id: string }; Returns: undefined }
       is_admin: { Args: never; Returns: boolean }
       is_seller_user: { Args: never; Returns: boolean }
+      is_staff: { Args: never; Returns: boolean }
       list_admin_team: {
         Args: never
         Returns: {
@@ -2013,8 +2167,37 @@ push_tokens: {
           role: string
         }[]
       }
-      lookup_order: { Args: { p_email: string; p_order_number: string }; Returns: Json }
+      list_staff: {
+        Args: never
+        Returns: {
+          admin_role: string
+          created_at: string
+          email: string
+          full_name: string
+          user_id: string
+        }[]
+      }
+      log_admin_action: {
+        Args: {
+          p_action: string
+          p_entity_id?: string
+          p_entity_type?: string
+          p_metadata?: Json
+          p_outcome?: string
+          p_reason?: string
+        }
+        Returns: undefined
+      }
+      lookup_order: {
+        Args: { p_email: string; p_order_number: string }
+        Returns: Json
+      }
       mark_message_read: { Args: { p_message_id: string }; Returns: undefined }
+      my_admin_access: { Args: never; Returns: Json }
+      notification_pref_allowed: {
+        Args: { p_type: string; p_user_id: string }
+        Returns: boolean
+      }
       notify_user: {
         Args: {
           p_body?: string
@@ -2051,6 +2234,7 @@ push_tokens: {
         }
         Returns: {
           billing_address: Json | null
+          consignment_id: string | null
           coupon_id: string | null
           created_at: string
           delivered_at: string | null
@@ -2168,6 +2352,10 @@ push_tokens: {
         Returns: undefined
       }
       request_withdrawal: { Args: { p_amount: number }; Returns: string }
+      revoke_staff_role: {
+        Args: { p_reason?: string; p_user_id: string }
+        Returns: Json
+      }
       seller_balance: { Args: never; Returns: number }
       send_message: {
         Args: {
@@ -2182,10 +2370,7 @@ push_tokens: {
         Args: { p_enabled: boolean; p_text: string }
         Returns: undefined
       }
-      set_app_settings: {
-        Args: { p_settings: Json }
-        Returns: undefined
-      }
+      set_app_settings: { Args: { p_settings: Json }; Returns: undefined }
       set_commission_settings: {
         Args: { p_enabled: boolean; p_rate: number }
         Returns: undefined
@@ -2312,7 +2497,13 @@ push_tokens: {
       }
     }
     Enums: {
-      [_ in never]: never
+      admin_role:
+        | "super_admin"
+        | "support_agent"
+        | "support_supervisor"
+        | "fulfilment_agent"
+        | "seller_manager"
+        | "finance_officer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -2328,12 +2519,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2357,11 +2548,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2382,11 +2573,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2407,11 +2598,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2424,11 +2615,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -2439,6 +2630,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      admin_role: [
+        "super_admin",
+        "support_agent",
+        "support_supervisor",
+        "fulfilment_agent",
+        "seller_manager",
+        "finance_officer",
+      ],
+    },
   },
 } as const
+

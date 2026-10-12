@@ -3,7 +3,8 @@ import { Route, Routes } from "react-router-dom";
 
 import { StorefrontLayout } from "@/components/storefront/StorefrontLayout";
 import { AppTabBar } from "@/components/storefront/AppTabBar";
-import { RequireAdmin, RequireApprovedSeller, RequireAuth, RequireSeller, LoadingScreen } from "@/components/guards";
+import { RequireAdmin, RequireApprovedSeller, RequireAuth, RequirePermission, RequireSeller, LoadingScreen } from "@/components/guards";
+import { PERMISSIONS } from "@/lib/permissions";
 import { isNative } from "@/lib/capacitor";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 
@@ -147,6 +148,15 @@ const AdminBanners = lazy(() =>
 const AdminTeam = lazy(() =>
   import("@/pages/admin/AdminTeam").then((m) => ({ default: m.AdminTeam }))
 );
+const AdminHome = lazy(() =>
+  import("@/pages/admin/AdminHome").then((m) => ({ default: m.AdminHome }))
+);
+const AuditLog = lazy(() =>
+  import("@/pages/admin/AuditLog").then((m) => ({ default: m.AuditLog }))
+);
+const AdminStaff = lazy(() =>
+  import("@/pages/admin/AdminStaff").then((m) => ({ default: m.AdminStaff }))
+);
 
 const SupplyLayout = lazy(() =>
   import("@/components/supply/SupplyLayout").then((m) => ({ default: m.SupplyLayout }))
@@ -255,24 +265,27 @@ export function App() {
         </Route>
 
         <Route path="/admin" element={<RequireAdmin><AdminLayout /></RequireAdmin>}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="sellers" element={<AdminSellers />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="withdrawals" element={<AdminWithdrawals />} />
-          <Route path="settings" element={<AdminSettings />} />
-          <Route path="team" element={<AdminTeam />} />
-          <Route path="app" element={<AdminAppSettings />} />
-          <Route path="banners" element={<AdminBanners />} />
-          <Route path="coupons" element={<AdminCoupons />} />
-          <Route path="messages" element={<AdminMessages />} />
-          <Route path="support" element={<AdminSupport />} />
-          <Route path="hero" element={<AdminHero />} />
-          <Route path="collections" element={<AdminCategories />} />
-          <Route path="supplies" element={<AdminSupplyOverview />} />
-          <Route path="supplies/products" element={<AdminSupplyProducts />} />
-          <Route path="supplies/categories" element={<AdminSupplyCategories />} />
-          <Route path="supplies/orders" element={<AdminSupplyOrders />} />
+          <Route index element={<AdminHome />} />
+          <Route path="overview" element={<RequirePermission permission={PERMISSIONS.reportsView}><AdminDashboard /></RequirePermission>} />
+          <Route path="products" element={<RequirePermission permission={PERMISSIONS.productsModerate}><AdminProducts /></RequirePermission>} />
+          <Route path="sellers" element={<RequirePermission permission={PERMISSIONS.sellersReview}><AdminSellers /></RequirePermission>} />
+          <Route path="orders" element={<RequirePermission permission={PERMISSIONS.ordersView}><AdminOrders /></RequirePermission>} />
+          <Route path="withdrawals" element={<RequirePermission permission={PERMISSIONS.payoutsReview}><AdminWithdrawals /></RequirePermission>} />
+          <Route path="settings" element={<RequirePermission permission={PERMISSIONS.systemSettingsManage}><AdminSettings /></RequirePermission>} />
+          <Route path="team" element={<RequirePermission permission={PERMISSIONS.staffPermissionsManage}><AdminTeam /></RequirePermission>} />
+          <Route path="access" element={<RequirePermission permission={PERMISSIONS.staffPermissionsManage}><AdminStaff /></RequirePermission>} />
+          <Route path="audit" element={<RequirePermission permission={PERMISSIONS.auditView}><AuditLog /></RequirePermission>} />
+          <Route path="app" element={<RequirePermission permission={PERMISSIONS.systemSettingsManage}><AdminAppSettings /></RequirePermission>} />
+          <Route path="banners" element={<RequirePermission permission={PERMISSIONS.contentManage}><AdminBanners /></RequirePermission>} />
+          <Route path="coupons" element={<RequirePermission permission={PERMISSIONS.promotionsManage}><AdminCoupons /></RequirePermission>} />
+          <Route path="messages" element={<RequirePermission permission={PERMISSIONS.messagingSend}><AdminMessages /></RequirePermission>} />
+          <Route path="support" element={<RequirePermission permission={PERMISSIONS.supportTicketsView}><AdminSupport /></RequirePermission>} />
+          <Route path="hero" element={<RequirePermission permission={PERMISSIONS.contentManage}><AdminHero /></RequirePermission>} />
+          <Route path="collections" element={<RequirePermission permission={PERMISSIONS.contentManage}><AdminCategories /></RequirePermission>} />
+          <Route path="supplies" element={<RequirePermission permission={PERMISSIONS.suppliesManage}><AdminSupplyOverview /></RequirePermission>} />
+          <Route path="supplies/products" element={<RequirePermission permission={PERMISSIONS.suppliesManage}><AdminSupplyProducts /></RequirePermission>} />
+          <Route path="supplies/categories" element={<RequirePermission permission={PERMISSIONS.suppliesManage}><AdminSupplyCategories /></RequirePermission>} />
+          <Route path="supplies/orders" element={<RequirePermission permission={PERMISSIONS.suppliesOrders}><AdminSupplyOrders /></RequirePermission>} />
         </Route>
 
         <Route path="/login" element={<LoginPage />} />

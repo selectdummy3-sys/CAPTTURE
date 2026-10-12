@@ -2,7 +2,10 @@ import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
 import { useAuth } from "@/hooks/useAuth";
+import { can, useAdminAccess } from "@/hooks/usePermissions";
+import type { Permission } from "@/lib/permissions";
 import { Spinner } from "@/components/ui/spinner";
+import { AccessDenied } from "@/components/access-denied";
 
 export function LoadingScreen() {
   return (
@@ -47,9 +50,34 @@ export function RequireApprovedSeller({ children }: { children: ReactNode }) {
 
 export function RequireAdmin({ children }: { children: ReactNode }) {
   const { user, isAdmin, isLoading } = useAuth();
+  const { access, isLoading: accessLoading } = useAdminAccess();
 
-  if (isLoading) return <LoadingScreen />;
+  if (isLoading || accessLoading) return <LoadingScreen />;
   if (!user) return <Navigate to="/login" replace />;
-  if (!isAdmin) return <Navigate to="/" replace />;
+  if (!isAdmin && !access.isStaff) return <Navigate to="/" replace />;
+  return <>{children}</>;
+}
+
+/**
+ * Route-level permission gate for admin workspaces.
+ *
+ * This only controls the UI; every protected operation is independently
+ * verified on the backend (RLS + RPC permission checks). A user who lacks the
+ * permission sees a clear access-denied state rather than a hidden route.
+ */
+export function RequirePermission({
+  permission,
+  children,
+}: {
+  permission: Permission;
+  children: ReactNode;
+}) {
+  const { user, isLoading } = useAuth();
+  const { access, isLoading: accessLoading } = useAdminAccess();
+
+  if (isLoading || accessLoading) return <LoadingScreen />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (!access.isStaff) return <Navigate to="/" replace />;
+  if (!can(access, permission)) return <AccessDenied />;
   return <>{children}</>;
 }

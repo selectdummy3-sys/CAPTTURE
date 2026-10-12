@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabase";
 import type { Coupon, OrderWithRelations, Seller } from "@/types";
+import type { AdminRole } from "@/lib/permissions";
 
 export function useAllSellers() {
   return useQuery({
@@ -318,6 +319,99 @@ export function useSetUserRole() {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["admin", "team"] });
+    },
+  });
+}
+
+/* ------------------------------------------------------------------ *
+ * Staff roles (Security workspace)
+ * ------------------------------------------------------------------ */
+
+export interface StaffMember {
+  user_id: string;
+  email: string;
+  full_name: string;
+  admin_role: string;
+  created_at: string;
+}
+
+export function useStaff() {
+  return useQuery({
+    queryKey: ["admin", "staff"],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("list_staff");
+      if (error) throw error;
+      return (data ?? []) as unknown as StaffMember[];
+    },
+  });
+}
+
+export function useAssignStaffRole() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      role,
+      reason,
+    }: {
+      userId: string;
+      role: AdminRole;
+      reason?: string;
+    }) => {
+      const { error } = await supabase.rpc("assign_staff_role", {
+        p_user_id: userId,
+        p_role: role,
+        ...(reason ? { p_reason: reason } : {}),
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "staff"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin", "audit"] });
+    },
+  });
+}
+
+export function useRevokeStaffRole() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userId, reason }: { userId: string; reason?: string }) => {
+      const { error } = await supabase.rpc("revoke_staff_role", {
+        p_user_id: userId,
+        ...(reason ? { p_reason: reason } : {}),
+      });
+      if (error) throw new Error(error.message);
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin", "staff"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin", "audit"] });
+    },
+  });
+}
+
+/* ------------------------------------------------------------------ *
+ * Audit log (Security workspace)
+ * ------------------------------------------------------------------ */
+
+export interface AuditLogEntry {
+  id: number;
+  actor_id: string | null;
+  action: string;
+  entity_type: string | null;
+  entity_id: string | null;
+  outcome: string | null;
+  reason: string | null;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+}
+
+export function useAuditLog(limit = 150) {
+  return useQuery({
+    queryKey: ["admin", "audit", limit],
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("get_audit_log", { p_limit: limit });
+      if (error) throw error;
+      return (data ?? []) as unknown as AuditLogEntry[];
     },
   });
 }
